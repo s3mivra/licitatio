@@ -10,6 +10,7 @@ import { recordAudit } from '../../repositories/audit';
 import { FileRepo } from '../../repositories/files';
 import { getOrganization } from '../../repositories/orgs';
 import { withTransaction } from '../../repositories/tx';
+import { PacketRepo } from '../../repositories/packets';
 import { DocumentTypeRepo, VaultRepo } from '../../repositories/vault';
 import { AppError } from '../../shared/errors';
 import { viaOf } from '../../shared/validate';
@@ -138,8 +139,7 @@ export async function get(access: OrgAccess, id: string): Promise<VaultDocumentD
   return {
     ...toDto(doc, ctx),
     versions: [...doc.versions].sort((a, b) => b.versionNo - a.versionNo).map((v) => versionDto(v, ctx.files)),
-    // Bid packets arrive in M6; until then no packet can reference a document.
-    referencingBids: [],
+    referencingBids: await new PacketRepo(access.orgId).referencingBids(id),
   };
 }
 

@@ -5,11 +5,11 @@ import { authenticator } from 'otplib';
 import { PDFDocument } from 'pdf-lib';
 import request from 'supertest';
 import { addDays, manilaDateOf } from '@licitatio/shared';
-import { DocumentTypeModel, FileModel, UserModel } from '../src/models';
+import { DocumentTypeModel, FileModel, RequirementTemplateModel, UserModel } from '../src/models';
 import { clearOrgAccessCache } from '../src/modules/auth/access';
 import { hashPassword } from '../src/modules/auth/auth.service';
 import { encryptSecret } from '../src/shared/crypto';
-import { SYSTEM_DOCUMENT_TYPES } from '../../../scripts/seedData';
+import { SYSTEM_DOCUMENT_TYPES, SYSTEM_TEMPLATES } from '../../../scripts/seedData';
 import { mailControl, objects, sentMail } from './state';
 
 export interface Auth {
@@ -33,6 +33,7 @@ export async function resetDb(): Promise<void> {
   const db = mongoose.connection.db;
   if (db) await Promise.all((await db.collections()).map((c) => c.deleteMany({})));
   await DocumentTypeModel.insertMany(SYSTEM_DOCUMENT_TYPES.map((t) => ({ ...t, orgId: null, archivedAt: null })));
+  await RequirementTemplateModel.insertMany(SYSTEM_TEMPLATES.map((t) => ({ ...t, orgId: null, archivedAt: null })));
   sentMail.length = 0;
   objects.clear();
   mailControl.failFor.clear();

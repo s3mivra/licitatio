@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { blockNodesSchema, proposalSectionsSchema } from './blocks';
 import { PCAB_CATEGORIES } from './constants';
 import { MAX_FILE_BYTES } from './constants';
 import { isValidDateOnly } from './dates';
@@ -249,3 +250,30 @@ export const opportunityListQuery = z.object({
 }).strict().refine((v) => v.page * v.pageSize <= 10_000, { path: ['page'], message: 'Page is out of range' });
 export type CreateOpportunityBody = z.input<typeof createOpportunityBody>;
 export type TransitionBody = z.infer<typeof transitionBody>;
+
+// ---------- proposals, blocks ----------
+export const createProposalBody = z.object({
+  title: text(200), opportunityId: objectId.optional(), sections: proposalSectionsSchema.optional(),
+}).strict();
+export const patchProposalBody = z.object({
+  rev, title: text(200).optional(), status: z.enum(['draft', 'final']).optional(), sections: proposalSectionsSchema.optional(),
+  opportunityId: objectId.nullable().optional(),
+}).strict();
+export const exportProposalBody = z.object({ format: z.enum(['pdf', 'docx']), allowUnresolved: z.boolean().optional() }).strict();
+export const contentBlockBody = z.object({
+  key: z.string().regex(/^[a-z][a-z0-9_]{2,59}$/), title: text(200), tags: z.array(text(30)).max(8), nodes: blockNodesSchema,
+}).strict();
+export const proposalListQuery = z.object({
+  opportunityId: objectId.optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(25),
+}).strict();
+export const blockListQuery = z.object({ q: z.string().trim().max(100).optional(), tag: z.string().trim().max(30).optional() }).strict();
+export const taskListQuery = z.object({
+  status: z.enum(TASK_STATUSES).optional(),
+  assigneeId: objectId.optional(),
+  opportunityId: objectId.optional(),
+  mine: z.enum(['true', 'false']).optional(),
+}).strict();
+export const deletePacketItemQuery = z.object({ rev: z.coerce.number().int().min(0) }).strict();
+export const idempotencyKeyHeader = z.string().uuid();

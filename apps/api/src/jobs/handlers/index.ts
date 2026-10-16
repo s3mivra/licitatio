@@ -1,7 +1,11 @@
+import { deleteObject } from '../../infra/r2';
+import { purgeExpiredExports } from '../../repositories/exports';
 import { cleanupFiles } from '../../repositories/files';
+import { markExportFailed } from '../exports/common';
 import { logger } from '../../shared/logger';
 import type { FailureHook, JobHandler, JobType } from '../queue';
 import { sendDigest } from './digest';
+import { exportPacket } from './exportPacket';
 import { scanDeadlines } from './scanDeadlines';
 import { scanExpiry } from './scanExpiry';
 
@@ -20,8 +24,13 @@ export const handlers: Partial<Record<JobType, JobHandler>> = {
   },
   'cleanup.files': async () => {
     const result = await cleanupFiles(new Date());
-    logger.info(result, 'cleanup.files done');
+    const expiredExports = await purgeExpiredExports(new Date(), deleteObject);
+    logger.info({ ...result, expiredExports }, 'cleanup.files done');
   },
+  'export.packet': exportPacket,
 };
 
-export const failureHooks: Partial<Record<JobType, FailureHook>> = {};
+export const failureHooks: Partial<Record<JobType, FailureHook>> = {
+  'export.packet': markExportFailed,
+  'export.proposal': markExportFailed,
+};

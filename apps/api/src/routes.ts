@@ -10,10 +10,12 @@ import * as files from './modules/files/files.controller';
 import * as notifications from './modules/notifications/notifications.controller';
 import * as opportunities from './modules/opportunities/opportunities.controller';
 import * as orgs from './modules/orgs/orgs.controller';
+import * as packets from './modules/packets/packets.controller';
 import * as platform from './modules/platform/platform.controller';
 import { controllers as registerControllers } from './modules/registers/registers.controller';
 import * as vault from './modules/vault/vault.controller';
 import { AppError } from './shared/errors';
+import { exportLimiter } from './shared/rateLimit';
 
 export const apiRouter = Router();
 
@@ -87,6 +89,19 @@ org.get('/opportunities/:id', viewer, opportunities.get);
 org.patch('/opportunities/:id', editor, opportunities.patch);
 org.delete('/opportunities/:id', requireOrgRole('admin'), opportunities.remove);
 org.post('/opportunities/:id/transition', editor, opportunities.transition);
+
+org.get('/requirement-templates', viewer, packets.listTemplates);
+org.post('/requirement-templates', adminNoStaff, packets.createTemplate);
+org.post('/opportunities/:id/packet', editor, packets.create);
+org.get('/opportunities/:id/packet', viewer, packets.get);
+org.post('/opportunities/:id/packet/refresh', editor, packets.refresh);
+org.post('/opportunities/:id/packet/items', editor, packets.addItem);
+org.patch('/opportunities/:id/packet/items/:itemId', editor, packets.updateItem); // waiving a mandatory item needs admin (domain rule)
+org.delete('/opportunities/:id/packet/items/:itemId', editor, packets.deleteItem);
+org.post('/opportunities/:id/packet/items/:itemId/generate', editor, packets.generate);
+org.post('/opportunities/:id/packet/export', editor, exportLimiter, packets.exportPacket);
+org.get('/opportunities/:id/packet/exports', viewer, packets.packetExports);
+org.get('/exports/:id', viewer, packets.getExportRecord);
 
 org.get('/notifications', viewer, notifications.list);
 org.post('/notifications/read', viewer, notifications.read);

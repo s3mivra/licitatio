@@ -2,12 +2,13 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { OpportunityDto, OpportunityStatus } from '@licitatio/shared';
 import { formatCentavos } from '@licitatio/shared';
 import { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ApiError, api } from '../../lib/api';
 import { formatDateTime } from '../../lib/format';
 import { can, useOrg, useOrgId } from '../../lib/queries';
 import { Alert, Button, Dialog, ErrorState, Skeleton, TextArea, cx } from '../../ui';
 import { BidForm } from './BidForm';
+import { PacketTab } from './PacketTab';
 import { DeadlineChip, NEXT, STATUS_LABEL, StatusChip } from './common';
 
 const NEEDS_REASON: OpportunityStatus[] = ['no_bid', 'cancelled', 'lost'];
@@ -63,7 +64,8 @@ export function BidDetail() {
   const org = useOrg();
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const [tab, setTab] = useState<(typeof TABS)[number]>('Overview');
+  const [params] = useSearchParams();
+  const [tab, setTab] = useState<(typeof TABS)[number]>(params.get('tab') === 'packet' ? 'Packet' : 'Overview');
   const [to, setTo] = useState<OpportunityStatus | null>(null);
   const [editing, setEditing] = useState(false);
   const q = useQuery({ queryKey: ['org', orgId, 'opportunities', 'detail', id], queryFn: () => api.get<{ data: OpportunityDto }>(`/orgs/${orgId}/opportunities/${id}`).then((r) => r.data) });
@@ -141,9 +143,8 @@ export function BidDetail() {
           ))}
         </ol>
       )}
-      {(tab === 'Packet' || tab === 'Proposal' || tab === 'Tasks') && (
-        <Alert tone="info">{tab === 'Packet' ? 'The bid packet checklist and readiness verdict arrive in the next milestone. Until then a bid cannot be moved to Ready.' : `${tab} arrive in a later milestone.`}</Alert>
-      )}
+      {tab === 'Packet' && <PacketTab bid={b} />}
+      {(tab === 'Proposal' || tab === 'Tasks') && <Alert tone="info">{tab} arrive in a later milestone.</Alert>}
       <TransitionDialog key={to ?? 'none'} bid={b} to={to} onClose={() => setTo(null)} />
       <BidForm open={editing} onClose={() => setEditing(false)} existing={b} />
     </>

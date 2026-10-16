@@ -1,6 +1,5 @@
 import type { OpportunityStatus } from '@licitatio/shared';
-
-export type PacketVerdict = 'ready' | 'blocked';
+import type { PacketVerdict } from './packetEvaluation';
 
 export const TRANSITIONS: Readonly<Record<OpportunityStatus, readonly OpportunityStatus[]>> = {
   identified: ['evaluating', 'no_bid', 'cancelled'],

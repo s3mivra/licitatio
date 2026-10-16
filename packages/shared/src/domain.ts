@@ -318,6 +318,27 @@ export interface ExportRecord extends TenantBase {
   expiresAt: Date;
 }
 
+// ---------- proposals ----------
+export interface ContentBlock extends TenantBase {
+  key: string; // snake_case unique per org
+  title: string;
+  tags: string[]; // max 8
+  nodes: import('./blocks').BlockNode[];
+  archivedAt: Date | null;
+}
+export interface ProposalSection {
+  id: string; // uuid
+  title: string;
+  nodes: import('./blocks').BlockNode[];
+}
+export interface Proposal extends TenantBase {
+  title: string;
+  opportunityId?: ObjectIdString;
+  status: 'draft' | 'final';
+  sections: ProposalSection[]; // max 40
+  createdBy: ObjectIdString;
+}
+
 // ---------- operations ----------
 export interface Task extends TenantBase {
   title: string;

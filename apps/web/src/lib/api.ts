@@ -84,6 +84,7 @@ export interface RequestOptions {
   body?: unknown;
   query?: Record<string, string | number | boolean | undefined>;
   auth?: boolean;
+  headers?: Record<string, string>;
 }
 
 export async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
@@ -97,6 +98,7 @@ export async function request<T>(path: string, opts: RequestOptions = {}): Promi
       headers: {
         ...(opts.body !== undefined ? { 'Content-Type': 'application/json' } : {}),
         ...(opts.auth !== false && accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        ...(opts.headers ?? {}),
       },
       body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
     });

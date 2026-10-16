@@ -197,3 +197,122 @@ export interface AssigneeOptionDto {
   name: string;
   via: 'membership' | 'staff_grant';
 }
+
+export interface PacketItemDto {
+  id: string;
+  key: string;
+  label: string;
+  stage: import('./domain').PacketStage;
+  mandatory: boolean;
+  fulfillment: import('./domain').Fulfillment;
+  docTypeCodes?: string[];
+  generator?: import('./domain').GeneratorCode;
+  custom?: boolean;
+  minValidityDaysAtSubmission: number;
+  order: number;
+  notes?: string;
+  vaultDocumentId?: string;
+  vaultDocumentTitle?: string;
+  fileId?: string;
+  fileName?: string;
+  includeInExport: boolean;
+  manual: { state: import('./domain').ManualState; reason?: string; setBy?: string; setAt?: string };
+}
+export interface ItemEvaluationDto {
+  itemId: string;
+  key: string;
+  mandatory: boolean;
+  status: import('./domain').ItemStatus;
+  reason?: string;
+  expiresAt?: string | null;
+}
+export interface PacketEvaluationDto {
+  verdict: 'ready' | 'blocked';
+  scorePercent: number;
+  mandatoryTotal: number;
+  mandatorySatisfied: number;
+  items: ItemEvaluationDto[];
+  blockers: ItemEvaluationDto[];
+  warnings: ItemEvaluationDto[];
+}
+export interface BidPacketDto {
+  id: string;
+  rev: number;
+  opportunityId: string;
+  templateId: string;
+  templateCode: string;
+  items: PacketItemDto[];
+  createdAt: string;
+  updatedAt: string;
+}
+export interface PacketResponseDto {
+  packet: BidPacketDto;
+  evaluation: PacketEvaluationDto;
+}
+export interface RequirementTemplateDto {
+  id: string;
+  code: string;
+  name: string;
+  mode: import('./domain').TemplateMode;
+  description?: string;
+  items: import('./domain').TemplateItem[];
+  system: boolean;
+}
+export interface ExportDto {
+  id: string;
+  kind: 'packet' | 'proposal';
+  refId: string;
+  format: 'pdf' | 'docx';
+  status: 'queued' | 'running' | 'done' | 'failed';
+  pageCount?: number;
+  warnings: string[];
+  error?: { code: string; message: string };
+  fileName?: string;
+  downloadUrl?: string;
+  finishedAt?: string;
+  expiresAt: string;
+  createdAt: string;
+}
+export interface ContentBlockDto {
+  id: string;
+  key: string;
+  title: string;
+  tags: string[];
+  nodes: import('./blocks').BlockNode[];
+  createdAt: string;
+  updatedAt: string;
+}
+export interface ProposalSummaryDto {
+  id: string;
+  rev: number;
+  title: string;
+  opportunityId?: string;
+  opportunityTitle?: string;
+  status: 'draft' | 'final';
+  sectionCount: number;
+  updatedAt: string;
+}
+export interface ProposalDto extends ProposalSummaryDto {
+  sections: import('./domain').ProposalSection[];
+  createdAt: string;
+}
+export interface TaskDto {
+  id: string;
+  title: string;
+  description?: string;
+  opportunityId?: string;
+  opportunityTitle?: string;
+  assigneeId?: string;
+  assigneeName?: string;
+  dueAt?: string;
+  status: import('./domain').TaskStatus;
+  priority: 'low' | 'normal' | 'high';
+  createdBy: string;
+  completedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+export interface DashboardDto {
+  readyWithBlockers: number;
+  myOpenTasks: number;
+}

@@ -7,6 +7,7 @@ import { AcceptInviteScreen, ForgotPasswordScreen, LoginScreen, RegisterScreen, 
 import { BidDetail } from './features/bids/BidDetail';
 import { BidsPage } from './features/bids/BidsPage';
 import { Dashboard } from './features/dashboard/Dashboard';
+import { ExportPage } from './features/exports/ExportPage';
 import { EquipmentPage, PersonnelPage, ProjectsPage } from './features/registers/Registers';
 import { MembersSettings } from './features/settings/MembersSettings';
 import { AuditSettings, NotificationSettings, PlanSettings, StaffAccessSettings } from './features/settings/OtherSettings';
@@ -61,6 +62,7 @@ function App() {
         <Route path="vault/:id" element={<VaultDetail />} />
         <Route path="bids" element={<BidsPage />} />
         <Route path="bids/:id" element={<BidDetail />} />
+        <Route path="exports/:id" element={<ExportPage />} />
         <Route path="projects" element={<ProjectsPage />} />
         <Route path="personnel" element={<PersonnelPage />} />
         <Route path="equipment" element={<EquipmentPage />} />

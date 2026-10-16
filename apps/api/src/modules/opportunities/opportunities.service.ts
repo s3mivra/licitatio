@@ -10,6 +10,7 @@ import { getOrganization, isActiveMember, listActiveMembers, listGrants } from '
 import { AppError } from '../../shared/errors';
 import { viaOf } from '../../shared/validate';
 import type { OrgAccess } from '../auth/access';
+import { packetVerdict } from '../packets/packets.service';
 
 const iso = (d: Date | undefined | null): string | undefined => (d ? new Date(d).toISOString() : undefined);
 const actor = (access: OrgAccess) => ({ userId: access.userId, via: viaOf(access) });
@@ -127,7 +128,7 @@ export async function transition(access: OrgAccess, id: string, body: z.infer<ty
     from: current.status,
     to: body.to,
     hasGoDecision: decided === 'go',
-    packetVerdict: null, // bid packets arrive in M6; until then no bid can be marked ready
+    packetVerdict: body.to === 'ready' ? await packetVerdict(access.orgId, id) : null,
     reason: body.reason ?? body.decision?.reason,
   });
   if (!result.ok) throw new AppError(422, result.code as 'invalid_transition', result.message);
