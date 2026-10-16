@@ -12,6 +12,7 @@ import * as opportunities from './modules/opportunities/opportunities.controller
 import * as orgs from './modules/orgs/orgs.controller';
 import * as packets from './modules/packets/packets.controller';
 import * as platform from './modules/platform/platform.controller';
+import * as proposals from './modules/proposals/proposals.controller';
 import { controllers as registerControllers } from './modules/registers/registers.controller';
 import * as vault from './modules/vault/vault.controller';
 import { AppError } from './shared/errors';
@@ -102,6 +103,20 @@ org.post('/opportunities/:id/packet/items/:itemId/generate', editor, packets.gen
 org.post('/opportunities/:id/packet/export', editor, exportLimiter, packets.exportPacket);
 org.get('/opportunities/:id/packet/exports', viewer, packets.packetExports);
 org.get('/exports/:id', viewer, packets.getExportRecord);
+
+org.get('/proposals', viewer, proposals.list);
+org.post('/proposals', editor, proposals.create);
+org.get('/proposals/:id', viewer, proposals.get);
+org.patch('/proposals/:id', editor, proposals.patch);
+org.delete('/proposals/:id', editor, proposals.remove);
+org.post('/proposals/:id/duplicate', editor, proposals.duplicate);
+org.get('/proposals/:id/variables', viewer, proposals.variables);
+org.post('/proposals/:id/export', editor, exportLimiter, proposals.exportProposal);
+org.get('/blocks', viewer, proposals.listBlocks);
+org.post('/blocks', editor, proposals.createBlock);
+org.get('/blocks/:id', viewer, proposals.getBlock);
+org.patch('/blocks/:id', editor, proposals.replaceBlock);
+org.delete('/blocks/:id', editor, proposals.archiveBlock);
 
 org.get('/notifications', viewer, notifications.list);
 org.post('/notifications/read', viewer, notifications.read);

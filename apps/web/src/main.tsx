@@ -8,6 +8,7 @@ import { BidDetail } from './features/bids/BidDetail';
 import { BidsPage } from './features/bids/BidsPage';
 import { Dashboard } from './features/dashboard/Dashboard';
 import { ExportPage } from './features/exports/ExportPage';
+import { BlocksPage, ProposalEditor, ProposalsPage } from './features/proposals/ProposalPages';
 import { EquipmentPage, PersonnelPage, ProjectsPage } from './features/registers/Registers';
 import { MembersSettings } from './features/settings/MembersSettings';
 import { AuditSettings, NotificationSettings, PlanSettings, StaffAccessSettings } from './features/settings/OtherSettings';
@@ -63,6 +64,9 @@ function App() {
         <Route path="bids" element={<BidsPage />} />
         <Route path="bids/:id" element={<BidDetail />} />
         <Route path="exports/:id" element={<ExportPage />} />
+        <Route path="proposals" element={<ProposalsPage />} />
+        <Route path="proposals/:id" element={<ProposalEditor />} />
+        <Route path="blocks" element={<BlocksPage />} />
         <Route path="projects" element={<ProjectsPage />} />
         <Route path="personnel" element={<PersonnelPage />} />
         <Route path="equipment" element={<EquipmentPage />} />

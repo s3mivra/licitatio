@@ -6,6 +6,7 @@ import { logger } from '../../shared/logger';
 import type { FailureHook, JobHandler, JobType } from '../queue';
 import { sendDigest } from './digest';
 import { exportPacket } from './exportPacket';
+import { exportProposal } from './exportProposal';
 import { scanDeadlines } from './scanDeadlines';
 import { scanExpiry } from './scanExpiry';
 
@@ -28,6 +29,7 @@ export const handlers: Partial<Record<JobType, JobHandler>> = {
     logger.info({ ...result, expiredExports }, 'cleanup.files done');
   },
   'export.packet': exportPacket,
+  'export.proposal': exportProposal,
 };
 
 export const failureHooks: Partial<Record<JobType, FailureHook>> = {
