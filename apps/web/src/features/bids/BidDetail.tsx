@@ -9,6 +9,7 @@ import { can, useOrg, useOrgId } from '../../lib/queries';
 import { Alert, Button, Dialog, ErrorState, Skeleton, TextArea, cx } from '../../ui';
 import { BidForm } from './BidForm';
 import { ProposalsPage } from '../proposals/ProposalPages';
+import { TaskBoard } from '../tasks/TaskBoard';
 import { PacketTab } from './PacketTab';
 import { DeadlineChip, NEXT, STATUS_LABEL, StatusChip } from './common';
 
@@ -146,7 +147,7 @@ export function BidDetail() {
       )}
       {tab === 'Packet' && <PacketTab bid={b} />}
       {tab === 'Proposal' && <ProposalsPage opportunity={b} />}
-      {tab === 'Tasks' && <Alert tone="info">Tasks arrive in a later milestone.</Alert>}
+      {tab === 'Tasks' && <TaskBoard opportunityId={b.id} />}
       <TransitionDialog key={to ?? 'none'} bid={b} to={to} onClose={() => setTo(null)} />
       <BidForm open={editing} onClose={() => setEditing(false)} existing={b} />
     </>

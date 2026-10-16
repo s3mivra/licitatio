@@ -2,8 +2,13 @@
   "name": "licitatio",
   "private": true,
   "type": "module",
-  "workspaces": ["packages/*", "apps/*"],
-  "engines": { "node": ">=20" },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "build": "npm run build -w @licitatio/api && npm run build -w @licitatio/web",
     "typecheck": "npm run typecheck --workspaces --if-present",
@@ -16,7 +21,9 @@
     "seed-demo": "npm run seed-demo -w @licitatio/api",
     "set-plan": "npm run set-plan -w @licitatio/api --",
     "reset-totp": "npm run reset-totp -w @licitatio/api --",
-    "db:indexes": "npm run db:indexes -w @licitatio/api"
+    "db:indexes": "npm run db:indexes -w @licitatio/api",
+    "purge-org": "npm run purge-org -w @licitatio/api --",
+    "export-org": "npm run export-org -w @licitatio/api --"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import type { OffsetPage, OpportunityDto, VaultDocumentDto, VaultSummaryDto } from '@licitatio/shared';
+import type { DashboardDto, OffsetPage, OpportunityDto, VaultDocumentDto, VaultSummaryDto } from '@licitatio/shared';
 import { DeadlineChip } from '../bids/common';
 import { Link } from 'react-router-dom';
 import { api } from '../../lib/api';
@@ -40,6 +40,7 @@ export function Dashboard() {
     queryKey: ['org', orgId, 'opportunities', 'next'],
     queryFn: () => api.get<{ data: OpportunityDto[] }>(`/orgs/${orgId}/opportunities`, { status: 'identified,evaluating,preparing,ready', from: new Date().toISOString(), pageSize: 5 }).then((r) => r.data),
   });
+  const counts = useQuery({ queryKey: ['org', orgId, 'dashboard'], queryFn: () => api.get<{ data: DashboardDto }>(`/orgs/${orgId}/dashboard`).then((r) => r.data) });
   const base = `/o/${orgId}/vault`;
   const gaps = org.data?.profileGaps ?? [];
 
@@ -54,6 +55,11 @@ export function Dashboard() {
           <StatCard label="No expiry" value={summary.data?.noExpiry} tone="text-slate-700" to={`${base}?status=no_expiry`} />
         </div>
       )}
+
+      <div className="mt-3 grid grid-cols-2 gap-3">
+        <StatCard label="Ready bids with new blockers" value={counts.data?.readyWithBlockers} tone={counts.data?.readyWithBlockers ? 'text-red-700' : 'text-slate-700'} to={`/o/${orgId}/bids`} />
+        <StatCard label="My open tasks" value={counts.data?.myOpenTasks} tone="text-slate-700" to={`/o/${orgId}/tasks`} />
+      </div>
 
       <section className="mt-6" aria-labelledby="deadlines-h">
         <h2 id="deadlines-h" className="mb-3 font-medium">Next deadlines</h2>

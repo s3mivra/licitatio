@@ -46,9 +46,11 @@ export function Home() {
 }
 
 export function StaffHome() {
+  const { user } = useAuth();
   const q = useQuery({ queryKey: ['me'], queryFn: () => api.get<{ data: MeDto }>('/me').then((r) => r.data) });
   return (
     <Frame title="Organizations you can access">
+      {user?.platformRole === 'admin' && <p className="mb-4 text-sm"><Link className="font-medium text-brand-700 underline" to="/admin">Manage plans and organizations</Link></p>}
       <p className="mb-4 text-sm text-slate-500">Owners grant time-boxed access. Everything you do inside an organization is logged as Semivra staff.</p>
       {q.isLoading && <ListSkeleton rows={3} />}
       {q.error && <ErrorState error={q.error} onRetry={() => void q.refetch()} />}

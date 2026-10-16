@@ -15,7 +15,9 @@
     "seed-demo": "tsx --env-file-if-exists=.env ../../scripts/seed-demo.ts",
     "set-plan": "tsx --env-file-if-exists=.env ../../scripts/set-plan.ts",
     "reset-totp": "tsx --env-file-if-exists=.env ../../scripts/reset-totp.ts",
-    "db:indexes": "tsx --env-file-if-exists=.env ../../scripts/db-indexes.ts"
+    "db:indexes": "tsx --env-file-if-exists=.env ../../scripts/db-indexes.ts",
+    "purge-org": "tsx --env-file-if-exists=.env ../../scripts/purge-org.ts",
+    "export-org": "tsx --env-file-if-exists=.env ../../scripts/export-org.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.716.0",

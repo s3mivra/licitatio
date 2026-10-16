@@ -6,7 +6,9 @@ import { registerSW } from 'virtual:pwa-register';
 import { AcceptInviteScreen, ForgotPasswordScreen, LoginScreen, RegisterScreen, ResetPasswordScreen, VerifyEmailScreen } from './features/auth/AuthScreens';
 import { BidDetail } from './features/bids/BidDetail';
 import { BidsPage } from './features/bids/BidsPage';
+import { AdminPage } from './features/admin/AdminPage';
 import { Dashboard } from './features/dashboard/Dashboard';
+import { TaskBoard } from './features/tasks/TaskBoard';
 import { ExportPage } from './features/exports/ExportPage';
 import { BlocksPage, ProposalEditor, ProposalsPage } from './features/proposals/ProposalPages';
 import { EquipmentPage, PersonnelPage, ProjectsPage } from './features/registers/Registers';
@@ -56,6 +58,7 @@ function App() {
       <Route path="/accept-invite" element={<AcceptInviteScreen />} />
       <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
       <Route path="/staff" element={<RequireAuth><StaffHome /></RequireAuth>} />
+      <Route path="/admin" element={<RequireAuth><AdminPage /></RequireAuth>} />
       <Route path="/o/:orgId" element={<RequireAuth><AppShell /></RequireAuth>}>
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
@@ -64,6 +67,7 @@ function App() {
         <Route path="bids" element={<BidsPage />} />
         <Route path="bids/:id" element={<BidDetail />} />
         <Route path="exports/:id" element={<ExportPage />} />
+        <Route path="tasks" element={<TaskBoard />} />
         <Route path="proposals" element={<ProposalsPage />} />
         <Route path="proposals/:id" element={<ProposalEditor />} />
         <Route path="blocks" element={<BlocksPage />} />
