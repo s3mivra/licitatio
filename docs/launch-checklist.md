@@ -44,14 +44,25 @@ automated test in `apps/api/test` or `apps/api/src/**/*.test.ts` that runs in CI
       look-back against current procurement rules and a real invitation to bid. Files: `scripts/seedData.ts`,
       `packages/shared/src/constants.ts`, `apps/api/src/domain/proposal/schedules.ts`. Sign off in writing.
 - [ ] **Lawyer:** privacy notice, terms of service and data processing clause reviewed for the Data Privacy Act; confirm
-      National Privacy Commission obligations.
+      National Privacy Commission obligations. Product-accurate drafts to start from: `docs/legal/privacy-notice-draft.md`,
+      `docs/legal/terms-and-dpa-draft.md`.
 - [ ] **Founders:** final product name, domain and sender domain; business registration and invoicing route; plan prices
       and desk plan inclusions validated with pilot clients.
+
+## Performance
+
+Acceptance target: a 150-page export in under 60 seconds. `test/export.perf.test.ts` builds one in about 0.3 s locally;
+repeat once on the staging instance (512 MB) with real scans, which are larger than the test pages.
+
+## End-to-end smoke
+
+`e2e/smoke.spec.ts` (Playwright) covers register, login, upload, bid, packet, export and download. Run it against staging
+before each release: `E2E_BASE_URL=https://app.<domain> E2E_EMAIL=... E2E_PASSWORD=... npx playwright test`.
 
 ## Accessibility pass
 
 Done in code: labelled form fields with errors announced (`role="alert"`), a skip link and focusable main landmark,
 native `<dialog>` (focus trap and Escape), visible focus rings, `aria-current` on navigation, `aria-pressed` on toggles,
-progress bars with values, and cards instead of tables below 640 px. Still to do by hand before launch: a keyboard-only
-walkthrough of register, vault upload, packet and export; a contrast check of status chips with a contrast tool; and a
-screen reader pass (NVDA or VoiceOver) of the packet page.
+progress bars with values, and cards instead of tables below 640 px. A scripted scan of every main screen found no unnamed controls, no images without alt text and no positive tab
+indexes, and every text element meets WCAG AA contrast (4.5:1, or 3:1 for large text). Still to do by hand before
+launch: a keyboard-only walkthrough and a screen reader pass (NVDA or VoiceOver) of the packet page.

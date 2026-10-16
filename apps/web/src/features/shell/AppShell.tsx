@@ -119,7 +119,7 @@ export function AppShell() {
           <button type="button" className="rounded p-2 text-slate-600 md:hidden" aria-label="Menu" aria-expanded={menu} onClick={() => setMenu((v) => !v)}>
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><path d="M4 6h16M4 12h16M4 18h16" /></svg>
           </button>
-          <Link to={`/o/${orgId}/dashboard`} className="flex shrink-0 items-center gap-2"><img src="/icon.svg" alt="Licitatio" className="h-7 w-7" /></Link>
+          <Link to={`/o/${orgId}/dashboard`} aria-label="Licitatio dashboard" className="flex shrink-0 items-center gap-2"><img src="/icon.svg" alt="" className="h-7 w-7" /></Link>
           <div className="min-w-0 flex-1">{org.data ? <OrgSwitcher currentName={org.data.name} /> : <Skeleton className="h-5 w-40" />}</div>
           {org.data && <NotificationsBell />}
           <div className="hidden items-center gap-2 sm:flex">

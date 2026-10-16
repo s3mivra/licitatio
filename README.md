@@ -32,7 +32,8 @@ packages/shared   Zod schemas, domain types, DTOs, dates, money, plans, profile,
 apps/api          Express 5 + Mongoose 8 API, in-process job queue and scheduler, PDF/DOCX renderers
 apps/web          React 18 + Vite PWA
 scripts/          operator scripts (see docs/onboarding.md) and local dev helpers
-docs/             launch checklist, restore drill, onboarding guide
+docs/             launch checklist, restore drill, onboarding guide, legal drafts
+e2e/              Playwright smoke test for staging
 ```
 
 ## Develop
@@ -65,6 +66,7 @@ npm run lint
 npm test -w @licitatio/shared
 npm run test:coverage -w @licitatio/api   # mongodb-memory-server replica set, fake R2 and mailer
 npm run build
+npx playwright test                       # e2e smoke against the running dev stack (or E2E_BASE_URL)
 ```
 
 ## Where this departs from the spec

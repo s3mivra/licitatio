@@ -6,3 +6,5 @@ coverage/
 .env.local
 *.log
 .dev-data/
+test-results/
+playwright-report/
