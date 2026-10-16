@@ -4,6 +4,8 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { registerSW } from 'virtual:pwa-register';
 import { AcceptInviteScreen, ForgotPasswordScreen, LoginScreen, RegisterScreen, ResetPasswordScreen, VerifyEmailScreen } from './features/auth/AuthScreens';
+import { BidDetail } from './features/bids/BidDetail';
+import { BidsPage } from './features/bids/BidsPage';
 import { Dashboard } from './features/dashboard/Dashboard';
 import { EquipmentPage, PersonnelPage, ProjectsPage } from './features/registers/Registers';
 import { MembersSettings } from './features/settings/MembersSettings';
@@ -57,6 +59,8 @@ function App() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="vault" element={<VaultList />} />
         <Route path="vault/:id" element={<VaultDetail />} />
+        <Route path="bids" element={<BidsPage />} />
+        <Route path="bids/:id" element={<BidDetail />} />
         <Route path="projects" element={<ProjectsPage />} />
         <Route path="personnel" element={<PersonnelPage />} />
         <Route path="equipment" element={<EquipmentPage />} />

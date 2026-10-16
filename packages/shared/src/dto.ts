@@ -167,3 +167,33 @@ export type EquipmentDto = RegisterDto<import('./domain').Equipment>;
 export type PersonnelDto = RegisterDto<import('./domain').Personnel> & {
   licenseExpiry: { state: ExpiryStateDto; daysRemaining: number | null } | null;
 };
+
+export interface OpportunityDto {
+  id: string;
+  rev: number;
+  title: string;
+  procuringEntity: string;
+  referenceNo?: string;
+  source: 'philgeps' | 'private' | 'other';
+  url?: string;
+  location?: string;
+  approvedBudget?: number;
+  bidSecurityRequired?: boolean;
+  preBidAt?: string;
+  clarificationDeadlineAt?: string;
+  submissionDeadlineAt: string;
+  openingAt?: string;
+  status: import('./domain').OpportunityStatus;
+  decision?: { goNoGo: 'go' | 'no_go'; reason: string; decidedBy: string; decidedAt: string };
+  assigneeId?: string;
+  assigneeName?: string;
+  notes?: string;
+  statusHistory: Array<{ from: import('./domain').OpportunityStatus | null; to: import('./domain').OpportunityStatus; by: string; byName?: string; at: string; reason?: string }>;
+  createdAt: string;
+  updatedAt: string;
+}
+export interface AssigneeOptionDto {
+  userId: string;
+  name: string;
+  via: 'membership' | 'staff_grant';
+}

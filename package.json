@@ -13,6 +13,7 @@
     "dev:web": "npm run dev -w @licitatio/web",
     "create-staff": "npm run create-staff -w @licitatio/api --",
     "seed-requirements": "npm run seed-requirements -w @licitatio/api",
+    "seed-demo": "npm run seed-demo -w @licitatio/api",
     "set-plan": "npm run set-plan -w @licitatio/api --",
     "reset-totp": "npm run reset-totp -w @licitatio/api --",
     "db:indexes": "npm run db:indexes -w @licitatio/api"

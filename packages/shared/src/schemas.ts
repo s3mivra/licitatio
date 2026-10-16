@@ -237,3 +237,15 @@ export const equipmentListQuery = z.object({
 export type ExperienceBody = z.infer<typeof experienceBody>;
 export type PersonnelBody = z.infer<typeof personnelBody>;
 export type EquipmentBody = z.infer<typeof equipmentBody>;
+
+export const opportunityListQuery = z.object({
+  status: z.string().regex(/^[a-z_]+(,[a-z_]+)*$/).optional(), // comma separated
+  assigneeId: objectId.optional(),
+  from: z.string().datetime({ offset: true }).optional(),
+  to: z.string().datetime({ offset: true }).optional(),
+  q: z.string().trim().max(100).optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).max(200).default(50),
+}).strict().refine((v) => v.page * v.pageSize <= 10_000, { path: ['page'], message: 'Page is out of range' });
+export type CreateOpportunityBody = z.input<typeof createOpportunityBody>;
+export type TransitionBody = z.infer<typeof transitionBody>;

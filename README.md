@@ -6,7 +6,7 @@ Built from *Licitatio: Bid Desk Build Spec* (Oct 14, 2026).
 
 ## Status
 
-Milestones **M0 to M4** are built. They are what the spec's **pre-build validation gate**
+Milestones **M0 to M5** are built. They are what the spec's **pre-build validation gate**
 needs: a demo of the vault, expiry reminders and the company profile. The spec says to hold
 M4 until 10 to 15 contractor conversations are done and the decision is written down.
 
@@ -18,7 +18,8 @@ M4 until 10 to 15 contractor conversations are done and the decision is written 
 | M3 Vault and expiry: seeded document types, vault CRUD, versions (cap 25), archive and restore, filters, summary, `scan.expiry`, notifications, daily digest, dashboard cards | Done |
 | Gate | Owner chose to proceed before the interviews |
 | M4 Registers: experience projects, personnel, equipment CRUD and UI, personnel license expiry in the scan | Done |
-| M5 to M9 | Not started |
+| M5 Bid tracker: opportunities, transition guards, board and table views, `scan.deadlines`, dashboard deadlines | Done (Ready needs packets from M6) |
+| M6 to M9 | Not started |
 
 Plans and read-only mode (part of M8 in the spec) are already enforced, because M1 and M2
 need seat and storage limits.
@@ -50,8 +51,8 @@ With Docker running you can use `docker compose up -d` (MongoDB + MinIO) instead
 With `MAIL_PROVIDER=console` in development, the API logs verification, reset and invite
 links (`dev mail link: ...`) so you can finish sign-up without a mail provider.
 
-Local test account used while building (local dev database only): `ana@cruzbuilders.test` /
-`dev-password-123`.
+Demo account with sample data: run `npm run seed-demo`, then sign in as `demo@licitatio.test` /
+`demo-password-123` (local dev only; the script refuses to run in production).
 
 ## Check
 
@@ -74,7 +75,7 @@ npm run test:coverage -w @licitatio/api   # mongodb-memory-server replica set, f
   proves they own the email, so the account starts verified. An existing account must enter
   its password.
 - **`referencingBids`** on the vault detail is always empty until bid packets exist (M6).
-- **`scan.deadlines`** is a no-op until opportunities exist (M5).
+- **Moving a bid to Ready** always fails with `packet_not_ready` until bid packets exist (M6). The `packet_blocked` half of `scan.deadlines` also waits for M6.
 - **`R2_ENDPOINT`** is an extra environment variable, for local development only.
 
 ## Open items before launch (from the spec)

@@ -8,6 +8,7 @@ import * as audit from './modules/audit/audit.controller';
 import { requireWritablePlan } from './modules/billing/requireWritablePlan';
 import * as files from './modules/files/files.controller';
 import * as notifications from './modules/notifications/notifications.controller';
+import * as opportunities from './modules/opportunities/opportunities.controller';
 import * as orgs from './modules/orgs/orgs.controller';
 import * as platform from './modules/platform/platform.controller';
 import { controllers as registerControllers } from './modules/registers/registers.controller';
@@ -78,6 +79,14 @@ for (const [path, kind] of [['projects', 'project'], ['personnel', 'personnel'],
   org.patch(`/${path}/:id`, editor, c.replace);
   org.delete(`/${path}/:id`, editor, c.remove);
 }
+
+org.get('/assignees', viewer, opportunities.assignees);
+org.get('/opportunities', viewer, opportunities.list);
+org.post('/opportunities', editor, opportunities.create);
+org.get('/opportunities/:id', viewer, opportunities.get);
+org.patch('/opportunities/:id', editor, opportunities.patch);
+org.delete('/opportunities/:id', requireOrgRole('admin'), opportunities.remove);
+org.post('/opportunities/:id/transition', editor, opportunities.transition);
 
 org.get('/notifications', viewer, notifications.list);
 org.post('/notifications/read', viewer, notifications.read);

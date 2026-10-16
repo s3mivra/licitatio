@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import type { OffsetPage, VaultDocumentDto, VaultSummaryDto } from '@licitatio/shared';
+import type { OffsetPage, OpportunityDto, VaultDocumentDto, VaultSummaryDto } from '@licitatio/shared';
+import { DeadlineChip } from '../bids/common';
 import { Link } from 'react-router-dom';
 import { api } from '../../lib/api';
-import { formatDateOnly } from '../../lib/format';
+import { formatDateOnly, formatDateTime } from '../../lib/format';
 import { keys, useOrg, useOrgId } from '../../lib/queries';
 import { EmptyState, ErrorState, PageHeader, Skeleton, cx } from '../../ui';
 import { ExpiryChip } from '../vault/ExpiryChip';
@@ -35,6 +36,10 @@ export function Dashboard() {
       return [...expired.data, ...expiring.data].slice(0, 6);
     },
   });
+  const deadlines = useQuery({
+    queryKey: ['org', orgId, 'opportunities', 'next'],
+    queryFn: () => api.get<{ data: OpportunityDto[] }>(`/orgs/${orgId}/opportunities`, { status: 'identified,evaluating,preparing,ready', from: new Date().toISOString(), pageSize: 5 }).then((r) => r.data),
+  });
   const base = `/o/${orgId}/vault`;
   const gaps = org.data?.profileGaps ?? [];
 
@@ -49,6 +54,24 @@ export function Dashboard() {
           <StatCard label="No expiry" value={summary.data?.noExpiry} tone="text-slate-700" to={`${base}?status=no_expiry`} />
         </div>
       )}
+
+      <section className="mt-6" aria-labelledby="deadlines-h">
+        <h2 id="deadlines-h" className="mb-3 font-medium">Next deadlines</h2>
+        {deadlines.isLoading ? <div className="card p-4"><Skeleton className="h-16 w-full" /></div> : deadlines.error ? <ErrorState error={deadlines.error} onRetry={() => void deadlines.refetch()} /> : deadlines.data?.length === 0 ? (
+          <EmptyState title="No upcoming deadlines" body="Bids you are evaluating or preparing show here." action={<Link to={`/o/${orgId}/bids`} className="text-sm font-medium text-brand-700 underline">Go to bids</Link>} />
+        ) : (
+          <ul className="card divide-y divide-slate-100">
+            {deadlines.data?.map((o) => (
+              <li key={o.id}>
+                <Link to={`/o/${orgId}/bids/${o.id}`} className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-slate-50">
+                  <div className="min-w-0"><p className="truncate font-medium">{o.title}</p><p className="text-sm text-slate-500">{o.procuringEntity} · {formatDateTime(o.submissionDeadlineAt)}</p></div>
+                  <DeadlineChip iso={o.submissionDeadlineAt} status={o.status} />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
         <section className="lg:col-span-2" aria-labelledby="attention-h">

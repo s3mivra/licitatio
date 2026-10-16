@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
-import type { DocumentType, Equipment, ExperienceProject, FileObject, Personnel, RequirementTemplate, VaultDocument } from '@licitatio/shared';
-import { DOC_CATEGORIES, FILE_MIMES, FULFILLMENTS, GENERATORS, PACKET_STAGES, TEMPLATE_MODES } from '@licitatio/shared';
+import type { DocumentType, Equipment, Opportunity, ExperienceProject, FileObject, Personnel, RequirementTemplate, VaultDocument } from '@licitatio/shared';
+import { DOC_CATEGORIES, FILE_MIMES, OPPORTUNITY_STATUSES, FULFILLMENTS, GENERATORS, PACKET_STAGES, TEMPLATE_MODES } from '@licitatio/shared';
 import { DATE_ONLY_RE, baseSchemaOptions, oid, rev } from './base';
 
 // ---------- files ----------
@@ -175,3 +175,44 @@ const requirementTemplateSchema = new Schema(
 );
 requirementTemplateSchema.index({ orgId: 1, code: 1 }, { unique: true });
 export const RequirementTemplateModel = model<RequirementTemplate>('RequirementTemplate', requirementTemplateSchema);
+
+// ---------- opportunities ----------
+const opportunitySchema = new Schema(
+  {
+    orgId: oid('Organization'),
+    title: { type: String, required: true, trim: true, maxlength: 300 },
+    procuringEntity: { type: String, required: true, trim: true, maxlength: 200 },
+    referenceNo: { type: String, maxlength: 100 },
+    source: { type: String, enum: ['philgeps', 'private', 'other'], required: true },
+    url: { type: String, maxlength: 500 },
+    location: { type: String, maxlength: 200 },
+    approvedBudget: { type: Number, min: 1 },
+    bidSecurityRequired: { type: Boolean },
+    preBidAt: { type: Date },
+    clarificationDeadlineAt: { type: Date },
+    submissionDeadlineAt: { type: Date, required: true },
+    openingAt: { type: Date },
+    status: { type: String, enum: OPPORTUNITY_STATUSES, default: 'identified' },
+    decision: {
+      type: new Schema(
+        { goNoGo: { type: String, enum: ['go', 'no_go'], required: true }, reason: { type: String, required: true, maxlength: 500 }, decidedBy: oid('User'), decidedAt: { type: Date, required: true } },
+        { _id: false },
+      ),
+    },
+    assigneeId: oid('User', false),
+    notes: { type: String, maxlength: 4000 },
+    statusHistory: {
+      type: [new Schema(
+        { from: { type: String, enum: [...OPPORTUNITY_STATUSES, null], default: null }, to: { type: String, enum: OPPORTUNITY_STATUSES, required: true }, by: oid('User'), at: { type: Date, required: true }, reason: { type: String, maxlength: 500 } },
+        { _id: false },
+      )],
+      default: [],
+    },
+    rev,
+  },
+  baseSchemaOptions,
+);
+opportunitySchema.index({ orgId: 1, status: 1, submissionDeadlineAt: 1 });
+opportunitySchema.index({ orgId: 1, createdAt: -1 });
+opportunitySchema.index({ status: 1, submissionDeadlineAt: 1 });
+export const OpportunityModel = model<Opportunity>('Opportunity', opportunitySchema);
