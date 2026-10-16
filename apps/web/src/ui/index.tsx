@@ -72,18 +72,18 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
   );
 });
 
-export function Checkbox({ label, description, ...rest }: InputHTMLAttributes<HTMLInputElement> & { label: string; description?: string }) {
+export const Checkbox = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement> & { label: string; description?: string }>(function Checkbox({ label, description, ...rest }, ref) {
   const id = useId();
   return (
     <div className="flex items-start gap-3">
-      <input id={id} type="checkbox" className="mt-0.5 h-4 w-4 rounded border-slate-300 text-brand-700 focus:ring-brand-600" {...rest} />
+      <input id={id} ref={ref} type="checkbox" className="mt-0.5 h-4 w-4 rounded border-slate-300 text-brand-700 focus:ring-brand-600" {...rest} />
       <label htmlFor={id} className="text-sm">
         <span className="font-medium text-slate-800">{label}</span>
         {description && <span className="block text-slate-500">{description}</span>}
       </label>
     </div>
   );
-}
+});
 
 // ---------- feedback ----------
 export function Alert({ tone = 'error', children, title }: { tone?: 'error' | 'warning' | 'info' | 'success'; children: ReactNode; title?: string }) {

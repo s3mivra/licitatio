@@ -160,3 +160,10 @@ export interface CursorPage {
 export interface ErrorPayload {
   error: { code: string; message: string; details?: unknown; requestId: string };
 }
+
+type RegisterDto<T> = Omit<T, '_id' | 'orgId' | 'createdAt' | 'updatedAt'> & { id: string; createdAt: string; updatedAt: string };
+export type ExperienceProjectDto = RegisterDto<import('./domain').ExperienceProject>;
+export type EquipmentDto = RegisterDto<import('./domain').Equipment>;
+export type PersonnelDto = RegisterDto<import('./domain').Personnel> & {
+  licenseExpiry: { state: ExpiryStateDto; daysRemaining: number | null } | null;
+};

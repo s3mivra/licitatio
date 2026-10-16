@@ -11,6 +11,9 @@ import { Alert, Button, ErrorState, Skeleton, cx } from '../../ui';
 const NAV = [
   { to: 'dashboard', label: 'Dashboard' },
   { to: 'vault', label: 'Document vault' },
+  { to: 'projects', label: 'Experience' },
+  { to: 'personnel', label: 'Personnel' },
+  { to: 'equipment', label: 'Equipment' },
   { to: 'settings/profile', label: 'Settings', match: 'settings' },
 ];
 

@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import type { DocumentType, FileObject, Personnel, RequirementTemplate, VaultDocument } from '@licitatio/shared';
+import type { DocumentType, Equipment, ExperienceProject, FileObject, Personnel, RequirementTemplate, VaultDocument } from '@licitatio/shared';
 import { DOC_CATEGORIES, FILE_MIMES, FULFILLMENTS, GENERATORS, PACKET_STAGES, TEMPLATE_MODES } from '@licitatio/shared';
 import { DATE_ONLY_RE, baseSchemaOptions, oid, rev } from './base';
 
@@ -98,6 +98,52 @@ const personnelSchema = new Schema(
 personnelSchema.index({ orgId: 1, fullName: 1 });
 personnelSchema.index({ orgId: 1, licenseExpiresAt: 1 });
 export const PersonnelModel = model<Personnel>('Personnel', personnelSchema);
+
+// ---------- experience projects ----------
+const projectSchema = new Schema(
+  {
+    orgId: oid('Organization'),
+    name: { type: String, required: true, trim: true, maxlength: 200 },
+    clientName: { type: String, required: true, trim: true, maxlength: 200 },
+    clientType: { type: String, enum: ['government', 'private'], required: true },
+    location: { type: String, required: true, maxlength: 200 },
+    category: { type: String, required: true, maxlength: 60 },
+    role: { type: String, enum: ['main', 'subcontractor', 'joint_venture'], required: true },
+    contractAmount: { type: Number, required: true, min: 1, validate: Number.isInteger },
+    startDate: { type: String, match: DATE_ONLY_RE },
+    completionDate: { type: String, match: DATE_ONLY_RE },
+    status: { type: String, enum: ['ongoing', 'completed'], required: true },
+    scopeSummary: { type: String, maxlength: 2000 },
+    completionCertFileId: oid('FileObject', false),
+    photoFileIds: { type: [{ type: Schema.Types.ObjectId, ref: 'FileObject' }], default: [], validate: (v: unknown[]) => v.length <= 6 },
+    rev,
+  },
+  baseSchemaOptions,
+);
+projectSchema.index({ orgId: 1, completionDate: -1 });
+projectSchema.index({ orgId: 1, status: 1, completionDate: -1 });
+projectSchema.index({ orgId: 1, photoFileIds: 1 });
+export const ExperienceProjectModel = model<ExperienceProject>('ExperienceProject', projectSchema);
+
+// ---------- equipment ----------
+const equipmentSchema = new Schema(
+  {
+    orgId: oid('Organization'),
+    name: { type: String, required: true, trim: true, maxlength: 120 },
+    type: { type: String, required: true, maxlength: 80 },
+    make: { type: String, maxlength: 80 },
+    model: { type: String, maxlength: 80 },
+    quantity: { type: Number, required: true, min: 1, max: 9999, validate: Number.isInteger },
+    ownership: { type: String, enum: ['owned', 'leased'], required: true },
+    plateOrSerial: { type: String, maxlength: 80 },
+    condition: { type: String, enum: ['good', 'fair', 'needs_repair'], required: true },
+    photoFileId: oid('FileObject', false),
+    rev,
+  },
+  baseSchemaOptions,
+);
+equipmentSchema.index({ orgId: 1, name: 1 });
+export const EquipmentModel = model<Equipment>('Equipment', equipmentSchema);
 
 // ---------- requirement templates (seeded now, used by packets in M6) ----------
 const templateItemSchema = new Schema(

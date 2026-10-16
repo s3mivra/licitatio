@@ -6,7 +6,7 @@ Built from *Licitatio: Bid Desk Build Spec* (Oct 14, 2026).
 
 ## Status
 
-Milestones **M0 to M3** are built. They are what the spec's **pre-build validation gate**
+Milestones **M0 to M4** are built. They are what the spec's **pre-build validation gate**
 needs: a demo of the vault, expiry reminders and the company profile. The spec says to hold
 M4 until 10 to 15 contractor conversations are done and the decision is written down.
 
@@ -16,8 +16,9 @@ M4 until 10 to 15 contractor conversations are done and the decision is written 
 | M1 Auth and tenancy: register, verify, login, refresh rotation with reuse detection, logout, reset, invites, members, roles, staff grants with TOTP, `requireOrgRole`, audit log, transactional emails | Done |
 | M2 Files and profile: presign, finalize (size, type, magic bytes, page count), download, cleanup job, storage quota, company profile with `rev` conflicts and `profileGaps` | Done |
 | M3 Vault and expiry: seeded document types, vault CRUD, versions (cap 25), archive and restore, filters, summary, `scan.expiry`, notifications, daily digest, dashboard cards | Done |
-| Gate | Waiting on customer conversations |
-| M4 to M9 | Not started |
+| Gate | Owner chose to proceed before the interviews |
+| M4 Registers: experience projects, personnel, equipment CRUD and UI, personnel license expiry in the scan | Done |
+| M5 to M9 | Not started |
 
 Plans and read-only mode (part of M8 in the spec) are already enforced, because M1 and M2
 need seat and storage limits.

@@ -10,6 +10,7 @@ import * as files from './modules/files/files.controller';
 import * as notifications from './modules/notifications/notifications.controller';
 import * as orgs from './modules/orgs/orgs.controller';
 import * as platform from './modules/platform/platform.controller';
+import { controllers as registerControllers } from './modules/registers/registers.controller';
 import * as vault from './modules/vault/vault.controller';
 import { AppError } from './shared/errors';
 
@@ -68,6 +69,15 @@ org.patch('/vault/documents/:id', editor, vault.patch);
 org.post('/vault/documents/:id/versions', editor, vault.addVersion);
 org.post('/vault/documents/:id/archive', editor, vault.archive);
 org.post('/vault/documents/:id/restore', editor, vault.restore);
+
+for (const [path, kind] of [['projects', 'project'], ['personnel', 'personnel'], ['equipment', 'equipment']] as const) {
+  const c = registerControllers(kind);
+  org.get(`/${path}`, viewer, c.list);
+  org.post(`/${path}`, editor, c.create);
+  org.get(`/${path}/:id`, viewer, c.get);
+  org.patch(`/${path}/:id`, editor, c.replace);
+  org.delete(`/${path}/:id`, editor, c.remove);
+}
 
 org.get('/notifications', viewer, notifications.list);
 org.post('/notifications/read', viewer, notifications.read);

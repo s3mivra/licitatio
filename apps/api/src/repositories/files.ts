@@ -6,7 +6,7 @@ import { PLANS } from '@licitatio/shared';
 import {
   SIGNED_URL_TTL_SECONDS, deleteObject, getObjectBytes, getRange, headObject, presignGet, presignPut, sanitizeFilename,
 } from '../infra/r2';
-import { FileModel, OrganizationModel, VaultDocumentModel } from '../models';
+import { EquipmentModel, ExperienceProjectModel, FileModel, OrganizationModel, PersonnelModel, VaultDocumentModel } from '../models';
 import type { OrgAccess } from '../modules/auth/access';
 import { AppError } from '../shared/errors';
 import { OrgRepo } from '../shared/orgRepo';
@@ -133,9 +133,16 @@ export async function downloadUrl(access: OrgAccess, fileId: string, inline: boo
 // ---------- cleanup job ----------
 const DAY = 86_400_000;
 
-/** Files referenced by any record are never deleted. Packets and projects join this list in later milestones. */
+/** Files referenced by any record are never deleted. Packets join this list in M6. */
 async function isReferenced(file: Pick<FileObject, '_id' | 'orgId'>): Promise<boolean> {
-  return (await VaultDocumentModel.exists({ orgId: file.orgId, 'versions.fileId': file._id })) !== null;
+  const q = { orgId: file.orgId };
+  const hits = await Promise.all([
+    VaultDocumentModel.exists({ ...q, 'versions.fileId': file._id }),
+    ExperienceProjectModel.exists({ ...q, $or: [{ completionCertFileId: file._id }, { photoFileIds: file._id }] }),
+    PersonnelModel.exists({ ...q, resumeFileId: file._id }),
+    EquipmentModel.exists({ ...q, photoFileId: file._id }),
+  ]);
+  return hits.some((h) => h !== null);
 }
 
 export async function cleanupFiles(now: Date): Promise<{ removedPending: number; purgedDeleted: number }> {

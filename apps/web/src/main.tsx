@@ -5,6 +5,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { registerSW } from 'virtual:pwa-register';
 import { AcceptInviteScreen, ForgotPasswordScreen, LoginScreen, RegisterScreen, ResetPasswordScreen, VerifyEmailScreen } from './features/auth/AuthScreens';
 import { Dashboard } from './features/dashboard/Dashboard';
+import { EquipmentPage, PersonnelPage, ProjectsPage } from './features/registers/Registers';
 import { MembersSettings } from './features/settings/MembersSettings';
 import { AuditSettings, NotificationSettings, PlanSettings, StaffAccessSettings } from './features/settings/OtherSettings';
 import { ProfileSettings } from './features/settings/ProfileSettings';
@@ -56,6 +57,9 @@ function App() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="vault" element={<VaultList />} />
         <Route path="vault/:id" element={<VaultDetail />} />
+        <Route path="projects" element={<ProjectsPage />} />
+        <Route path="personnel" element={<PersonnelPage />} />
+        <Route path="equipment" element={<EquipmentPage />} />
         <Route path="settings" element={<SettingsLayout />}>
           <Route index element={<Navigate to="profile" replace />} />
           <Route path="profile" element={<ProfileSettings />} />

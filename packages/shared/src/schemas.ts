@@ -209,3 +209,31 @@ export type CreateVaultDocBody = z.infer<typeof createVaultDocBody>;
 export type AddVaultVersionBody = z.infer<typeof addVaultVersionBody>;
 export type VaultListQuery = z.infer<typeof vaultListQuery>;
 export type VaultStatusFilter = (typeof VAULT_STATUS_FILTERS)[number];
+
+// ---------- register list queries ----------
+const listPage = {
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(25),
+};
+const pageInRange = (v: { page: number; pageSize: number }): boolean => v.page * v.pageSize <= 10_000;
+export const projectListQuery = z.object({
+  status: z.enum(['ongoing', 'completed']).optional(),
+  clientType: z.enum(['government', 'private']).optional(),
+  category: z.string().trim().max(60).optional(),
+  minAmount: z.coerce.number().int().min(0).max(10_000_000_000_000).optional(),
+  q: z.string().trim().max(100).optional(),
+  ...listPage,
+}).strict().refine(pageInRange, { path: ['page'], message: 'Page is out of range' });
+export const personnelListQuery = z.object({
+  q: z.string().trim().max(100).optional(),
+  key: z.enum(['true', 'false']).optional(),
+  ...listPage,
+}).strict().refine(pageInRange, { path: ['page'], message: 'Page is out of range' });
+export const equipmentListQuery = z.object({
+  q: z.string().trim().max(100).optional(),
+  ...listPage,
+}).strict().refine(pageInRange, { path: ['page'], message: 'Page is out of range' });
+
+export type ExperienceBody = z.infer<typeof experienceBody>;
+export type PersonnelBody = z.infer<typeof personnelBody>;
+export type EquipmentBody = z.infer<typeof equipmentBody>;
