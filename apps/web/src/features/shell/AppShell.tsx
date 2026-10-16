@@ -108,6 +108,7 @@ export function AppShell() {
 
   return (
     <div className="min-h-screen">
+      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:shadow">Skip to content</a>
       {org.data?.access.via === 'staff_grant' && (
         <div className="bg-amber-400 px-4 py-2 text-center text-sm font-medium text-amber-950" role="status">
           You are working in {org.data.name} as Semivra staff. Every action is logged in their audit trail.
@@ -144,7 +145,7 @@ export function AppShell() {
             <Button variant="ghost" className="mt-1 w-full justify-start" onClick={() => void signOut()}>Sign out</Button>
           </div>
         </nav>
-        <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8">
+        <main id="main" tabIndex={-1} className="min-w-0 flex-1 px-4 py-6 focus:outline-none sm:px-6 lg:px-8">
           {org.data?.planStatus === 'grace' && (
             <div className="mb-4"><Alert tone="warning">Your plan expired on {formatDate(org.data.planExpiresAt)}. Renew within 7 days to keep editing; after that the workspace becomes read-only.</Alert></div>
           )}

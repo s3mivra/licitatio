@@ -1,0 +1,35 @@
+name: nightly-backup
+on:
+  schedule:
+    - cron: '0 18 * * *' # 02:00 Manila
+  workflow_dispatch:
+
+# Dumps MongoDB, encrypts with age (public key only lives here; the private key is kept offline by
+# the founder), and uploads to Backblaze B2 through its S3-compatible endpoint. Any failed step fails
+# the run, so GitHub emails the repository owner. Bucket lifecycle: delete after 30 days.
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Install tools
+        run: |
+          set -euo pipefail
+          wget -qO- https://www.mongodb.org/static/pgp/server-7.0.asc | sudo gpg --dearmor -o /usr/share/keyrings/mongodb.gpg
+          echo "deb [signed-by=/usr/share/keyrings/mongodb.gpg] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb.list
+          sudo apt-get update -qq && sudo apt-get install -y -qq mongodb-database-tools age awscli
+      - name: Dump, encrypt, upload
+        env:
+          MONGODB_BACKUP_URI: ${{ secrets.MONGODB_BACKUP_URI }}
+          AGE_PUBLIC_KEY: ${{ secrets.AGE_PUBLIC_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.B2_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+          B2_ENDPOINT: ${{ secrets.B2_ENDPOINT }}
+          B2_BUCKET: ${{ secrets.B2_BUCKET }}
+        run: |
+          set -euo pipefail
+          name="licitatio-$(date -u +%Y%m%dT%H%M%SZ).archive.gz.age"
+          mongodump --uri "$MONGODB_BACKUP_URI" --gzip --archive | age -r "$AGE_PUBLIC_KEY" > "$name"
+          test -s "$name"
+          aws s3 cp "$name" "s3://$B2_BUCKET/$name" --endpoint-url "$B2_ENDPOINT"
+          echo "Uploaded $name ($(stat -c%s "$name") bytes)"

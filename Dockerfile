@@ -21,6 +21,9 @@ COPY apps/api/package.json apps/api/
 COPY apps/web/package.json apps/web/
 RUN npm ci --workspace @licitatio/api --omit=dev && npm cache clean --force
 COPY --from=build /app/apps/api/dist apps/api/dist
+# Roboto TTFs for PDF rendering; the process runs from apps/api so FONT_DIR defaults to ./assets/fonts
+COPY apps/api/assets apps/api/assets
+WORKDIR /app/apps/api
 USER node
 EXPOSE 8080
-CMD ["node", "apps/api/dist/server.js"]
+CMD ["node", "--max-old-space-size=384", "dist/server.js"]

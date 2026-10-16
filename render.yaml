@@ -5,7 +5,7 @@ services:
     runtime: docker
     plan: starter # always on once the first client pays; the job runner needs a live process
     healthCheckPath: /api/v1/healthz
-    preDeployCommand: node apps/api/dist/db-indexes.js && node apps/api/dist/seed-requirements.js
+    preDeployCommand: node dist/db-indexes.js && node dist/seed-requirements.js
     envVars:
       - key: NODE_ENV
         value: production
