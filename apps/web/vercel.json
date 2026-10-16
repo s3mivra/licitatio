@@ -1,0 +1,14 @@
+{
+  "rewrites": [{ "source": "/((?!assets/|icon.svg|manifest.webmanifest|sw.js|workbox-).*)", "destination": "/index.html" }],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://ACCOUNT_ID.r2.cloudflarestorage.com; frame-src https://ACCOUNT_ID.r2.cloudflarestorage.com; connect-src 'self' https://api.DOMAIN https://ACCOUNT_ID.r2.cloudflarestorage.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'" },
+        { "key": "Strict-Transport-Security", "value": "max-age=15552000; includeSubDomains" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    }
+  ]
+}

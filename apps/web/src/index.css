@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :focus-visible {
+    outline: 2px solid #1d4ed8;
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .input {
+    @apply block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-1 focus:ring-brand-600 disabled:bg-slate-100;
+  }
+  .input-error {
+    @apply border-red-500 focus:border-red-600 focus:ring-red-600;
+  }
+  .card {
+    @apply rounded-lg border border-slate-200 bg-white shadow-sm;
+  }
+}

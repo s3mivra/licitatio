@@ -1,0 +1,50 @@
+# Render blueprint skeleton. Secrets are set in the dashboard (sync: false).
+services:
+  - type: web
+    name: licitatio-api
+    runtime: docker
+    plan: starter # always on once the first client pays; the job runner needs a live process
+    healthCheckPath: /api/v1/healthz
+    preDeployCommand: node apps/api/dist/db-indexes.js && node apps/api/dist/seed-requirements.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: APP_ORIGIN
+        sync: false
+      - key: APP_URL
+        sync: false
+      - key: COOKIE_DOMAIN
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: DATA_ENCRYPTION_KEY
+        sync: false
+      - key: INTERNAL_SECRET
+        sync: false
+      - key: R2_ACCOUNT_ID
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_BUCKET
+        value: licitatio-files
+      - key: MAIL_PROVIDER
+        value: resend
+      - key: RESEND_API_KEY
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+  - type: cron
+    name: licitatio-tick
+    runtime: docker
+    schedule: "*/15 * * * *"
+    dockerCommand: >
+      node -e "fetch(process.env.API_URL + '/api/v1/internal/jobs/tick', { method: 'POST', headers: { 'X-Internal-Secret': process.env.INTERNAL_SECRET } }).then(r => process.exit(r.status === 202 ? 0 : 1))"
+    envVars:
+      - key: API_URL
+        sync: false
+      - key: INTERNAL_SECRET
+        sync: false
