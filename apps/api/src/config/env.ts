@@ -25,6 +25,9 @@ const schema = z
     FONT_DIR: z.string().optional(),
     // memory is correct for one instance; mongo shares counters across instances
     RATE_LIMIT_STORE: z.enum(['memory', 'mongo']).default('memory'),
+    // AI drafting in proposals: off unless AI_DRAFTING=on and the key is set
+    AI_DRAFTING: z.enum(['on', 'off']).default('off'),
+    ANTHROPIC_API_KEY: z.string().optional(),
     // Online payments are off unless both are set
     PAYMONGO_SECRET_KEY: z.string().optional(),
     PAYMONGO_WEBHOOK_SECRET: z.string().optional(),

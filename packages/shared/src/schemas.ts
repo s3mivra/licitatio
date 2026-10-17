@@ -270,6 +270,10 @@ export const patchProposalBody = z.object({
   opportunityId: objectId.nullable().optional(),
 }).strict();
 export const exportProposalBody = z.object({ format: z.enum(['pdf', 'docx']), allowUnresolved: z.boolean().optional() }).strict();
+export const aiDraftBody = z.object({
+  kind: z.enum(['company_background', 'method_statement', 'quality_safety', 'custom']),
+  instructions: optText(1000),
+}).strict();
 export const contentBlockBody = z.object({
   key: z.string().regex(/^[a-z][a-z0-9_]{2,59}$/), title: text(200), tags: z.array(text(30)).max(8), nodes: blockNodesSchema,
 }).strict();

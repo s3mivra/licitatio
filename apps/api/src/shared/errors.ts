@@ -38,6 +38,7 @@ export const ERROR_CODES = {
   idempotency_mismatch: 422,
   schedule_empty: 422,
   wrong_fulfillment: 422,
+  ai_declined: 422,
   rate_limited: 429,
   internal_error: 500,
   service_unavailable: 503,

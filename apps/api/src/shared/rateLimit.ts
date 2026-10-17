@@ -20,4 +20,5 @@ export const limiter = (windowMs: number, limit: number, keyGenerator?: (req: Re
 export const globalLimiter = limiter(60_000, 300, undefined, 'global');
 export const loginLimiter = limiter(10 * 60_000, 20, undefined, 'login');
 export const signupLimiter = limiter(60 * 60_000, 5, undefined, 'signup');
+export const aiLimiter = limiter(24 * 60 * 60_000, 50, (req) => String(req.params.orgId ?? req.ip ?? 'unknown'), 'ai');
 export const exportLimiter = limiter(60 * 60_000, 10, (req) => String(req.params.orgId ?? req.ip ?? 'unknown'), 'export');

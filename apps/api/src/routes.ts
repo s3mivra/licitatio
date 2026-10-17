@@ -19,7 +19,7 @@ import * as tasks from './modules/tasks/tasks.controller';
 import { controllers as registerControllers } from './modules/registers/registers.controller';
 import * as vault from './modules/vault/vault.controller';
 import { AppError } from './shared/errors';
-import { exportLimiter } from './shared/rateLimit';
+import { aiLimiter, exportLimiter } from './shared/rateLimit';
 
 export const apiRouter = Router();
 
@@ -117,6 +117,8 @@ org.patch('/proposals/:id', editor, proposals.patch);
 org.delete('/proposals/:id', editor, proposals.remove);
 org.post('/proposals/:id/duplicate', editor, proposals.duplicate);
 org.get('/proposals/:id/variables', viewer, proposals.variables);
+org.get('/ai/status', viewer, proposals.aiStatus);
+org.post('/proposals/:id/ai-draft', editor, aiLimiter, proposals.aiDraft);
 org.post('/proposals/:id/export', editor, exportLimiter, proposals.exportProposal);
 org.get('/blocks', viewer, proposals.listBlocks);
 org.post('/blocks', editor, proposals.createBlock);

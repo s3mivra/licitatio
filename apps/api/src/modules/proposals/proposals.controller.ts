@@ -1,8 +1,10 @@
 import type { Request, Response } from 'express';
-import { blockListQuery, contentBlockBody, createProposalBody, exportProposalBody, patchProposalBody, proposalListQuery } from '@licitatio/shared';
+import { aiDraftBody, blockListQuery, contentBlockBody, createProposalBody, exportProposalBody, patchProposalBody, proposalListQuery } from '@licitatio/shared';
 import { requestProposalExport } from '../../repositories/exports';
 import { orgAccess, param } from '../../shared/validate';
 import { idempotencyKey } from '../packets/packets.controller';
+import { aiEnabled } from '../../infra/ai';
+import * as draftSvc from './aiDraft.service';
 import * as svc from './proposals.service';
 
 export async function list(req: Request, res: Response): Promise<void> {
@@ -39,6 +41,14 @@ export async function exportProposal(req: Request, res: Response): Promise<void>
   });
   if (result.replay) res.setHeader('Idempotent-Replay', 'true');
   res.status(result.status).json({ data: result.body });
+}
+
+export async function aiDraft(req: Request, res: Response): Promise<void> {
+  res.json({ data: await draftSvc.aiDraft(orgAccess(req), param(req, 'id'), aiDraftBody.parse(req.body), req.ip) });
+}
+
+export async function aiStatus(_req: Request, res: Response): Promise<void> {
+  res.json({ data: { enabled: aiEnabled() } });
 }
 
 export async function listBlocks(req: Request, res: Response): Promise<void> {

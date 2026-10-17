@@ -20,6 +20,7 @@
     "export-org": "tsx --env-file-if-exists=.env ../../scripts/export-org.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.135.0",
     "@aws-sdk/client-s3": "^3.716.0",
     "@aws-sdk/s3-request-presigner": "^3.716.0",
     "@licitatio/shared": "0.1.0",

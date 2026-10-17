@@ -95,6 +95,36 @@ function InsertBlock({ onInsert, onClose }: { onInsert: (nodes: BlockNode[]) => 
   );
 }
 
+const AI_KINDS = [
+  { value: 'company_background', label: 'Company background' },
+  { value: 'method_statement', label: 'Method statement and work plan' },
+  { value: 'quality_safety', label: 'Quality and safety approach' },
+  { value: 'custom', label: 'Something else (describe it)' },
+] as const;
+
+function AiDraft({ proposalId, onInsert, onClose }: { proposalId: string; onInsert: (nodes: BlockNode[]) => void; onClose: () => void }) {
+  const orgId = useOrgId();
+  const [kind, setKind] = useState<(typeof AI_KINDS)[number]['value']>('company_background');
+  const [instructions, setInstructions] = useState('');
+  const draft = useMutation({
+    mutationFn: () => api.post<{ data: { nodes: BlockNode[] } }>(`/orgs/${orgId}/proposals/${proposalId}/ai-draft`, { kind, ...(instructions.trim() ? { instructions: instructions.trim() } : {}) }).then((r) => r.data.nodes),
+  });
+  return (
+    <Dialog open onClose={onClose} title="Draft with AI" wide
+      footer={draft.data ? <><Button variant="secondary" onClick={() => draft.reset()}>Discard</Button><Button onClick={() => onInsert(draft.data)}>Insert into section</Button></> : <Button busy={draft.isPending} onClick={() => draft.mutate()}>Write draft</Button>}>
+      <div className="space-y-3">
+        <p className="text-sm text-slate-600">Uses your company profile, project and personnel registers and the linked bid. Your TIN and contact details are not sent. Review every sentence before you submit: the draft can be wrong.</p>
+        <Select label="Section" value={kind} options={[...AI_KINDS]} onChange={(e) => setKind(e.target.value as typeof kind)} />
+        <label className="block text-sm">Instructions{kind === 'custom' ? '' : ' (optional)'}
+          <textarea className="input mt-1 min-h-20" maxLength={1000} value={instructions} onChange={(e) => setInstructions(e.target.value)} placeholder="For example: stress our flood-control experience in Region III" />
+        </label>
+        {draft.error && <ErrorAlert error={draft.error} />}
+        {draft.data && <div className="space-y-2 rounded border border-slate-200 bg-slate-50 p-3 text-sm">{draft.data.map((n, i) => <p key={i}>{n.type === 'paragraph' ? n.runs.map((r) => r.text).join('') : ''}</p>)}</div>}
+      </div>
+    </Dialog>
+  );
+}
+
 export function ProposalEditor() {
   const orgId = useOrgId();
   const { id = '' } = useParams();
@@ -109,6 +139,8 @@ export function ProposalEditor() {
   const [draft, setDraft] = useState<{ title: string; status: 'draft' | 'final'; opportunityId: string; sections: ProposalSection[] } | null>(null);
   const [dirty, setDirty] = useState(false);
   const [inserting, setInserting] = useState<number | null>(null);
+  const [drafting, setDrafting] = useState<number | null>(null);
+  const aiStatus = useQuery({ queryKey: ['org', orgId, 'ai', 'status'], queryFn: () => api.get<{ data: { enabled: boolean } }>(`/orgs/${orgId}/ai/status`).then((r) => r.data.enabled), staleTime: 300_000 });
   const [error, setError] = useState<unknown>(null);
   const [confirmUnresolved, setConfirmUnresolved] = useState<{ format: 'pdf' | 'docx'; names: string[] } | null>(null);
   const idem = useRef(uuid());
@@ -179,6 +211,7 @@ export function ProposalEditor() {
                     <Button variant="ghost" aria-label="Move section up" disabled={i === 0} onClick={() => moveSection(i, -1)}>↑</Button>
                     <Button variant="ghost" aria-label="Move section down" disabled={i === draft.sections.length - 1} onClick={() => moveSection(i, 1)}>↓</Button>
                     <Button variant="ghost" onClick={() => setInserting(i)}>Insert block</Button>
+                    {aiStatus.data && <Button variant="ghost" onClick={() => setDrafting(i)}>Draft with AI</Button>}
                     <Button variant="ghost" className="text-red-700" onClick={() => update({ sections: draft.sections.filter((_, j) => j !== i) })}>Remove</Button>
                   </div>
                 )}
@@ -206,6 +239,13 @@ export function ProposalEditor() {
           </section>
         </aside>
       </div>
+      {drafting !== null && (
+        <AiDraft proposalId={id} onClose={() => setDrafting(null)} onInsert={(nodes) => {
+          const s = draft.sections[drafting];
+          if (s) setSection(drafting, { ...s, nodes: [...s.nodes, ...nodes] });
+          setDrafting(null);
+        }} />
+      )}
       {inserting !== null && (
         <InsertBlock onClose={() => setInserting(null)} onInsert={(nodes) => {
           const s = draft.sections[inserting];
