@@ -1,4 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { LanguageSwitch } from './LanguageSwitch';
+import { t } from '../../lib/i18n';
 import type { CursorPage, NotificationDto } from '@licitatio/shared';
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -9,16 +11,16 @@ import { keys, useOrg, useOrgId } from '../../lib/queries';
 import { Alert, Button, ErrorState, Skeleton, cx } from '../../ui';
 
 const NAV = [
-  { to: 'dashboard', label: 'Dashboard' },
-  { to: 'bids', label: 'Bids' },
-  { to: 'proposals', label: 'Proposals' },
-  { to: 'tasks', label: 'Tasks' },
-  { to: 'analytics', label: 'Outcomes' },
-  { to: 'vault', label: 'Document vault' },
-  { to: 'projects', label: 'Experience' },
-  { to: 'personnel', label: 'Personnel' },
-  { to: 'equipment', label: 'Equipment' },
-  { to: 'settings/profile', label: 'Settings', match: 'settings' },
+  { to: 'dashboard', label: t('Dashboard') },
+  { to: 'bids', label: t('Bids') },
+  { to: 'proposals', label: t('Proposals') },
+  { to: 'tasks', label: t('Tasks') },
+  { to: 'analytics', label: t('Outcomes') },
+  { to: 'vault', label: t('Document vault') },
+  { to: 'projects', label: t('Experience') },
+  { to: 'personnel', label: t('Personnel') },
+  { to: 'equipment', label: t('Equipment') },
+  { to: 'settings/profile', label: t('Settings'), match: 'settings' },
 ];
 
 function NotificationsBell() {
@@ -55,12 +57,12 @@ function NotificationsBell() {
       {open && (
         <div className="absolute right-0 z-30 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-lg border border-slate-200 bg-white shadow-lg">
           <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-            <p className="text-sm font-semibold">Notifications</p>
-            {unread > 0 && <button type="button" className="text-xs text-brand-700 underline" onClick={() => markRead.mutate({ all: true })}>Mark all read</button>}
+            <p className="text-sm font-semibold">{t('Notifications')}</p>
+            {unread > 0 && <button type="button" className="text-xs text-brand-700 underline" onClick={() => markRead.mutate({ all: true })}>{t('Mark all read')}</button>}
           </div>
           <ul className="max-h-96 divide-y divide-slate-100 overflow-y-auto">
             {q.isLoading && <li className="p-4"><Skeleton className="h-4 w-2/3" /></li>}
-            {q.data?.data.length === 0 && <li className="px-4 py-8 text-center text-sm text-slate-500">You are all caught up.</li>}
+            {q.data?.data.length === 0 && <li className="px-4 py-8 text-center text-sm text-slate-500">{t('You are all caught up.')}</li>}
             {q.data?.data.map((n) => (
               <li key={n.id}>
                 <button type="button" className={cx('block w-full px-4 py-3 text-left hover:bg-slate-50', !n.readAt && 'bg-brand-50/60')}
@@ -109,7 +111,7 @@ export function AppShell() {
 
   return (
     <div className="min-h-screen">
-      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:shadow">Skip to content</a>
+      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:shadow">{t('Skip to content')}</a>
       {org.data?.access.via === 'staff_grant' && (
         <div className="bg-amber-400 px-4 py-2 text-center text-sm font-medium text-amber-950" role="status">
           You are working in {org.data.name} as Semivra staff. Every action is logged in their audit trail.
@@ -117,15 +119,16 @@ export function AppShell() {
       )}
       <header className="sticky top-0 z-20 border-b border-slate-200 bg-white">
         <div className="mx-auto flex h-14 max-w-7xl items-center gap-3 px-4">
-          <button type="button" className="rounded p-2 text-slate-600 md:hidden" aria-label="Menu" aria-expanded={menu} onClick={() => setMenu((v) => !v)}>
+          <button type="button" className="rounded p-2 text-slate-600 md:hidden" aria-label={t('Menu')} aria-expanded={menu} onClick={() => setMenu((v) => !v)}>
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><path d="M4 6h16M4 12h16M4 18h16" /></svg>
           </button>
           <Link to={`/o/${orgId}/dashboard`} aria-label="Licitatio dashboard" className="flex shrink-0 items-center gap-2"><img src="/icon.svg" alt="" className="h-7 w-7" /></Link>
           <div className="min-w-0 flex-1">{org.data ? <OrgSwitcher currentName={org.data.name} /> : <Skeleton className="h-5 w-40" />}</div>
           {org.data && <NotificationsBell />}
           <div className="hidden items-center gap-2 sm:flex">
+            <LanguageSwitch />
             <span className="text-sm text-slate-600">{user?.name}</span>
-            <Button variant="ghost" onClick={() => void signOut()}>Sign out</Button>
+            <Button variant="ghost" onClick={() => void signOut()}>{t('Sign out')}</Button>
           </div>
         </div>
       </header>
@@ -143,7 +146,7 @@ export function AppShell() {
           </ul>
           <div className="mt-6 border-t border-slate-100 pt-4 sm:hidden">
             <p className="px-3 text-sm text-slate-600">{user?.name}</p>
-            <Button variant="ghost" className="mt-1 w-full justify-start" onClick={() => void signOut()}>Sign out</Button>
+            <Button variant="ghost" className="mt-1 w-full justify-start" onClick={() => void signOut()}>{t('Sign out')}</Button>
           </div>
         </nav>
         <main id="main" tabIndex={-1} className="min-w-0 flex-1 px-4 py-6 focus:outline-none sm:px-6 lg:px-8">

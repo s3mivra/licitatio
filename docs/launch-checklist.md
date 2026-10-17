@@ -40,6 +40,10 @@ automated test in `apps/api/test` or `apps/api/src/**/*.test.ts` that runs in CI
       PayMongo's current API reference, then make one real test-mode payment end to end.
 - [ ] SMS reminders: create a Semaphore account, set `SMS_PROVIDER=semaphore`, `SEMAPHORE_API_KEY` and an approved
       `SEMAPHORE_SENDER_NAME`.
+- [ ] Optional AI drafting: set `AI_DRAFTING=on` and `ANTHROPIC_API_KEY`, add a line on AI use to the privacy notice
+      (company profile, registers and bid details are sent to Anthropic; the TIN and contact details are not), and try
+      one draft per section kind.
+- [ ] Filipino text: have a native speaker review `apps/web/src/lib/i18n.ts`.
 - [ ] Optional error monitoring: set `SENTRY_DSN` (API) and `VITE_SENTRY_DSN` (web), and add the Sentry ingest host to the CSP `connect-src`.
 - [ ] Before running more than one API instance: set `RATE_LIMIT_STORE=mongo`.
 - [ ] Nightly backup workflow secrets set (`.github/workflows/backup.yml`) and one successful run.

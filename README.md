@@ -25,6 +25,12 @@ sign-off, the legal review, the restore drill, the hosting setup) are listed in
 | M8 Service desk and plans: tasks, staff access, plan limits, read-only mode, admin plans page, operator scripts | Done |
 | M9 Hardening: controls checklist, security tests, backup workflow, accessibility pass, onboarding guide | Done in code; sign-offs open |
 
+Added after M9: CSV import for the registers, more requirement templates (drafts for review), a shared
+rate-limit store and optional Sentry, client approval before export, bid outcomes with an Outcomes page,
+SMS reminders through Semaphore, online renewals through PayMongo, optional AI drafting in proposals
+(Claude Opus 5.5, off unless `AI_DRAFTING=on` and `ANTHROPIC_API_KEY` are set), and Filipino for the
+navigation, sign-in screens and dashboard. Each integration that needs an outside account is off by default.
+
 ## Layout
 
 ```
