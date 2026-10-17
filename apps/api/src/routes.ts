@@ -79,6 +79,7 @@ for (const [path, kind] of [['projects', 'project'], ['personnel', 'personnel'],
   const c = registerControllers(kind);
   org.get(`/${path}`, viewer, c.list);
   org.post(`/${path}`, editor, c.create);
+  org.post(`/${path}/import`, editor, c.importCsv);
   org.get(`/${path}/:id`, viewer, c.get);
   org.patch(`/${path}/:id`, editor, c.replace);
   org.delete(`/${path}/:id`, editor, c.remove);

@@ -35,6 +35,11 @@ export class RegisterRepo extends OrgRepo<RegisterDoc> {
     return (await this.create(data as Omit<RegisterDoc, 'orgId' | '_id'>)).toObject() as RegisterDoc;
   }
 
+  async insertMany(rows: Array<Record<string, unknown>>): Promise<number> {
+    const docs = await this.model.insertMany(rows.map((r) => ({ ...r, orgId: this.orgOid })));
+    return docs.length;
+  }
+
   /** PATCH on registers replaces the record: optional fields left out are removed. */
   async replace(id: string, data: Record<string, unknown>, optionalKeys: readonly string[]): Promise<RegisterDoc> {
     const unset = Object.fromEntries(optionalKeys.filter((k) => data[k] === undefined).map((k) => [k, 1]));

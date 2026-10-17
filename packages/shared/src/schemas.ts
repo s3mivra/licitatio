@@ -277,3 +277,5 @@ export const taskListQuery = z.object({
 }).strict();
 export const deletePacketItemQuery = z.object({ rev: z.coerce.number().int().min(0) }).strict();
 export const idempotencyKeyHeader = z.string().uuid();
+
+export const importBody = z.object({ csv: z.string().min(1).max(900_000), dryRun: z.boolean().default(false) }).strict();

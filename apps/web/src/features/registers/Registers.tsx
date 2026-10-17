@@ -10,6 +10,7 @@ import { formatDateOnly, relativeDays } from '../../lib/format';
 import { applyServerErrors } from '../../lib/forms';
 import { can, useOrg, useOrgId } from '../../lib/queries';
 import { ACCEPT, uploadFile } from '../../lib/upload';
+import { ImportDialog } from './ImportDialog';
 import { Alert, Button, Checkbox, Chip, Dialog, EmptyState, ErrorState, Field, ListSkeleton, PageHeader, Select, TextArea, TextInput } from '../../ui';
 
 type Values = Record<string, string | boolean>;
@@ -48,6 +49,7 @@ function RegisterPage<T extends { id: string }>({ cfg }: { cfg: RegisterConfig<T
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [editing, setEditing] = useState<T | 'new' | null>(null);
+  const [importing, setImporting] = useState(false);
   const key = ['org', orgId, cfg.path];
   useEffect(() => {
     const t = setTimeout(() => { setFilters((f) => ({ ...f, q: search })); setPage(1); }, 300);
@@ -67,7 +69,7 @@ function RegisterPage<T extends { id: string }>({ cfg }: { cfg: RegisterConfig<T
 
   return (
     <>
-      <PageHeader title={cfg.title} description={cfg.description} actions={canEdit && <Button onClick={() => setEditing('new')}>Add {cfg.noun}</Button>} />
+      <PageHeader title={cfg.title} description={cfg.description} actions={canEdit && <><Button variant="secondary" onClick={() => setImporting(true)}>Import CSV</Button><Button onClick={() => setEditing('new')}>Add {cfg.noun}</Button></>} />
       <div className="mb-4 flex flex-col gap-2 sm:flex-row">
         <input type="search" className="input sm:max-w-xs" placeholder="Search" aria-label="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
         {cfg.filters?.(filters, setFilter)}
@@ -120,6 +122,7 @@ function RegisterPage<T extends { id: string }>({ cfg }: { cfg: RegisterConfig<T
           )}
         </>
       )}
+      <ImportDialog kind={cfg.path} noun={cfg.title.toLowerCase()} open={importing} onClose={() => setImporting(false)} onDone={() => void qc.invalidateQueries({ queryKey: key })} />
       <RegisterForm cfg={cfg} editing={editing} onClose={() => setEditing(null)} onSaved={() => void qc.invalidateQueries({ queryKey: key })} />
     </>
   );

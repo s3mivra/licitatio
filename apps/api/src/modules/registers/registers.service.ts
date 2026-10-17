@@ -2,7 +2,9 @@ import type {
   EquipmentDto, ExperienceProjectDto, OffsetPage, Personnel, PersonnelDto,
 } from '@licitatio/shared';
 import type { equipmentListQuery, personnelListQuery, projectListQuery } from '@licitatio/shared';
-import { manilaDateOf } from '@licitatio/shared';
+import { mapImportRows, manilaDateOf, parseCsv } from '@licitatio/shared';
+import type { ImportKind } from '@licitatio/shared';
+import type { ZodTypeAny } from 'zod';
 import type { z } from 'zod';
 import { computeExpiryStatus } from '../../domain/expiry';
 import { recordAudit } from '../../repositories/audit';
@@ -143,4 +145,28 @@ export async function replace(kind: RegisterKind, access: OrgAccess, id: string,
 export async function remove(kind: RegisterKind, access: OrgAccess, id: string, ip?: string): Promise<void> {
   await new RegisterRepo(kind, access.orgId).deleteById(id);
   await recordAudit({ orgId: access.orgId, actor: actor(access), action: `${KINDS[kind].audit}.delete`, entityType: KINDS[kind].audit, entityId: id, ip });
+}
+
+const IMPORT_KIND: Record<RegisterKind, ImportKind> = { project: 'projects', personnel: 'personnel', equipment: 'equipment' };
+
+/**
+ * CSV import: every row is validated with the same schema as the form. Any error rejects the whole
+ * file (nothing is written) and reports each problem by line. dryRun validates without saving.
+ */
+export async function importCsv(kind: RegisterKind, access: OrgAccess, csv: string, dryRun: boolean, schema: ZodTypeAny, ip?: string): Promise<{ valid: number; imported: number; preview: Array<Record<string, unknown>> }> {
+  const { rows, errors } = mapImportRows(IMPORT_KIND[kind], parseCsv(csv));
+  const bodies: Array<Record<string, unknown>> = [];
+  for (const r of rows) {
+    const parsed = schema.safeParse(r.body);
+    if (parsed.success) bodies.push(parsed.data as Record<string, unknown>);
+    else for (const i of parsed.error.issues) errors.push({ line: r.line, path: i.path.join('.') || 'row', message: i.message });
+  }
+  if (rows.length === 0 && errors.length === 0) errors.push({ line: 2, path: 'rows', message: 'The file has a header but no rows' });
+  if (errors.length > 0) {
+    throw new AppError(400, 'validation_failed', `${errors.length} problem${errors.length === 1 ? '' : 's'} in the file. Nothing was imported.`, errors.slice(0, 200).map((e) => ({ path: `line ${e.line}: ${e.path}`, message: e.message, line: e.line, field: e.path })));
+  }
+  if (dryRun) return { valid: bodies.length, imported: 0, preview: bodies.slice(0, 5) };
+  const imported = await new RegisterRepo(kind, access.orgId).insertMany(bodies);
+  await recordAudit({ orgId: access.orgId, actor: actor(access), action: `${KINDS[kind].audit}.import`, entityType: KINDS[kind].audit, ip, meta: { rows: imported } });
+  return { valid: bodies.length, imported, preview: [] };
 }

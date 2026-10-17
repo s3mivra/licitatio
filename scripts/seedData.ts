@@ -33,6 +33,7 @@ export interface SeedTemplate {
   code: string;
   name: string;
   mode: TemplateMode;
+  description?: string;
   items: TemplateItem[];
 }
 
@@ -87,6 +88,65 @@ export const SYSTEM_TEMPLATES: readonly SeedTemplate[] = [
       other('technical_proposal', 'Technical proposal', 'technical', true, 'upload', 'Proposal export or scan'),
       other('bid_form_boq', 'Priced bill of quantities', 'financial', true, 'upload', 'Priced BOQ'),
       other('bid_bond', 'Bid bond', 'financial', false, 'external', 'Scan of bid bond'),
+    ],
+  },
+  // Drafts added after v1 for the civil engineer to review before clients use them.
+  {
+    code: 'small_value_default',
+    name: 'Small value procurement (draft for review)',
+    mode: 'small_value',
+    description: 'Pending civil engineer review. Negotiated procurement under the small value threshold.',
+    items: [
+      vault('philgeps_registration', 'PhilGEPS registration certificate', 'eligibility', true, ['philgeps_registration']),
+      vault('mayors_permit', "Mayor's or business permit", 'eligibility', true, ['mayors_permit']),
+      vault('business_registration', 'Business registration (DTI, SEC or CDA)', 'eligibility', false, BUSINESS_REG),
+      vault('tax_clearance', 'Tax clearance certificate', 'eligibility', false, ['tax_clearance']),
+      vault('income_tax_return', 'Income tax return with filing proof', 'eligibility', false, ['income_tax_return']),
+      other('omnibus_sworn_statement', 'Omnibus sworn statement', 'eligibility', true, 'external', 'Scan of the notarized statement'),
+      other('price_quotation', 'Price quotation form', 'financial', true, 'upload', "Signed quotation on the procuring entity's form"),
+    ],
+  },
+  {
+    code: 'design_build_default',
+    name: 'Public bidding: design and build (draft for review)',
+    mode: 'public_bidding',
+    description: 'Pending civil engineer review. Adds design team and preliminary design to the infrastructure list.',
+    items: [
+      vault('philgeps_registration', 'PhilGEPS registration certificate', 'eligibility', true, ['philgeps_registration']),
+      vault('business_registration', 'Business registration (DTI, SEC or CDA)', 'eligibility', true, BUSINESS_REG),
+      vault('mayors_permit', "Mayor's or business permit", 'eligibility', true, ['mayors_permit']),
+      vault('pcab_license', "PCAB contractor's license", 'eligibility', true, ['pcab_license']),
+      vault('tax_clearance', 'Tax clearance certificate', 'eligibility', true, ['tax_clearance']),
+      vault('audited_fs', 'Audited financial statements', 'eligibility', true, ['audited_financial_statements']),
+      generated('completed_contracts', 'Statement of completed contracts', 'eligibility', true, 'completed_projects'),
+      generated('ongoing_contracts', 'Statement of ongoing contracts', 'eligibility', true, 'ongoing_projects'),
+      vault('nfcc', 'NFCC computation', 'eligibility', true, ['nfcc_computation']),
+      vault('jv_agreement', 'Joint venture agreement (if a JV)', 'eligibility', false, ['jv_agreement']),
+      other('bid_security', 'Bid security', 'eligibility', true, 'external', 'Scan of bid security or bid securing declaration'),
+      other('omnibus_sworn_statement', 'Omnibus sworn statement', 'eligibility', true, 'external', 'Scan of the notarized statement'),
+      generated('key_personnel', 'Design and construction team', 'technical', true, 'personnel_list'),
+      generated('equipment', 'List of equipment', 'technical', true, 'equipment_list'),
+      other('preliminary_design', 'Preliminary design and design concept', 'technical', true, 'upload', 'Drawings and design report'),
+      other('technical_proposal', 'Technical proposal and work plan', 'technical', true, 'upload', 'Proposal export or scan'),
+      other('bid_form_boq', 'Bid form and cost estimate', 'financial', true, 'upload', 'Bid form and priced estimate'),
+    ],
+  },
+  {
+    code: 'consulting_default',
+    name: 'Consulting services (draft for review)',
+    mode: 'public_bidding',
+    description: 'Pending civil engineer review. Eligibility and technical proposal for consulting engagements.',
+    items: [
+      vault('philgeps_registration', 'PhilGEPS registration certificate', 'eligibility', true, ['philgeps_registration']),
+      vault('business_registration', 'Business registration (DTI, SEC or CDA)', 'eligibility', true, BUSINESS_REG),
+      vault('mayors_permit', "Mayor's or business permit", 'eligibility', true, ['mayors_permit']),
+      vault('tax_clearance', 'Tax clearance certificate', 'eligibility', true, ['tax_clearance']),
+      generated('completed_contracts', 'Statement of completed engagements', 'eligibility', true, 'completed_projects'),
+      generated('ongoing_contracts', 'Statement of ongoing engagements', 'eligibility', true, 'ongoing_projects'),
+      other('omnibus_sworn_statement', 'Omnibus sworn statement', 'eligibility', true, 'external', 'Scan of the notarized statement'),
+      generated('key_personnel', 'Key staff with CVs', 'technical', true, 'personnel_list'),
+      other('approach_methodology', 'Approach, methodology and work plan', 'technical', true, 'upload', 'Proposal export or scan'),
+      other('financial_proposal', 'Financial proposal', 'financial', true, 'upload', 'Sealed separately where required'),
     ],
   },
 ];
