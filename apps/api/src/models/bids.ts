@@ -37,6 +37,7 @@ const bidPacketSchema = new Schema(
     templateCode: { type: String, required: true },
     items: { type: [packetItemSchema], validate: (v: unknown[]) => v.length <= 120 },
     createdBy: oid('User'),
+    approval: { type: new Schema({ approvedBy: oid('User'), approvedAt: { type: Date, required: true } }, { _id: false }), default: null },
     rev,
   },
   baseSchemaOptions,

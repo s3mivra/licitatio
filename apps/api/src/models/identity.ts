@@ -90,6 +90,7 @@ const organizationSchema = new Schema(
       expiryThresholdsDays: { type: [Number], default: () => [...DEFAULT_EXPIRY_THRESHOLDS] },
       reminderEmailsEnabled: { type: Boolean, default: true },
       extraReminderRecipients: { type: [String], default: [] },
+      requireApprovalForExport: { type: Boolean, default: false },
     },
     profile: { type: profileSchema, required: true },
     storageBytesUsed: { type: Number, default: 0, min: 0 },

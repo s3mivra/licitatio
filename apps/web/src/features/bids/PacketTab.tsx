@@ -215,6 +215,11 @@ export function PacketTab({ bid }: { bid: OpportunityDto }) {
   const generate = useMutation({ mutationFn: (itemId: string) => api.post<{ data: PacketResponseDto }>(`${base}/items/${itemId}/generate`), onSuccess: (r) => set(r.data), onError: setError });
   const refresh = useMutation({ mutationFn: () => api.post<{ data: PacketResponseDto }>(`${base}/refresh`), onSuccess: (r) => set(r.data), onError: setError });
   const addItem = useMutation({ mutationFn: (b: Record<string, unknown>) => api.post<{ data: PacketResponseDto }>(`${base}/items`, { rev: q.data?.packet.rev ?? 0, ...b }), onSuccess: (r) => set(r.data), onError: setError });
+  const approve = useMutation({
+    mutationFn: (value: boolean) => api.post<{ data: PacketResponseDto }>(`${base}/approval`, { rev: q.data?.packet.rev ?? 0, approve: value }),
+    onSuccess: (r) => set(r.data),
+    onError: setError,
+  });
   const removeItem = useMutation({ mutationFn: (itemId: string) => api.del<{ data: PacketResponseDto }>(`${base}/items/${itemId}?rev=${q.data?.packet.rev ?? 0}`), onSuccess: (r) => set(r.data), onError: setError });
   const exportPdf = useMutation({
     mutationFn: async () => {
@@ -253,6 +258,16 @@ export function PacketTab({ bid }: { bid: OpportunityDto }) {
           {canEdit && <Button variant="secondary" onClick={() => setAdding(true)}>Add requirement</Button>}
           {canEdit && <Button busy={exportPdf.isPending} onClick={() => exportPdf.mutate()}>{ready ? 'Export packet PDF' : 'Export draft PDF'}</Button>}
         </div>
+      </section>
+      <section className="card flex flex-col gap-2 p-4 sm:flex-row sm:items-center" aria-label="Client approval">
+        <p className="flex-1 text-sm">
+          {packet.approval
+            ? <span className="text-emerald-800">Approved by {packet.approval.approvedByName ?? 'the client'} on {formatDateTime(packet.approval.approvedAt)}. Any change clears the approval.</span>
+            : <span className="text-slate-600">Not yet approved by the client.{org.data?.settings.requireApprovalForExport ? ' Exports stay marked DRAFT until an owner or admin approves.' : ''}</span>}
+        </p>
+        {canWaiveMandatory && org.data?.planStatus !== 'read_only' && (packet.approval
+          ? <Button variant="secondary" busy={approve.isPending} onClick={() => approve.mutate(false)}>Withdraw approval</Button>
+          : <Button variant="secondary" disabled={!ready} busy={approve.isPending} onClick={() => approve.mutate(true)}>{ready ? 'Approve packet' : 'Approve when ready'}</Button>)}
       </section>
       {error !== null && (gapError
         ? <Alert>Complete the company profile first: {(error.details as string[]).join(', ')}. <Link className="underline" to={`/o/${orgId}/settings/profile`}>Open the profile</Link></Alert>

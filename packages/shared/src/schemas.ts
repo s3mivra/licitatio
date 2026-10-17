@@ -57,6 +57,7 @@ export const orgSettingsBody = z.object({
   expiryThresholdsDays: z.array(z.number().int().min(1).max(365)).min(1).max(5),
   reminderEmailsEnabled: z.boolean(),
   extraReminderRecipients: z.array(email).max(5),
+  requireApprovalForExport: z.boolean().optional(),
 }).strict();
 export const patchOrgBody = z.object({
   rev, name: text(120).optional(), tradeName: optText(120),
@@ -275,6 +276,7 @@ export const taskListQuery = z.object({
   opportunityId: objectId.optional(),
   mine: z.enum(['true', 'false']).optional(),
 }).strict();
+export const approvePacketBody = z.object({ rev, approve: z.boolean() }).strict();
 export const deletePacketItemQuery = z.object({ rev: z.coerce.number().int().min(0) }).strict();
 export const idempotencyKeyHeader = z.string().uuid();
 

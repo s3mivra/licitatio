@@ -13,6 +13,7 @@ import { renderProposalPdf } from '../../infra/pdf/renderPdf';
 import { retireGeneratedFile, storeGeneratedFile } from '../../jobs/exports/storeFile';
 import { recordAudit } from '../../repositories/audit';
 import { FileRepo } from '../../repositories/files';
+import { findUsersByIds } from '../../repositories/identity';
 import { OpportunityRepo } from '../../repositories/opportunities';
 import { evaluateStoredPacket } from '../../repositories/packetEvaluation';
 import { PacketRepo, TemplateRepo, vaultCandidates, vaultDocInfo } from '../../repositories/packets';
@@ -48,6 +49,9 @@ async function toPacketDto(access: OrgAccess, p: BidPacket): Promise<BidPacketDt
   const [docs, files] = await Promise.all([vaultDocInfo(access.orgId, vaultIds), fileIds.length > 0 ? new FileRepo(access.orgId).summaries(fileIds) : Promise.resolve(new Map())]);
   return {
     id: String(p._id), rev: p.rev, opportunityId: String(p.opportunityId), templateId: String(p.templateId), templateCode: p.templateCode,
+    approval: p.approval
+      ? { approvedBy: String(p.approval.approvedBy), approvedByName: (await findUsersByIds([String(p.approval.approvedBy)]))[0]?.name, approvedAt: new Date(p.approval.approvedAt).toISOString() }
+      : null,
     items: [...p.items].sort((a, b) => a.order - b.order).map((i) => ({
       id: String(i._id), key: i.key, label: i.label, stage: i.stage, mandatory: i.mandatory, fulfillment: i.fulfillment, docTypeCodes: i.docTypeCodes,
       generator: i.generator, custom: i.custom, minValidityDaysAtSubmission: i.minValidityDaysAtSubmission, order: i.order, notes: i.notes,
@@ -204,4 +208,23 @@ export async function packetVerdict(orgId: string, opportunityId: string): Promi
   if (!packet) return null;
   const opp = await new OpportunityRepo(orgId).getLean(opportunityId);
   return (await evaluateStoredPacket(packet, opp)).verdict;
+}
+
+/**
+ * Client sign-off. Only owner or admin members (never staff) approve, and only a ready packet.
+ * Changing any item afterwards clears the approval.
+ */
+export async function setApproval(access: OrgAccess, opportunityId: string, approve: boolean, rev: number, ip?: string): Promise<PacketResponseDto> {
+  if (access.via === 'staff_grant') throw new AppError(403, 'staff_forbidden', 'The client approves the packet, not Semivra staff');
+  if (access.role !== 'owner' && access.role !== 'admin') throw new AppError(403, 'forbidden', 'Only an owner or admin can approve the packet');
+  const repo = new PacketRepo(access.orgId);
+  const packet = await repo.getByOpportunity(opportunityId);
+  assertRev(packet, rev);
+  if (approve) {
+    const opp = await new OpportunityRepo(access.orgId).getLean(opportunityId);
+    if ((await evaluateStoredPacket(packet, opp)).verdict !== 'ready') throw new AppError(422, 'packet_not_ready', 'The bid packet has unresolved blockers');
+  }
+  const saved = await repo.setApproval(String(packet._id), rev, approve ? { approvedBy: access.userId, approvedAt: new Date() } : null);
+  await recordAudit({ orgId: access.orgId, actor: actor(access), action: approve ? 'packet.approve' : 'packet.unapprove', entityType: 'packet', entityId: String(packet._id), ip });
+  return respond(access, saved, opportunityId);
 }

@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { addPacketItemBody, createPacketBody, deletePacketItemQuery, idempotencyKeyHeader, patchPacketItemBody, templateBody } from '@licitatio/shared';
+import { addPacketItemBody, approvePacketBody, createPacketBody, deletePacketItemQuery, idempotencyKeyHeader, patchPacketItemBody, templateBody } from '@licitatio/shared';
 import { getExport, listExports, requestPacketExport } from '../../repositories/exports';
 import { PacketRepo } from '../../repositories/packets';
 import { AppError } from '../../shared/errors';
@@ -37,6 +37,11 @@ export async function updateItem(req: Request, res: Response): Promise<void> {
 export async function deleteItem(req: Request, res: Response): Promise<void> {
   const { rev } = deletePacketItemQuery.parse(req.query);
   res.json({ data: await svc.deleteItem(orgAccess(req), param(req, 'id'), param(req, 'itemId'), rev, req.ip) });
+}
+
+export async function approve(req: Request, res: Response): Promise<void> {
+  const body = approvePacketBody.parse(req.body);
+  res.json({ data: await svc.setApproval(orgAccess(req), param(req, 'id'), body.approve, body.rev, req.ip) });
 }
 
 export async function generate(req: Request, res: Response): Promise<void> {

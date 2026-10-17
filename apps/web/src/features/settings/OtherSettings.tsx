@@ -84,17 +84,18 @@ export function NotificationSettings() {
   const admin = can(org.data, 'admin', { staff: false });
   const members = useQuery({ queryKey: keys.members(orgId), queryFn: () => api.get<{ data: { members: MemberDto[] } }>(`/orgs/${orgId}/members`).then((r) => r.data), enabled: org.data?.access.via === 'membership' && admin });
   const [message, setMessage] = useState<{ tone: 'success' | 'error'; text: string } | null>(null);
-  const form = useForm<{ thresholds: string; reminderEmailsEnabled: boolean; recipients: string }>();
+  const form = useForm<{ thresholds: string; reminderEmailsEnabled: boolean; recipients: string; requireApproval: boolean }>();
   useEffect(() => {
-    if (org.data) form.reset({ thresholds: org.data.settings.expiryThresholdsDays.join(', '), reminderEmailsEnabled: org.data.settings.reminderEmailsEnabled, recipients: org.data.settings.extraReminderRecipients.join(', ') });
+    if (org.data) form.reset({ thresholds: org.data.settings.expiryThresholdsDays.join(', '), reminderEmailsEnabled: org.data.settings.reminderEmailsEnabled, recipients: org.data.settings.extraReminderRecipients.join(', '), requireApproval: org.data.settings.requireApprovalForExport ?? false });
   }, [org.data, form]);
   const save = useMutation({
-    mutationFn: (v: { thresholds: string; reminderEmailsEnabled: boolean; recipients: string }) => api.patch<{ data: OrganizationDto }>(`/orgs/${orgId}`, {
+    mutationFn: (v: { thresholds: string; reminderEmailsEnabled: boolean; recipients: string; requireApproval: boolean }) => api.patch<{ data: OrganizationDto }>(`/orgs/${orgId}`, {
       rev: org.data?.rev ?? 0,
       settings: {
         expiryThresholdsDays: v.thresholds.split(',').map((s) => Number(s.trim())).filter((n) => Number.isFinite(n) && n > 0),
         reminderEmailsEnabled: v.reminderEmailsEnabled,
         extraReminderRecipients: v.recipients.split(',').map((s) => s.trim()).filter(Boolean),
+        requireApprovalForExport: v.requireApproval,
       },
     }),
     onSuccess: (res) => { qc.setQueryData(keys.org(orgId), res.data); setMessage({ tone: 'success', text: 'Notification settings saved.' }); },
@@ -119,6 +120,7 @@ export function NotificationSettings() {
         <fieldset disabled={!admin} className="space-y-4">
           <TextInput label="Remind before expiry (days)" hint="Comma separated, up to 5 values. Default 60, 30, 7." {...form.register('thresholds')} error={form.formState.errors.thresholds?.message} />
           <Checkbox label="Send a daily email digest at 08:00" description="Owners, admins and editors get one email a day with new reminders." {...form.register('reminderEmailsEnabled')} />
+          <Checkbox label="Require approval before final exports" description="Packet exports stay marked DRAFT until an owner or admin approves the packet." {...form.register('requireApproval')} />
           <TextInput label="Extra recipients" hint="Comma separated, up to 5. They receive the expiry reminders only." {...form.register('recipients')} error={form.formState.errors.recipients?.message} />
         </fieldset>
         {message && <Alert tone={message.tone}>{message.text}</Alert>}

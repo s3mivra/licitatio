@@ -36,6 +36,7 @@ export function toOrganizationDto(org: Organization, access: OrgAccess, now: Dat
       expiryThresholdsDays: org.settings.expiryThresholdsDays,
       reminderEmailsEnabled: org.settings.reminderEmailsEnabled,
       extraReminderRecipients: org.settings.extraReminderRecipients,
+      requireApprovalForExport: org.settings.requireApprovalForExport ?? false,
     },
     profile: org.profile,
     profileGaps: profileGaps(org.profile),
@@ -58,6 +59,7 @@ export async function patchOrg(access: OrgAccess, body: z.infer<typeof patchOrgB
     set['settings.expiryThresholdsDays'] = [...new Set(body.settings.expiryThresholdsDays)].sort((a, b) => b - a);
     set['settings.reminderEmailsEnabled'] = body.settings.reminderEmailsEnabled;
     set['settings.extraReminderRecipients'] = [...new Set(body.settings.extraReminderRecipients)];
+    if (body.settings.requireApprovalForExport !== undefined) set['settings.requireApprovalForExport'] = body.settings.requireApprovalForExport;
   }
   if (body.profile) set.profile = body.profile;
   const updated = await withTransaction(async (session) => {

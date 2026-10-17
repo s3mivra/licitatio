@@ -98,6 +98,7 @@ org.post('/requirement-templates', adminNoStaff, packets.createTemplate);
 org.post('/opportunities/:id/packet', editor, packets.create);
 org.get('/opportunities/:id/packet', viewer, packets.get);
 org.post('/opportunities/:id/packet/refresh', editor, packets.refresh);
+org.post('/opportunities/:id/packet/approval', requireOrgRole('admin', { staffAllowed: false }), packets.approve);
 org.post('/opportunities/:id/packet/items', editor, packets.addItem);
 org.patch('/opportunities/:id/packet/items/:itemId', editor, packets.updateItem); // waiving a mandatory item needs admin (domain rule)
 org.delete('/opportunities/:id/packet/items/:itemId', editor, packets.deleteItem);

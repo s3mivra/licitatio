@@ -24,6 +24,7 @@ export interface PacketPdfInput {
   submissionDate: string;
   generatedOn: string;
   draftNote?: string;
+  approvalNote?: string;
   items: PacketPdfItem[];
 }
 
@@ -169,6 +170,7 @@ export async function buildPacketPdf(input: PacketPdfInput): Promise<PacketPdfRe
   put(`Submission date: ${input.submissionDate}`, 12, font);
   put(`Prepared on: ${input.generatedOn}`, 12, font, rgb(0.4, 0.4, 0.4), 18);
   if (input.draftNote) put(input.draftNote, 13, bold, rgb(0.75, 0.1, 0.1));
+  if (input.approvalNote) put(input.approvalNote, 11, font, rgb(0.1, 0.45, 0.25));
 
   // index
   for (let pageNo = 0; pageNo < indexPages; pageNo++) {

@@ -242,6 +242,7 @@ export interface BidPacketDto {
   templateId: string;
   templateCode: string;
   items: PacketItemDto[];
+  approval: { approvedBy: string; approvedByName?: string; approvedAt: string } | null;
   createdAt: string;
   updatedAt: string;
 }

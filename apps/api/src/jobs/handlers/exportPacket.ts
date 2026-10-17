@@ -3,7 +3,7 @@ import { manilaDateOf } from '@licitatio/shared';
 import { ExportError, buildPacketPdf } from '../../infra/pdf/buildPacketPdf';
 import type { PacketPdfItem } from '../../infra/pdf/buildPacketPdf';
 import { getObjectBytes } from '../../infra/r2';
-import { BidPacketModel, ExportModel, FileModel, OpportunityModel, OrganizationModel, VaultDocumentModel } from '../../models';
+import { BidPacketModel, ExportModel, FileModel, OpportunityModel, OrganizationModel, UserModel, VaultDocumentModel } from '../../models';
 import { evaluateStoredPacket } from '../../repositories/packetEvaluation';
 import { PACKET_MAX_SOURCE_BYTES, completeExport, failExport, notifyExportReady, safeSlug } from '../exports/common';
 import { storeGeneratedFile } from '../exports/storeFile';
@@ -64,6 +64,11 @@ export async function exportPacket(job: Job): Promise<void> {
       });
     }
     const blocked = evaluation.verdict === 'blocked';
+    const needsApproval = org.settings.requireApprovalForExport === true && !packet.approval;
+    const approver = packet.approval ? await UserModel.findById(packet.approval.approvedBy, { name: 1 }).lean() : null;
+    const draftNote = blocked
+      ? `DRAFT: ${evaluation.blockers.length} mandatory items unresolved`
+      : needsApproval ? 'DRAFT: awaiting client approval' : undefined;
     const result = await buildPacketPdf({
       bidder: org.profile.legalName,
       opportunityTitle: opp.title,
@@ -71,10 +76,11 @@ export async function exportPacket(job: Job): Promise<void> {
       procuringEntity: opp.procuringEntity,
       submissionDate: manilaDateOf(opp.submissionDeadlineAt),
       generatedOn: manilaDateOf(new Date()),
-      draftNote: blocked ? `DRAFT: ${evaluation.blockers.length} mandatory items unresolved` : undefined,
+      draftNote,
+      approvalNote: packet.approval ? `Approved by ${approver?.name ?? 'the client'} on ${manilaDateOf(packet.approval.approvedAt)}` : undefined,
       items,
     });
-    const name = `${safeSlug(org.slug)}_${safeSlug(opp.referenceNo ?? String(opp._id))}_bid-packet${blocked ? '_DRAFT' : ''}.pdf`;
+    const name = `${safeSlug(org.slug)}_${safeSlug(opp.referenceNo ?? String(opp._id))}_bid-packet${draftNote ? '_DRAFT' : ''}.pdf`;
     const fileId = await storeGeneratedFile({ orgId, userId: String(record.requestedBy), originalName: name, mime: 'application/pdf', bytes: result.bytes, area: 'exports', pageCount: result.pageCount });
     await completeExport(exportId, { fileId, pageCount: result.pageCount, warnings: result.warnings });
     await notifyExportReady(record);

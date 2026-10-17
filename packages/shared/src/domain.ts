@@ -96,6 +96,7 @@ export interface OrgSettings {
   expiryThresholdsDays: number[]; // default [60, 30, 7], each 1..365, max 5 entries
   reminderEmailsEnabled: boolean;
   extraReminderRecipients: string[]; // max 5 emails
+  requireApprovalForExport?: boolean; // final (non-draft) exports need an owner or admin approval
 }
 export interface Organization extends Base {
   name: string; // display name, max 120
@@ -303,6 +304,8 @@ export interface BidPacket extends TenantBase {
   templateCode: string;
   items: PacketItem[];
   createdBy: ObjectIdString;
+  /** Set by an owner or admin member; any later packet change clears it. */
+  approval?: { approvedBy: ObjectIdString; approvedAt: Date } | null;
 }
 export interface ExportRecord extends TenantBase {
   kind: 'packet' | 'proposal';
