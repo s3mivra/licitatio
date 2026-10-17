@@ -6,6 +6,7 @@ import { authRouter } from './modules/auth/auth.routes';
 import { authenticate, requirePlatformRole } from './modules/auth/middleware';
 import * as analytics from './modules/analytics/analytics.controller';
 import * as audit from './modules/audit/audit.controller';
+import * as billing from './modules/billing/billing.controller';
 import { requireWritablePlan } from './modules/billing/requireWritablePlan';
 import * as files from './modules/files/files.controller';
 import * as notifications from './modules/notifications/notifications.controller';
@@ -135,3 +136,7 @@ org.get('/notifications', viewer, notifications.list);
 org.post('/notifications/read', viewer, notifications.read);
 
 org.get('/audit', adminNoStaff, audit.list);
+
+org.get('/billing/status', viewer, billing.status);
+org.get('/billing/payments', ownerNoStaff, billing.payments);
+org.post('/billing/checkout', ownerNoStaff, billing.checkout);

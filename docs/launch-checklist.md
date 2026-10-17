@@ -34,6 +34,12 @@ automated test in `apps/api/test` or `apps/api/src/**/*.test.ts` that runs in CI
 - [ ] DNS: `app.<domain>` and `api.<domain>` under one registrable domain; set `COOKIE_DOMAIN`.
 - [ ] Mail: `MAIL_FROM` on a verified sender domain with SPF, DKIM and DMARC; `MAIL_PROVIDER=resend`.
 - [ ] Uptime check on `/api/v1/healthz` every 5 minutes with email alerts.
+- [ ] Online payments: create a PayMongo account, set `PAYMONGO_SECRET_KEY` and `PAYMONGO_WEBHOOK_SECRET`, and register
+      the webhook `https://api.<domain>/api/v1/webhooks/paymongo` for `checkout_session.payment.paid`. Before going live,
+      check the checkout request fields and the `Paymongo-Signature` format in `apps/api/src/infra/paymongo.ts` against
+      PayMongo's current API reference, then make one real test-mode payment end to end.
+- [ ] SMS reminders: create a Semaphore account, set `SMS_PROVIDER=semaphore`, `SEMAPHORE_API_KEY` and an approved
+      `SEMAPHORE_SENDER_NAME`.
 - [ ] Optional error monitoring: set `SENTRY_DSN` (API) and `VITE_SENTRY_DSN` (web), and add the Sentry ingest host to the CSP `connect-src`.
 - [ ] Before running more than one API instance: set `RATE_LIMIT_STORE=mongo`.
 - [ ] Nightly backup workflow secrets set (`.github/workflows/backup.yml`) and one successful run.

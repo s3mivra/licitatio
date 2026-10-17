@@ -336,3 +336,13 @@ export interface AnalyticsDto {
   topBlockers: Array<{ label: string; count: number }>;
   medianDaysToSubmit: number | null;
 }
+
+export interface PaymentDto {
+  id: string;
+  plan: import('./domain').PlanCode;
+  months: number;
+  amount: number;
+  status: 'pending' | 'paid' | 'expired';
+  paidAt?: string;
+  createdAt: string;
+}

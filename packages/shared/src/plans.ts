@@ -19,6 +19,13 @@ export const PLANS: Readonly<Record<PlanCode, PlanLimits>> = {
   desk: { seats: 15, storageBytes: 10 * GB, activeOpportunities: null, packetExportsPerMonth: null, proposalExportsPerMonth: null, proposals: true, staffGrants: true },
 };
 
+/** Monthly list prices in centavos (initial assumptions from the spec; validate with pilot clients). */
+export const PLAN_PRICES: Readonly<Record<PlanCode, number>> = { starter: 1_500_00, pro: 3_500_00, desk: 12_000_00 };
+export const BILLING_PERIODS = [1, 3, 12] as const;
+export type BillingPeriod = (typeof BILLING_PERIODS)[number];
+/** Annual billing: 12 months for the price of 10. */
+export const priceFor = (plan: PlanCode, months: BillingPeriod): number => PLAN_PRICES[plan] * (months === 12 ? 10 : months);
+
 export type PlanStatus = 'active' | 'grace' | 'read_only';
 export const GRACE_DAYS = 7;
 export const TRIAL_DAYS = 14;

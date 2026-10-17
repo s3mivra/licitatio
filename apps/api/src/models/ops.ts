@@ -89,3 +89,38 @@ const idempotencySchema = new Schema(
 idempotencySchema.index({ orgId: 1, key: 1 }, { unique: true });
 idempotencySchema.index({ createdAt: 1 }, { expireAfterSeconds: 86_400 });
 export const IdempotencyModel = model<IdempotencyRecord>('Idempotency', idempotencySchema);
+
+// ---------- payments (PayMongo checkout) ----------
+export interface PaymentRecord {
+  _id: string;
+  orgId: string;
+  plan: 'starter' | 'pro' | 'desk';
+  months: number;
+  amount: number;
+  checkoutSessionId: string;
+  status: 'pending' | 'paid' | 'expired';
+  paidAt?: Date;
+  createdBy: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+const paymentSchema = new Schema(
+  {
+    orgId: oid('Organization'),
+    plan: { type: String, enum: ['starter', 'pro', 'desk'], required: true },
+    months: { type: Number, required: true },
+    amount: { type: Number, required: true },
+    checkoutSessionId: { type: String, required: true },
+    status: { type: String, enum: ['pending', 'paid', 'expired'], default: 'pending' },
+    paidAt: { type: Date },
+    createdBy: oid('User'),
+  },
+  baseSchemaOptions,
+);
+paymentSchema.index({ checkoutSessionId: 1 }, { unique: true });
+paymentSchema.index({ orgId: 1, createdAt: -1 });
+export const PaymentModel = model<PaymentRecord>('Payment', paymentSchema);
+
+/** Processed webhook event ids: a redelivered event is a no-op. */
+const paymentEventSchema = new Schema({ _id: { type: String, required: true }, type: String, at: { type: Date, default: () => new Date() } }, { versionKey: false });
+export const PaymentEventModel = model<{ _id: string; type?: string; at: Date }>('PaymentEvent', paymentEventSchema);

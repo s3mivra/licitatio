@@ -1,6 +1,8 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { AuditEntryDto, CursorPage, MeDto, OrganizationDto, StaffGrantDto, UserDto } from '@licitatio/shared';
-import { PLANS } from '@licitatio/shared';
+import { BILLING_PERIODS, PLANS, formatCentavos, priceFor } from '@licitatio/shared';
+import type { BillingPeriod, PaymentDto, PlanCode } from '@licitatio/shared';
+import { useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ApiError, api } from '../../lib/api';
@@ -151,8 +153,48 @@ export function NotificationSettings() {
 }
 
 // ---------- plan ----------
+function PayOnline() {
+  const orgId = useOrgId();
+  const org = useOrg();
+  const [plan, setPlan] = useState<PlanCode>(org.data?.plan === 'starter' ? 'pro' : org.data?.plan ?? 'pro');
+  const [months, setMonths] = useState<BillingPeriod>(1);
+  const status = useQuery({ queryKey: ['org', orgId, 'billing', 'status'], queryFn: () => api.get<{ data: { enabled: boolean } }>(`/orgs/${orgId}/billing/status`).then((r) => r.data) });
+  const payments = useQuery({ queryKey: ['org', orgId, 'billing', 'payments'], queryFn: () => api.get<{ data: PaymentDto[] }>(`/orgs/${orgId}/billing/payments`).then((r) => r.data) });
+  const pay = useMutation({
+    mutationFn: () => api.post<{ data: { checkoutUrl: string } }>(`/orgs/${orgId}/billing/checkout`, { plan, months }),
+    onSuccess: (r) => { window.location.assign(r.data.checkoutUrl); },
+  });
+  if (!status.data?.enabled) return <Alert tone="info">To renew or change your plan, contact Semivra. Payment by bank transfer, GCash or invoice is recorded by our team.</Alert>;
+  return (
+    <section className="card space-y-4 p-5" aria-labelledby="pay-h">
+      <h2 id="pay-h" className="font-medium">Pay online</h2>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <label className="text-sm">Plan<select className="input mt-1" value={plan} onChange={(e) => setPlan(e.target.value as PlanCode)}>{(['starter', 'pro', 'desk'] as const).map((p) => <option key={p} value={p}>{p[0]?.toUpperCase()}{p.slice(1)}</option>)}</select></label>
+        <label className="text-sm">Period<select className="input mt-1" value={months} onChange={(e) => setMonths(Number(e.target.value) as BillingPeriod)}>{BILLING_PERIODS.map((m) => <option key={m} value={m}>{m === 12 ? '12 months (2 months free)' : `${m} month${m === 1 ? '' : 's'}`}</option>)}</select></label>
+      </div>
+      <p className="text-sm">Total: <span className="font-semibold tabular-nums">PHP {formatCentavos(priceFor(plan, months))}</span>. Pay with GCash, card, Maya or GrabPay on PayMongo's secure page. Time is added from your current expiry date.</p>
+      {pay.error && <ErrorAlert error={pay.error} />}
+      <Button busy={pay.isPending} onClick={() => pay.mutate()}>Continue to payment</Button>
+      {payments.data && payments.data.length > 0 && (
+        <ul className="divide-y divide-slate-100 border-t border-slate-100 pt-2 text-sm">
+          {payments.data.map((p) => <li key={p.id} className="flex justify-between gap-3 py-1.5"><span className="capitalize">{p.plan}, {p.months} mo · {formatDate(p.paidAt ?? p.createdAt)}</span><span className="tabular-nums">PHP {formatCentavos(p.amount)} · {p.status}</span></li>)}
+        </ul>
+      )}
+    </section>
+  );
+}
+
 export function PlanSettings() {
   const org = useOrg();
+  const [params] = useSearchParams();
+  const { refetch } = org;
+  // after PayMongo redirects back, poll briefly until the webhook has extended the plan
+  useEffect(() => {
+    if (params.get('paid') !== '1') return undefined;
+    const t = setInterval(() => void refetch(), 4000);
+    const stop = setTimeout(() => clearInterval(t), 40_000);
+    return () => { clearInterval(t); clearTimeout(stop); };
+  }, [params, refetch]);
   if (!org.data) return <Skeleton className="h-40 w-full" />;
   const o = org.data;
   const limits = PLANS[o.plan];
@@ -176,7 +218,11 @@ export function PlanSettings() {
           </div>
         </div>
       </section>
-      <Alert tone="info">To renew or change your plan, contact Semivra. Payment by bank transfer, GCash or invoice is recorded by our team.</Alert>
+      {params.get('paid') === '1' && <Alert tone="success">Payment received. Your plan updates as soon as PayMongo confirms it, usually within a minute.</Alert>}
+      {params.get('cancelled') === '1' && <Alert tone="info">Payment cancelled. Nothing was charged.</Alert>}
+      {o.access.role === 'owner' && o.access.via === 'membership'
+        ? <PayOnline />
+        : <Alert tone="info">The organization owner renews or changes the plan.</Alert>}
     </div>
   );
 }

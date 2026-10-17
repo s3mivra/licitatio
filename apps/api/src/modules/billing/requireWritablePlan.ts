@@ -7,6 +7,7 @@ const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 const EXEMPT = [
   { method: 'POST', pattern: /^\/notifications\/read$/ },
   { method: 'DELETE', pattern: /^\/staff-grants\/[a-f0-9]{24}$/ },
+  { method: 'POST', pattern: /^\/billing\/checkout$/ }, // an expired organization must be able to pay
   { method: 'PATCH', pattern: /^\/members\/[a-f0-9]{24}$/ }, // narrowed in the controller to the caller's own emailDigest
 ];
 

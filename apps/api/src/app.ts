@@ -5,6 +5,7 @@ import express from 'express';
 import helmet from 'helmet';
 import { pinoHttp } from 'pino-http';
 import { env } from './config/env';
+import * as billing from './modules/billing/billing.controller';
 import { apiRouter } from './routes';
 import { AppError, errorHandler } from './shared/errors';
 import { logger } from './shared/logger';
@@ -31,6 +32,8 @@ export function createApp(): express.Express {
       maxAge: 600,
     }),
   );
+  // signed webhooks need the exact bytes, so this route parses raw before the JSON parser
+  app.post('/api/v1/webhooks/paymongo', express.raw({ type: 'application/json', limit: '1mb' }), billing.webhook);
   app.use(express.json({ limit: '1mb' }));
   app.use(cookieParser());
   app.use('/api/v1', globalLimiter, apiRouter);

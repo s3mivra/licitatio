@@ -204,6 +204,7 @@ export const auditQuery = cursorQuery.extend({
   from: dateOnly.optional(),
   to: dateOnly.optional(),
 }).strict();
+export const checkoutBody = z.object({ plan: z.enum(['starter', 'pro', 'desk']), months: z.union([z.literal(1), z.literal(3), z.literal(12)]) }).strict();
 export const setPlanBody = z.object({ plan: z.enum(['starter', 'pro', 'desk']), planExpiresAt: instant.nullable() }).strict();
 export const adminOrgsQuery = z.object({
   q: z.string().trim().max(100).optional(),

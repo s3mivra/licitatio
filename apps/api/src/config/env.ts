@@ -25,6 +25,9 @@ const schema = z
     FONT_DIR: z.string().optional(),
     // memory is correct for one instance; mongo shares counters across instances
     RATE_LIMIT_STORE: z.enum(['memory', 'mongo']).default('memory'),
+    // Online payments are off unless both are set
+    PAYMONGO_SECRET_KEY: z.string().optional(),
+    PAYMONGO_WEBHOOK_SECRET: z.string().optional(),
     SMS_PROVIDER: z.enum(['console', 'semaphore']).default('console'),
     SEMAPHORE_API_KEY: z.string().optional(),
     SEMAPHORE_SENDER_NAME: z.string().max(11).optional(),
