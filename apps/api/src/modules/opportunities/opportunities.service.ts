@@ -30,6 +30,7 @@ function toDto(o: Opportunity, n: Map<string, string>): OpportunityDto {
     assigneeId: o.assigneeId ? String(o.assigneeId) : undefined,
     assigneeName: o.assigneeId ? n.get(String(o.assigneeId)) : undefined,
     notes: o.notes,
+    outcome: o.outcome,
     statusHistory: o.statusHistory.map((h) => ({ from: h.from, to: h.to, by: String(h.by), byName: n.get(String(h.by)), at: iso(h.at) ?? '', reason: h.reason })),
     createdAt: iso(o.createdAt) ?? '', updatedAt: iso(o.updatedAt) ?? '',
   };
@@ -135,6 +136,7 @@ export async function transition(access: OrgAccess, id: string, body: z.infer<ty
   const now = new Date();
   const set: Record<string, unknown> = { status: body.to };
   if (body.decision) set.decision = { ...body.decision, decidedBy: access.userId, decidedAt: now };
+  if (body.outcome && (body.to === 'awarded' || body.to === 'lost')) set.outcome = body.outcome;
   const doc = await repo.transition(id, current.status, set, { from: current.status, to: body.to, by: access.userId, at: now, reason: body.reason ?? body.decision?.reason });
   await recordAudit({ orgId: access.orgId, actor: actor(access), action: 'opportunity.transition', entityType: 'opportunity', entityId: id, ip, meta: { from: current.status, to: body.to } });
   return (await dtos([doc]))[0] as OpportunityDto;

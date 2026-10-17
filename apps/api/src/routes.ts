@@ -4,6 +4,7 @@ import { schedulerTick } from './jobs/scheduler';
 import { requireOrgRole } from './modules/auth/access';
 import { authRouter } from './modules/auth/auth.routes';
 import { authenticate, requirePlatformRole } from './modules/auth/middleware';
+import * as analytics from './modules/analytics/analytics.controller';
 import * as audit from './modules/audit/audit.controller';
 import { requireWritablePlan } from './modules/billing/requireWritablePlan';
 import * as files from './modules/files/files.controller';
@@ -127,6 +128,7 @@ org.get('/tasks/:id', viewer, tasks.get);
 org.patch('/tasks/:id', editor, tasks.replace);
 org.delete('/tasks/:id', editor, tasks.remove);
 org.get('/dashboard', viewer, tasks.dashboard);
+org.get('/analytics', viewer, analytics.get);
 
 org.get('/notifications', viewer, notifications.list);
 org.post('/notifications/read', viewer, notifications.read);

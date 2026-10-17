@@ -201,6 +201,12 @@ const opportunitySchema = new Schema(
     },
     assigneeId: oid('User', false),
     notes: { type: String, maxlength: 4000 },
+    outcome: {
+      type: new Schema(
+        { ourBidAmount: Number, winningBidAmount: Number, winner: { type: String, maxlength: 200 }, disqualified: Boolean, disqualifiedFor: { type: String, maxlength: 200 } },
+        { _id: false },
+      ),
+    },
     statusHistory: {
       type: [new Schema(
         { from: { type: String, enum: [...OPPORTUNITY_STATUSES, null], default: null }, to: { type: String, enum: OPPORTUNITY_STATUSES, required: true }, by: oid('User'), at: { type: Date, required: true }, reason: { type: String, maxlength: 500 } },

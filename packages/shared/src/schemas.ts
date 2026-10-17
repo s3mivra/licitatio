@@ -135,7 +135,12 @@ export const patchOpportunityBody = createOpportunityBody.partial().extend({ rev
 export const transitionBody = z.object({
   to: z.enum(OPPORTUNITY_STATUSES), reason: optText(500),
   decision: z.object({ goNoGo: z.enum(['go', 'no_go']), reason: text(500) }).strict().optional(),
+  outcome: z.object({
+    ourBidAmount: centavos.optional(), winningBidAmount: centavos.optional(), winner: optText(200),
+    disqualified: z.boolean().optional(), disqualifiedFor: optText(200),
+  }).strict().optional(),
 }).strict();
+export const analyticsQuery = z.object({ from: dateOnly.optional(), to: dateOnly.optional() }).strict();
 export const createPacketBody = z.object({ templateId: objectId }).strict();
 export const addPacketItemBody = z.object({
   rev, label: text(200), stage: z.enum(PACKET_STAGES), mandatory: z.boolean(), fulfillment: z.enum(['upload', 'external']),

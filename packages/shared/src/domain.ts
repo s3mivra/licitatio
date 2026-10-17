@@ -278,6 +278,8 @@ export interface Opportunity extends TenantBase {
   decision?: { goNoGo: 'go' | 'no_go'; reason: string; decidedBy: ObjectIdString; decidedAt: Date };
   assigneeId?: ObjectIdString;
   notes?: string;
+  /** Recorded when a bid is awarded or lost. Amounts in centavos. */
+  outcome?: { ourBidAmount?: Centavos; winningBidAmount?: Centavos; winner?: string; disqualified?: boolean; disqualifiedFor?: string };
   statusHistory: Array<{ from: OpportunityStatus | null; to: OpportunityStatus; by: ObjectIdString; at: Date; reason?: string }>;
 }
 export interface PacketItem {

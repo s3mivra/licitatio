@@ -13,6 +13,7 @@ const NAV = [
   { to: 'bids', label: 'Bids' },
   { to: 'proposals', label: 'Proposals' },
   { to: 'tasks', label: 'Tasks' },
+  { to: 'analytics', label: 'Outcomes' },
   { to: 'vault', label: 'Document vault' },
   { to: 'projects', label: 'Experience' },
   { to: 'personnel', label: 'Personnel' },

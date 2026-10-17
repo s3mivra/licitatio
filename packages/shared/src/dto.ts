@@ -188,6 +188,7 @@ export interface OpportunityDto {
   assigneeId?: string;
   assigneeName?: string;
   notes?: string;
+  outcome?: { ourBidAmount?: number; winningBidAmount?: number; winner?: string; disqualified?: boolean; disqualifiedFor?: string };
   statusHistory: Array<{ from: import('./domain').OpportunityStatus | null; to: import('./domain').OpportunityStatus; by: string; byName?: string; at: string; reason?: string }>;
   createdAt: string;
   updatedAt: string;
@@ -316,4 +317,17 @@ export interface TaskDto {
 export interface DashboardDto {
   readyWithBlockers: number;
   myOpenTasks: number;
+}
+
+export interface AnalyticsDto {
+  range: { from?: string; to?: string };
+  byStatus: Record<string, number>;
+  decided: { awarded: number; lost: number; winRatePercent: number | null };
+  awardedValue: number; // centavos, our bid amount (or approved budget when not recorded)
+  disqualifications: number;
+  lostReasons: Array<{ label: string; count: number }>;
+  noBidReasons: Array<{ label: string; count: number }>;
+  disqualifiedFor: Array<{ label: string; count: number }>;
+  topBlockers: Array<{ label: string; count: number }>;
+  medianDaysToSubmit: number | null;
 }

@@ -8,6 +8,7 @@ import { AcceptInviteScreen, ForgotPasswordScreen, LoginScreen, RegisterScreen, 
 import { BidDetail } from './features/bids/BidDetail';
 import { BidsPage } from './features/bids/BidsPage';
 import { AdminPage } from './features/admin/AdminPage';
+import { AnalyticsPage } from './features/analytics/AnalyticsPage';
 import { Dashboard } from './features/dashboard/Dashboard';
 import { TaskBoard } from './features/tasks/TaskBoard';
 import { ExportPage } from './features/exports/ExportPage';
@@ -69,6 +70,7 @@ function App() {
         <Route path="bids/:id" element={<BidDetail />} />
         <Route path="exports/:id" element={<ExportPage />} />
         <Route path="tasks" element={<TaskBoard />} />
+        <Route path="analytics" element={<AnalyticsPage />} />
         <Route path="proposals" element={<ProposalsPage />} />
         <Route path="proposals/:id" element={<ProposalEditor />} />
         <Route path="blocks" element={<BlocksPage />} />

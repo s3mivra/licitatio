@@ -1,12 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { OpportunityDto, OpportunityStatus } from '@licitatio/shared';
-import { formatCentavos } from '@licitatio/shared';
+import { formatCentavos, toCentavos } from '@licitatio/shared';
 import { useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ApiError, api } from '../../lib/api';
 import { formatDateTime } from '../../lib/format';
 import { can, useOrg, useOrgId } from '../../lib/queries';
-import { Alert, Button, Dialog, ErrorState, Skeleton, TextArea, cx } from '../../ui';
+import { Alert, Button, Checkbox, Dialog, ErrorState, Skeleton, TextArea, TextInput, cx } from '../../ui';
 import { BidForm } from './BidForm';
 import { ProposalsPage } from '../proposals/ProposalPages';
 import { TaskBoard } from '../tasks/TaskBoard';
@@ -21,6 +21,17 @@ function TransitionDialog({ bid, to, onClose }: { bid: OpportunityDto; to: Oppor
   const qc = useQueryClient();
   const [reason, setReason] = useState('');
   const [go, setGo] = useState<'go' | 'no_go'>('go');
+  const [ourBid, setOurBid] = useState('');
+  const [winningBid, setWinningBid] = useState('');
+  const [winner, setWinner] = useState('');
+  const [disqualified, setDisqualified] = useState(false);
+  const [disqualifiedFor, setDisqualifiedFor] = useState('');
+  const outcomeStep = to === 'awarded' || to === 'lost';
+  const amount = (v: string): number | undefined => { try { return v.trim() ? toCentavos(v) : undefined; } catch { return undefined; } };
+  const outcome = outcomeStep ? {
+    ourBidAmount: amount(ourBid), winningBidAmount: amount(winningBid), winner: winner.trim() || undefined,
+    ...(to === 'lost' ? { disqualified, disqualifiedFor: disqualified ? disqualifiedFor.trim() || undefined : undefined } : {}),
+  } : undefined;
   const [error, setError] = useState<string | null>(null);
   const decision = to === 'preparing' && bid.status === 'evaluating';
   const move = useMutation({
@@ -28,7 +39,7 @@ function TransitionDialog({ bid, to, onClose }: { bid: OpportunityDto; to: Oppor
       if (decision && go === 'no_go') {
         return api.post(`/orgs/${orgId}/opportunities/${bid.id}/transition`, { to: 'no_bid', reason, decision: { goNoGo: 'no_go', reason } });
       }
-      return api.post(`/orgs/${orgId}/opportunities/${bid.id}/transition`, { to, ...(reason ? { reason } : {}), ...(decision ? { decision: { goNoGo: 'go', reason } } : {}) });
+      return api.post(`/orgs/${orgId}/opportunities/${bid.id}/transition`, { to, ...(reason ? { reason } : {}), ...(decision ? { decision: { goNoGo: 'go', reason } } : {}), ...(outcome ? { outcome } : {}) });
     },
     onSuccess: () => { void qc.invalidateQueries({ queryKey: ['org', orgId, 'opportunities'] }); onClose(); },
     // guard failures are shown verbatim from error.message
@@ -50,7 +61,16 @@ function TransitionDialog({ bid, to, onClose }: { bid: OpportunityDto; to: Oppor
           </fieldset>
         )}
         {needsReason && <TextArea label={decision ? 'Reason for the decision' : 'Reason'} hint={NEEDS_REASON.includes(to) || go === 'no_go' ? 'At least 5 characters' : undefined} value={reason} onChange={(e) => setReason(e.target.value)} />}
-        {!needsReason && <p className="text-sm text-slate-600">Move this bid from {STATUS_LABEL[bid.status]} to {STATUS_LABEL[to]}?</p>}
+        {!needsReason && !outcomeStep && <p className="text-sm text-slate-600">Move this bid from {STATUS_LABEL[bid.status]} to {STATUS_LABEL[to]}?</p>}
+        {outcomeStep && (
+          <div className="grid gap-3 sm:grid-cols-2">
+            <TextInput label="Our bid (PHP)" inputMode="decimal" value={ourBid} onChange={(e) => setOurBid(e.target.value)} />
+            <TextInput label="Winning bid (PHP)" inputMode="decimal" value={winningBid} onChange={(e) => setWinningBid(e.target.value)} />
+            <TextInput label="Winning bidder" value={winner} onChange={(e) => setWinner(e.target.value)} />
+            {to === 'lost' && <div className="sm:col-span-2 space-y-2"><Checkbox label="We were disqualified" checked={disqualified} onChange={(e) => setDisqualified(e.target.checked)} />{disqualified && <TextInput label="Disqualified for" placeholder="Expired tax clearance" value={disqualifiedFor} onChange={(e) => setDisqualifiedFor(e.target.value)} />}</div>}
+            <p className="text-xs text-slate-500 sm:col-span-2">Optional. Feeds the Outcomes page.</p>
+          </div>
+        )}
       </div>
     </Dialog>
   );
