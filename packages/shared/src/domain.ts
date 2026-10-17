@@ -120,6 +120,7 @@ export interface User extends Base {
   lockedUntil: Date | null;
   totp?: { secretEnc: string; enabledAt: Date }; // AES-256-GCM with DATA_ENCRYPTION_KEY
   lastLoginAt: Date | null;
+  phone?: string; // E.164 without plus, Philippine mobile: 639XXXXXXXXX
 }
 export interface Membership extends Base {
   orgId: ObjectIdString;
@@ -127,6 +128,7 @@ export interface Membership extends Base {
   role: OrgRole;
   status: 'active' | 'revoked';
   emailDigest: boolean; // digest email preference, default true
+  smsReminders?: boolean; // daily SMS for urgent items, default false
   invitedBy?: ObjectIdString;
 }
 export interface StaffGrant extends Base {
@@ -365,6 +367,7 @@ export interface Notification extends TenantBase {
   dedupeKey: string;
   readAt: Date | null;
   emailedAt: Date | null;
+  smsAt?: Date | null;
 }
 export interface AuditLog {
   _id: ObjectIdString;

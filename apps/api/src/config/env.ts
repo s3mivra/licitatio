@@ -25,12 +25,18 @@ const schema = z
     FONT_DIR: z.string().optional(),
     // memory is correct for one instance; mongo shares counters across instances
     RATE_LIMIT_STORE: z.enum(['memory', 'mongo']).default('memory'),
+    SMS_PROVIDER: z.enum(['console', 'semaphore']).default('console'),
+    SEMAPHORE_API_KEY: z.string().optional(),
+    SEMAPHORE_SENDER_NAME: z.string().max(11).optional(),
     SENTRY_DSN: z.string().url().optional(),
     SENTRY_ENVIRONMENT: z.string().optional(),
   })
   .superRefine((v, ctx) => {
     if (v.MAIL_PROVIDER === 'resend' && !v.RESEND_API_KEY) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['RESEND_API_KEY'], message: 'required when MAIL_PROVIDER is resend' });
+    }
+    if (v.SMS_PROVIDER === 'semaphore' && !v.SEMAPHORE_API_KEY) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['SEMAPHORE_API_KEY'], message: 'required when SMS_PROVIDER is semaphore' });
     }
     if (v.NODE_ENV === 'production' && !v.APP_ORIGIN.startsWith('https://')) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['APP_ORIGIN'], message: 'must be https in production' });

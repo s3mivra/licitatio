@@ -10,7 +10,7 @@ import { clearOrgAccessCache } from '../src/modules/auth/access';
 import { hashPassword } from '../src/modules/auth/auth.service';
 import { encryptSecret } from '../src/shared/crypto';
 import { SYSTEM_DOCUMENT_TYPES, SYSTEM_TEMPLATES } from '../../../scripts/seedData';
-import { mailControl, objects, sentMail } from './state';
+import { mailControl, objects, sentMail, sentSms } from './state';
 
 export interface Auth {
   token: string;
@@ -35,6 +35,7 @@ export async function resetDb(): Promise<void> {
   await DocumentTypeModel.insertMany(SYSTEM_DOCUMENT_TYPES.map((t) => ({ ...t, orgId: null, archivedAt: null })));
   await RequirementTemplateModel.insertMany(SYSTEM_TEMPLATES.map((t) => ({ ...t, orgId: null, archivedAt: null })));
   sentMail.length = 0;
+  sentSms.length = 0;
   objects.clear();
   mailControl.failFor.clear();
   clearOrgAccessCache();

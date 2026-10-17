@@ -25,6 +25,14 @@ vi.mock('../src/infra/mailer', async () => {
   };
 });
 
+vi.mock('../src/infra/sms', async () => {
+  const { sentSms } = await import('./state');
+  return {
+    sms: { send: async (m: { to: string; text: string }) => void sentSms.push(m) },
+    fitSms: (t: string) => (t.length <= 160 ? t : `${t.slice(0, 157)}...`),
+  };
+});
+
 vi.mock('../src/infra/r2', async () => {
   const { objects } = await import('./state');
   return {

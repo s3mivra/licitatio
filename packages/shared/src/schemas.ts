@@ -65,7 +65,10 @@ export const patchOrgBody = z.object({
   profile: profileBody.optional(),
 }).strict();
 export const inviteBody = z.object({ email, role: z.enum(['admin', 'editor', 'viewer']) }).strict();
-export const patchMemberBody = z.object({ role: z.enum(ORG_ROLES).optional(), emailDigest: z.boolean().optional() }).strict();
+export const patchMemberBody = z.object({ role: z.enum(ORG_ROLES).optional(), emailDigest: z.boolean().optional(), smsReminders: z.boolean().optional() }).strict();
+/** Philippine mobile numbers: 09XXXXXXXXX, 639XXXXXXXXX or +639XXXXXXXXX, stored as 639XXXXXXXXX. */
+export const phMobile = z.string().trim().transform((v) => v.replace(/[\s-]/g, '')).refine((v) => /^(\+?63|0)9\d{9}$/.test(v), 'Enter a Philippine mobile number such as 0917 123 4567').transform((v) => `63${v.slice(-10)}`);
+export const patchMeBody = z.object({ name: text(120).optional(), phone: z.union([phMobile, z.literal('')]).optional() }).strict();
 export const staffGrantBody = z.object({ staffEmail: email, days: z.number().int().min(1).max(90).default(30), note: optText(300) }).strict();
 
 // ---------- files ----------

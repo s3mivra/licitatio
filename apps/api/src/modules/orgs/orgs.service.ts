@@ -92,7 +92,7 @@ export async function listMembers(access: OrgAccess): Promise<{ members: MemberD
       const u = byId.get(String(m.userId));
       return {
         id: String(m._id), userId: String(m.userId), name: u?.name ?? '', email: u?.email ?? '',
-        role: m.role, emailDigest: m.emailDigest, createdAt: m.createdAt.toISOString(),
+        role: m.role, emailDigest: m.emailDigest, smsReminders: m.smsReminders ?? false, createdAt: m.createdAt.toISOString(),
       };
     }),
     invites: invites.map((i) => ({ id: String(i._id), email: i.email, role: i.role ?? 'viewer', expiresAt: i.expiresAt.toISOString(), createdAt: i.createdAt.toISOString() })),
@@ -149,7 +149,7 @@ export async function patchMember(access: OrgAccess, memberId: string, body: z.i
   const target = await orgs.getMember(access.orgId, memberId);
   const isSelf = String(target.userId) === access.userId;
   const roleChange = body.role !== undefined && body.role !== target.role;
-  if (!isSelf && body.emailDigest !== undefined) throw new AppError(403, 'forbidden', 'Members set their own email preference');
+  if (!isSelf && (body.emailDigest !== undefined || body.smsReminders !== undefined)) throw new AppError(403, 'forbidden', 'Members set their own reminder preferences');
   if (roleChange) {
     if (access.via === 'staff_grant') throw new AppError(403, 'staff_forbidden', 'Not permitted for staff access');
     if (access.role !== 'owner' && access.role !== 'admin') throw new AppError(403, 'forbidden', 'Insufficient role');
@@ -159,7 +159,7 @@ export async function patchMember(access: OrgAccess, memberId: string, body: z.i
     if (roleChange && target.role === 'owner' && (await orgs.countOwners(access.orgId, session)) <= 1) {
       throw new AppError(409, 'last_owner', 'The organization needs at least one owner');
     }
-    const m = await orgs.updateMember(access.orgId, memberId, { ...(body.role ? { role: body.role } : {}), ...(body.emailDigest !== undefined ? { emailDigest: body.emailDigest } : {}) }, session);
+    const m = await orgs.updateMember(access.orgId, memberId, { ...(body.role ? { role: body.role } : {}), ...(body.emailDigest !== undefined ? { emailDigest: body.emailDigest } : {}), ...(body.smsReminders !== undefined ? { smsReminders: body.smsReminders } : {}) }, session);
     if (roleChange) {
       await recordAudit({ orgId: access.orgId, actor: { userId: access.userId, via: viaOf(access) }, action: 'org.member.role_change', entityType: 'org', entityId: memberId, ip, meta: { from: target.role, to: body.role } }, session);
     } else {
@@ -169,7 +169,7 @@ export async function patchMember(access: OrgAccess, memberId: string, body: z.i
   });
   invalidateOrgAccess(String(target.userId), access.orgId);
   const user = await findUserById(String(updated.userId));
-  return { id: String(updated._id), userId: String(updated.userId), name: user?.name ?? '', email: user?.email ?? '', role: updated.role, emailDigest: updated.emailDigest, createdAt: updated.createdAt.toISOString() };
+  return { id: String(updated._id), userId: String(updated.userId), name: user?.name ?? '', email: user?.email ?? '', role: updated.role, emailDigest: updated.emailDigest, smsReminders: updated.smsReminders ?? false, createdAt: updated.createdAt.toISOString() };
 }
 
 /** Removal (or leaving, when the target is the caller) sets status revoked. */

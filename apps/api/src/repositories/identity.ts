@@ -57,6 +57,16 @@ export async function setTotp(userId: unknown, totp: { secretEnc: string; enable
   await UserModel.updateOne({ _id: userId }, totp ? { $set: { totp } } : { $unset: { totp: 1 } });
 }
 
+export async function updateProfile(userId: string, set: { name?: string; phone?: string | null }): Promise<User | null> {
+  const update: Record<string, unknown> = { $inc: { rev: 1 } };
+  const $set: Record<string, unknown> = {};
+  if (set.name !== undefined) $set.name = set.name;
+  if (set.phone) $set.phone = set.phone;
+  if (Object.keys($set).length > 0) update.$set = $set;
+  if (set.phone === null) update.$unset = { phone: 1 };
+  return UserModel.findByIdAndUpdate(userId, update, { new: true }).lean<User>();
+}
+
 export async function bumpTokenVersion(userId: unknown): Promise<void> {
   await UserModel.updateOne({ _id: userId }, { $inc: { tokenVersion: 1 } });
 }

@@ -10,11 +10,15 @@ export interface UserDto {
   email: string;
   name: string;
   platformRole: PlatformRole;
+  phone?: string;
 }
 export interface MembershipDto {
   orgId: string;
   orgName: string;
   role: OrgRole;
+  membershipId?: string;
+  emailDigest?: boolean;
+  smsReminders?: boolean;
 }
 export interface StaffGrantSummaryDto {
   id: string;
@@ -58,6 +62,7 @@ export interface MemberDto {
   email: string;
   role: OrgRole;
   emailDigest: boolean;
+  smsReminders: boolean;
   createdAt: string;
 }
 export interface InviteDto {

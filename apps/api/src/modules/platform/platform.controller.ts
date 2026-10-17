@@ -1,10 +1,10 @@
 import { createHash } from 'node:crypto';
 import type { Request, Response } from 'express';
 import type { MeDto } from '@licitatio/shared';
-import { adminOrgsQuery, planStatus, setPlanBody } from '@licitatio/shared';
+import { adminOrgsQuery, patchMeBody, planStatus, setPlanBody } from '@licitatio/shared';
 import { env } from '../../config/env';
 import { recordAudit } from '../../repositories/audit';
-import { findUserById } from '../../repositories/identity';
+import { findUserById, updateProfile } from '../../repositories/identity';
 import { searchOrganizations, setPlan } from '../../repositories/orgs';
 import { pingDb, withTransaction } from '../../repositories/tx';
 import { safeEqualHex } from '../../shared/crypto';
@@ -23,6 +23,15 @@ export async function me(req: Request, res: Response): Promise<void> {
     staffGrants: platformRole === 'none' ? [] : await staffOrgs(userId),
   };
   res.json({ data: body });
+}
+
+export async function patchMe(req: Request, res: Response): Promise<void> {
+  const { userId } = authUser(req);
+  const body = patchMeBody.parse(req.body);
+  const user = await updateProfile(userId, { name: body.name, phone: body.phone === '' ? null : body.phone });
+  if (!user) throw new AppError(401, 'unauthenticated', 'Invalid or expired token');
+  await recordAudit({ orgId: null, actor: { userId, via: 'user' }, action: 'auth.profile_update', entityType: 'auth', entityId: userId, ip: req.ip, meta: { fields: Object.keys(body) } });
+  res.json({ data: toUserDto(user) });
 }
 
 export async function staffOrgList(req: Request, res: Response): Promise<void> {

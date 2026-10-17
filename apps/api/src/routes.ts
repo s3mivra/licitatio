@@ -33,6 +33,7 @@ apiRouter.post('/internal/jobs/tick', async (req, res) => {
 });
 
 apiRouter.get('/me', authenticate, platform.me);
+apiRouter.patch('/me', authenticate, platform.patchMe);
 apiRouter.get('/staff/orgs', authenticate, requirePlatformRole('staff'), platform.staffOrgList);
 apiRouter.get('/admin/orgs', authenticate, requirePlatformRole('admin'), platform.adminOrgs);
 apiRouter.post('/admin/orgs/:orgId/plan', authenticate, requirePlatformRole('admin'), platform.adminSetPlan);

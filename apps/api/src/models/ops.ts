@@ -16,6 +16,7 @@ const notificationSchema = new Schema(
     dedupeKey: { type: String, required: true },
     readAt: { type: Date, default: null },
     emailedAt: { type: Date, default: null },
+    smsAt: { type: Date, default: null },
     rev,
   },
   baseSchemaOptions,

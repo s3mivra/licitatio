@@ -1,10 +1,9 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { AuditEntryDto, CursorPage, MemberDto, OrganizationDto, StaffGrantDto } from '@licitatio/shared';
+import type { AuditEntryDto, CursorPage, MeDto, OrganizationDto, StaffGrantDto, UserDto } from '@licitatio/shared';
 import { PLANS } from '@licitatio/shared';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ApiError, api } from '../../lib/api';
-import { useAuth } from '../../lib/auth';
 import { formatBytes, formatDate, formatDateTime } from '../../lib/format';
 import { applyServerErrors } from '../../lib/forms';
 import { can, keys, useOrg, useOrgId } from '../../lib/queries';
@@ -79,10 +78,11 @@ export function StaffAccessSettings() {
 export function NotificationSettings() {
   const orgId = useOrgId();
   const org = useOrg();
-  const { user } = useAuth();
   const qc = useQueryClient();
   const admin = can(org.data, 'admin', { staff: false });
-  const members = useQuery({ queryKey: keys.members(orgId), queryFn: () => api.get<{ data: { members: MemberDto[] } }>(`/orgs/${orgId}/members`).then((r) => r.data), enabled: org.data?.access.via === 'membership' && admin });
+  const meQ = useQuery({ queryKey: ['me'], queryFn: () => api.get<{ data: MeDto }>('/me').then((r) => r.data) });
+  const [phone, setPhone] = useState<string | null>(null);
+  const [phoneMsg, setPhoneMsg] = useState<{ tone: 'success' | 'error'; text: string } | null>(null);
   const [message, setMessage] = useState<{ tone: 'success' | 'error'; text: string } | null>(null);
   const form = useForm<{ thresholds: string; reminderEmailsEnabled: boolean; recipients: string; requireApproval: boolean }>();
   useEffect(() => {
@@ -106,11 +106,17 @@ export function NotificationSettings() {
       setMessage({ tone: 'error', text: err instanceof ApiError && err.code === 'validation_failed' ? 'Check the highlighted fields.' : (err as Error).message });
     },
   });
-  const self = members.data?.members.find((m) => m.userId === user?.id);
-  const digest = useMutation({
-    mutationFn: (on: boolean) => api.patch(`/orgs/${orgId}/members/${self?.id ?? ''}`, { emailDigest: on }),
-    onSettled: () => qc.invalidateQueries({ queryKey: keys.members(orgId) }),
+  const self = meQ.data?.memberships.find((m) => m.orgId === orgId);
+  const pref = useMutation({
+    mutationFn: (body: { emailDigest?: boolean; smsReminders?: boolean }) => api.patch(`/orgs/${orgId}/members/${self?.membershipId ?? ''}`, body),
+    onSettled: () => qc.invalidateQueries({ queryKey: ['me'] }),
   });
+  const savePhone = useMutation({
+    mutationFn: (value: string) => api.patch<{ data: UserDto }>('/me', { phone: value }),
+    onSuccess: () => { setPhoneMsg({ tone: 'success', text: 'Mobile number saved.' }); setPhone(null); void qc.invalidateQueries({ queryKey: ['me'] }); },
+    onError: (e) => setPhoneMsg({ tone: 'error', text: e instanceof ApiError ? (e.fieldErrors[0]?.message ?? e.message) : 'Could not save' }),
+  });
+  const savedPhone = meQ.data?.user.phone ? `0${meQ.data.user.phone.slice(2)}` : '';
 
   if (!org.data) return <Skeleton className="h-40 w-full" />;
   return (
@@ -126,11 +132,18 @@ export function NotificationSettings() {
         {message && <Alert tone={message.tone}>{message.text}</Alert>}
         {admin && <div className="flex justify-end"><Button type="submit" busy={save.isPending}>Save</Button></div>}
       </form>
-      {self && (
-        <section className="card p-5">
-          <h2 className="mb-3 font-medium">Your email digest</h2>
-          <Checkbox label="Email me the daily digest" checked={self.emailDigest} disabled={digest.isPending} onChange={(e) => digest.mutate(e.target.checked)} />
-          {digest.error && <div className="mt-3"><ErrorAlert error={digest.error} /></div>}
+      {self?.membershipId && (
+        <section className="card space-y-4 p-5">
+          <h2 className="font-medium">Your reminders</h2>
+          <Checkbox label="Email me the daily digest" checked={self.emailDigest ?? true} disabled={pref.isPending} onChange={(e) => pref.mutate({ emailDigest: e.target.checked })} />
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+            <div className="flex-1"><TextInput label="Mobile number" inputMode="tel" placeholder="0917 123 4567" value={phone ?? savedPhone} onChange={(e) => { setPhone(e.target.value); setPhoneMsg(null); }} /></div>
+            <Button variant="secondary" disabled={phone === null} busy={savePhone.isPending} onClick={() => savePhone.mutate(phone ?? '')}>Save number</Button>
+          </div>
+          {phoneMsg && <Alert tone={phoneMsg.tone}>{phoneMsg.text}</Alert>}
+          <Checkbox label="Text me about urgent items" description="One SMS a day when documents expire, deadlines are close or a ready bid gains blockers." checked={self.smsReminders ?? false} disabled={pref.isPending || !savedPhone} onChange={(e) => pref.mutate({ smsReminders: e.target.checked })} />
+          {!savedPhone && <p className="text-xs text-slate-500">Save a mobile number to turn on SMS.</p>}
+          {pref.error && <ErrorAlert error={pref.error} />}
         </section>
       )}
     </div>

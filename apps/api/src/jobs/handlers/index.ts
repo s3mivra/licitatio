@@ -8,6 +8,7 @@ import { sendDigest } from './digest';
 import { exportPacket } from './exportPacket';
 import { exportProposal } from './exportProposal';
 import { scanDeadlines } from './scanDeadlines';
+import { sendSmsDigest } from './smsDigest';
 import { scanExpiry } from './scanExpiry';
 
 export const handlers: Partial<Record<JobType, JobHandler>> = {
@@ -21,7 +22,10 @@ export const handlers: Partial<Record<JobType, JobHandler>> = {
   },
   'email.send': async (job) => {
     if (job.payload.kind !== 'digest') throw new Error(`Unknown email job ${String(job.payload.kind)}`);
+    // SMS first: it is idempotent per notification, and an email failure must not skip texts
+    const smsResult = await sendSmsDigest(new Date()).catch((err: unknown) => { logger.error({ err }, 'sms digest failed'); return null; });
     await sendDigest(new Date(), job._id);
+    if (smsResult === null) throw new Error('SMS digest failed; retrying');
   },
   'cleanup.files': async () => {
     const result = await cleanupFiles(new Date());

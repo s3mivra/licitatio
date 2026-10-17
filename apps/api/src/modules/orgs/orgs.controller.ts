@@ -38,7 +38,7 @@ export async function patchMember(req: Request, res: Response): Promise<void> {
   if (await isReadOnly(access.orgId)) {
     // read-only orgs only accept the caller's own emailDigest toggle
     const target = await getMember(access.orgId, memberId);
-    const onlyDigest = Object.keys(body).every((k) => k === 'emailDigest');
+    const onlyDigest = Object.keys(body).every((k) => k === 'emailDigest' || k === 'smsReminders');
     if (!onlyDigest || String(target.userId) !== access.userId) throw planExpiredError();
   }
   res.json({ data: await svc.patchMember(access, memberId, body, req.ip) });

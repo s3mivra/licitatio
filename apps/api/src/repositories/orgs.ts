@@ -101,7 +101,7 @@ export async function getMember(orgId: string, membershipId: string): Promise<Me
   return m;
 }
 
-export async function updateMember(orgId: string, membershipId: string, set: Partial<Pick<Membership, 'role' | 'emailDigest' | 'status'>>, session?: ClientSession): Promise<Membership> {
+export async function updateMember(orgId: string, membershipId: string, set: Partial<Pick<Membership, 'role' | 'emailDigest' | 'smsReminders' | 'status'>>, session?: ClientSession): Promise<Membership> {
   const m = await MembershipModel.findOneAndUpdate(
     { _id: toOid(membershipId), orgId: toOid(orgId), status: 'active' },
     { $set: set, $inc: { rev: 1 } },

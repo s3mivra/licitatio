@@ -32,7 +32,7 @@ export interface SessionResult extends SessionDto {
   refreshExpiresAt: Date;
 }
 
-type UserLike = Pick<User, '_id' | 'email' | 'name' | 'tokenVersion' | 'platformRole'>;
+type UserLike = Pick<User, '_id' | 'email' | 'name' | 'tokenVersion' | 'platformRole'> & { phone?: string };
 
 export const hashPassword = (password: string): Promise<string> => argon2.hash(password, ARGON);
 
@@ -64,14 +64,17 @@ export function verifyAccessToken(token: string): { userId: string; tv: number }
 }
 
 export const toUserDto = (user: UserLike): SessionDto['user'] => ({
-  id: String(user._id), email: user.email, name: user.name, platformRole: user.platformRole,
+  id: String(user._id), email: user.email, name: user.name, platformRole: user.platformRole, ...(user.phone ? { phone: user.phone } : {}),
 });
 
 export async function membershipsFor(userId: string): Promise<MembershipDto[]> {
   const memberships = await listUserMemberships(userId);
   const orgs = await findOrganizationsByIds(memberships.map((m) => m.orgId));
   const names = new Map(orgs.map((o) => [String(o._id), o.name]));
-  return memberships.map((m) => ({ orgId: String(m.orgId), orgName: names.get(String(m.orgId)) ?? '', role: m.role }));
+  return memberships.map((m) => ({
+    orgId: String(m.orgId), orgName: names.get(String(m.orgId)) ?? '', role: m.role,
+    membershipId: String(m._id), emailDigest: m.emailDigest, smsReminders: m.smsReminders ?? false,
+  }));
 }
 
 export async function issueSession(user: UserLike, meta: SessionMeta, familyId: string = randomUUID()): Promise<SessionResult> {
