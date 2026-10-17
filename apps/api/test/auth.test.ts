@@ -194,7 +194,7 @@ describe('error payload', () => {
   it('returns /me with memberships', async () => {
     const a = await registerAndLogin(app, 'a@example.com');
     const res = await request(app).get('/api/v1/me').set('Authorization', `Bearer ${a.token}`).expect(200);
-    expect(res.body.data.memberships).toEqual([{ orgId: a.orgId, orgName: 'Org a@example.com', role: 'owner' }]);
+    expect(res.body.data.memberships).toEqual([expect.objectContaining({ orgId: a.orgId, orgName: 'Org a@example.com', role: 'owner', emailDigest: true, smsReminders: false })]);
     await api(app, a).get('').expect(200);
   });
 });
