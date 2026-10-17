@@ -23,6 +23,10 @@ const schema = z
     RESEND_API_KEY: z.string().optional(),
     MAIL_FROM: z.string().min(3).default('Licitatio <no-reply@example.com>'),
     FONT_DIR: z.string().optional(),
+    // memory is correct for one instance; mongo shares counters across instances
+    RATE_LIMIT_STORE: z.enum(['memory', 'mongo']).default('memory'),
+    SENTRY_DSN: z.string().url().optional(),
+    SENTRY_ENVIRONMENT: z.string().optional(),
   })
   .superRefine((v, ctx) => {
     if (v.MAIL_PROVIDER === 'resend' && !v.RESEND_API_KEY) {

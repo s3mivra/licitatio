@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -91,6 +92,10 @@ function App() {
 }
 
 registerSW({ immediate: true });
+
+// Off unless VITE_SENTRY_DSN is set. No replays, no default PII; add the ingest host to the CSP connect-src.
+const sentryDsn = import.meta.env.VITE_SENTRY_DSN as string | undefined;
+if (sentryDsn) Sentry.init({ dsn: sentryDsn, sendDefaultPii: false, tracesSampleRate: 0 });
 
 const root = document.getElementById('root');
 if (!root) throw new Error('missing #root');

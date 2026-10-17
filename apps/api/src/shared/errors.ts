@@ -1,6 +1,7 @@
 import type { ErrorRequestHandler } from 'express';
 import { ZodError } from 'zod';
 import type { ErrorPayload } from '@licitatio/shared';
+import { captureError } from '../infra/monitoring';
 import { logger } from './logger';
 
 export type { ErrorPayload };
@@ -95,6 +96,7 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
     message = 'A record with these values already exists';
   } else {
     logger.error({ err, requestId }, 'unhandled error');
+    captureError(err, { requestId });
   }
   if (status === 429 && err instanceof AppError && typeof (err.details as { retryAfter?: number })?.retryAfter === 'number') {
     res.setHeader('Retry-After', String((err.details as { retryAfter: number }).retryAfter));

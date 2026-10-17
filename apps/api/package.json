@@ -23,6 +23,7 @@
     "@aws-sdk/client-s3": "^3.716.0",
     "@aws-sdk/s3-request-presigner": "^3.716.0",
     "@licitatio/shared": "0.1.0",
+    "@sentry/node": "^8.47.0",
     "argon2": "^0.41.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",

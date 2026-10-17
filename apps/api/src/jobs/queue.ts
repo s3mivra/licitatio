@@ -1,5 +1,6 @@
 import type { Job } from '@licitatio/shared';
 import { JobModel } from '../models';
+import { captureError } from '../infra/monitoring';
 import { logger } from '../shared/logger';
 
 export type JobType = Job['type'];
@@ -118,6 +119,7 @@ export class JobRunner {
         await JobModel.updateOne({ _id: job._id }, { $set: { status: 'queued', lockedUntil: null, runAt, lastError: message } });
       } else {
         await JobModel.updateOne({ _id: job._id }, { $set: { status: 'failed', lockedUntil: null, lastError: message, finishedAt: new Date() } });
+        captureError(err, { jobId: String(job._id) });
         await this.failureHooks[job.type]?.(job, err).catch((hookErr: unknown) => logger.error({ hookErr }, 'failure hook error'));
       }
     }

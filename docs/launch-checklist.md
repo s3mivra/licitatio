@@ -34,6 +34,8 @@ automated test in `apps/api/test` or `apps/api/src/**/*.test.ts` that runs in CI
 - [ ] DNS: `app.<domain>` and `api.<domain>` under one registrable domain; set `COOKIE_DOMAIN`.
 - [ ] Mail: `MAIL_FROM` on a verified sender domain with SPF, DKIM and DMARC; `MAIL_PROVIDER=resend`.
 - [ ] Uptime check on `/api/v1/healthz` every 5 minutes with email alerts.
+- [ ] Optional error monitoring: set `SENTRY_DSN` (API) and `VITE_SENTRY_DSN` (web), and add the Sentry ingest host to the CSP `connect-src`.
+- [ ] Before running more than one API instance: set `RATE_LIMIT_STORE=mongo`.
 - [ ] Nightly backup workflow secrets set (`.github/workflows/backup.yml`) and one successful run.
 - [ ] Restore drill done and recorded (`docs/restore-drill.md`).
 - [ ] Create staff and admin users with `npm run create-staff -- <email> [--admin]`; each enrolls TOTP.

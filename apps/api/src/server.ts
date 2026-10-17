@@ -4,9 +4,11 @@ import { env } from './config/env';
 import { failureHooks, handlers } from './jobs/handlers';
 import { JobRunner, setActiveRunner } from './jobs/queue';
 import { schedulerTick } from './jobs/scheduler';
+import { initMonitoring } from './infra/monitoring';
 import { logger } from './shared/logger';
 
 async function main(): Promise<void> {
+  initMonitoring();
   mongoose.set('strictQuery', true);
   await mongoose.connect(env.MONGODB_URI, {
     maxPoolSize: 10,
