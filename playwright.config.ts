@@ -15,5 +15,6 @@ export default defineConfig({
     trace: 'retain-on-failure',
     acceptDownloads: true,
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  // PW_CHANNEL=msedge (or chrome) uses an installed browser instead of the downloaded Chromium
+  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'], ...(process.env.PW_CHANNEL ? { channel: process.env.PW_CHANNEL } : {}) } }],
 });

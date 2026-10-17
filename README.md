@@ -66,7 +66,7 @@ npm run lint
 npm test -w @licitatio/shared
 npm run test:coverage -w @licitatio/api   # mongodb-memory-server replica set, fake R2 and mailer
 npm run build
-npx playwright test                       # e2e smoke against the running dev stack (or E2E_BASE_URL)
+npx playwright test                       # e2e smoke against the running dev stack (or E2E_BASE_URL); PW_CHANNEL=msedge uses installed Edge
 ```
 
 ## Where this departs from the spec

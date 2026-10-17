@@ -58,6 +58,7 @@ repeat once on the staging instance (512 MB) with real scans, which are larger t
 
 `e2e/smoke.spec.ts` (Playwright) covers register, login, upload, bid, packet, export and download. Run it against staging
 before each release: `E2E_BASE_URL=https://app.<domain> E2E_EMAIL=... E2E_PASSWORD=... npx playwright test`.
+Passed locally on 2026-10-17 against the dev stack (Edge, `PW_CHANNEL=msedge`).
 
 ## Accessibility pass
 
