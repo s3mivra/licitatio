@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* global fetch, AbortSignal, setTimeout */
 /**
  * One command to try Licitatio locally:  node scripts/start-local.mjs   (or: npm start, or double-click start-licitatio.cmd)
  *
