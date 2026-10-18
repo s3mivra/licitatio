@@ -61,5 +61,13 @@ export function applyItemAction(item: PacketItem, action: PacketItemAction, ctx:
     case 'set_notes':
       next.notes = action.notes;
       return { ok: true, item: next };
+    case 'set_submission':
+      next.submission = { ...item.submission, copy: action.copy, notarized: action.notarized };
+      return { ok: true, item: next };
+    case 'set_packed':
+      next.submission = action.packed
+        ? { ...item.submission, packedAt: ctx.now, packedBy: ctx.userId }
+        : { ...item.submission, packedAt: undefined, packedBy: undefined };
+      return { ok: true, item: next };
   }
 }

@@ -9,6 +9,7 @@ import { applyItemAction } from '../../domain/packetActions';
 import type { PacketEvaluation } from '../../domain/packetEvaluation';
 import { pickVaultMatch } from '../../domain/packetEvaluation';
 import { ScheduleEmptyError, SCHEDULE_TITLES, buildSchedule } from '../../domain/proposal/schedules';
+import { buildSubmissionChecklist } from '../../domain/submissionChecklist';
 import { renderProposalPdf } from '../../infra/pdf/renderPdf';
 import { retireGeneratedFile, storeGeneratedFile } from '../../jobs/exports/storeFile';
 import { recordAudit } from '../../repositories/audit';
@@ -61,6 +62,9 @@ async function toPacketDto(access: OrgAccess, p: BidPacket): Promise<BidPacketDt
       fileName: i.fileId ? files.get(String(i.fileId))?.originalName : undefined,
       includeInExport: i.includeInExport,
       manual: { state: i.manual.state, reason: i.manual.reason, setBy: i.manual.setBy ? String(i.manual.setBy) : undefined, setAt: iso(i.manual.setAt) },
+      submission: i.submission && (i.submission.copy || i.submission.notarized || i.submission.packedAt)
+        ? { copy: i.submission.copy, notarized: i.submission.notarized, packedAt: iso(i.submission.packedAt) }
+        : undefined,
     })),
     createdAt: iso(p.createdAt) ?? '', updatedAt: iso(p.updatedAt) ?? '',
   };
@@ -160,9 +164,22 @@ export async function updateItem(access: OrgAccess, opportunityId: string, itemI
   });
   if (!result.ok) throw new AppError(result.status, result.code as 'not_found', result.message);
   const items = packet.items.map((i) => (String(i._id) === itemId ? result.item : i));
-  const saved = await repo.saveItems(String(packet._id), items, action.rev);
+  const packing = action.action === 'set_packed' || action.action === 'set_submission';
+  const saved = await repo.saveItems(String(packet._id), items, action.rev, { keepApproval: packing });
   await recordAudit({ orgId: access.orgId, actor: actor(access), action: 'packet.item_update', entityType: 'packet', entityId: String(packet._id), ip, meta: { itemId, action: action.action } });
   return respond(access, saved, opportunityId);
+}
+
+/** Envelope labels and a packing checklist as a PDF, stored like other generated files. */
+export async function submissionChecklist(access: OrgAccess, opportunityId: string, ip?: string): Promise<{ fileId: string }> {
+  const packet = await new PacketRepo(access.orgId).getByOpportunity(opportunityId);
+  const data = await loadResolveData(access.orgId, opportunityId);
+  if (!data.opportunity) throw new AppError(404, 'not_found', 'Resource not found');
+  const doc = buildSubmissionChecklist({ bidder: data.org.profile.legalName || data.org.name, opportunity: data.opportunity, packet, now: new Date() });
+  const bytes = await renderProposalPdf(doc, new Map());
+  const fileId = await storeGeneratedFile({ orgId: access.orgId, userId: access.userId, originalName: 'submission-checklist.pdf', mime: 'application/pdf', bytes, area: 'files' });
+  await recordAudit({ orgId: access.orgId, actor: actor(access), action: 'packet.checklist', entityType: 'packet', entityId: String(packet._id), ip });
+  return { fileId };
 }
 
 /** Only items a user added (custom) can be deleted; template items can be waived instead. */
@@ -190,7 +207,7 @@ export async function generateItem(access: OrgAccess, opportunityId: string, ite
   try {
     schedule = buildSchedule(item.generator, data);
   } catch (err) {
-    if (err instanceof ScheduleEmptyError) throw new AppError(422, 'schedule_empty', `There are no records for the ${SCHEDULE_TITLES[item.generator].toLowerCase()}`);
+    if (err instanceof ScheduleEmptyError) throw new AppError(422, 'schedule_empty', item.generator === 'nfcc' ? err.message : `There are no records for the ${SCHEDULE_TITLES[item.generator].toLowerCase()}`);
     throw err;
   }
   const bytes = await renderProposalPdf(schedule, new Map());

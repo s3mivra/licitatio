@@ -70,3 +70,7 @@ export async function packetExports(req: Request, res: Response): Promise<void> 
 export async function getExportRecord(req: Request, res: Response): Promise<void> {
   res.json({ data: await getExport(orgAccess(req).orgId, param(req, 'id')) });
 }
+
+export async function checklist(req: Request, res: Response): Promise<void> {
+  res.json({ data: await svc.submissionChecklist(orgAccess(req), param(req, 'id'), req.ip) });
+}

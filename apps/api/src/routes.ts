@@ -72,6 +72,7 @@ org.post('/document-types', editor, vault.createDocType);
 org.get('/vault/summary', viewer, vault.summary);
 org.get('/vault/documents', viewer, vault.list);
 org.post('/vault/documents', editor, vault.create);
+org.post('/vault/scan', editor, aiLimiter, vault.scan);
 org.get('/vault/documents/:id', viewer, vault.get);
 org.patch('/vault/documents/:id', editor, vault.patch);
 org.post('/vault/documents/:id/versions', editor, vault.addVersion);
@@ -106,6 +107,7 @@ org.post('/opportunities/:id/packet/items', editor, packets.addItem);
 org.patch('/opportunities/:id/packet/items/:itemId', editor, packets.updateItem); // waiving a mandatory item needs admin (domain rule)
 org.delete('/opportunities/:id/packet/items/:itemId', editor, packets.deleteItem);
 org.post('/opportunities/:id/packet/items/:itemId/generate', editor, packets.generate);
+org.post('/opportunities/:id/packet/checklist', editor, packets.checklist);
 org.post('/opportunities/:id/packet/export', editor, exportLimiter, packets.exportPacket);
 org.get('/opportunities/:id/packet/exports', viewer, packets.packetExports);
 org.get('/exports/:id', viewer, packets.getExportRecord);

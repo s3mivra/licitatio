@@ -63,6 +63,17 @@ const profileSchema = new Schema(
     signatory: {
       type: new Schema({ name: { type: String, maxlength: 120 }, position: { type: String, maxlength: 120 } }, { _id: false }),
     },
+    financials: {
+      type: new Schema(
+        {
+          fiscalYear: { type: Number, min: 1990, max: 2100 },
+          currentAssets: { type: Number, min: 0, validate: Number.isInteger },
+          currentLiabilities: { type: Number, min: 0, validate: Number.isInteger },
+          otherCommitments: { type: Number, min: 0, validate: Number.isInteger },
+        },
+        { _id: false },
+      ),
+    },
     narrative: {
       type: new Schema(
         {

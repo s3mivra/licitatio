@@ -40,6 +40,11 @@ automated test in `apps/api/test` or `apps/api/src/**/*.test.ts` that runs in CI
       PayMongo's current API reference, then make one real test-mode payment end to end.
 - [ ] SMS reminders: create a Semaphore account, set `SMS_PROVIDER=semaphore`, `SEMAPHORE_API_KEY` and an approved
       `SEMAPHORE_SENDER_NAME`.
+- [ ] Civil engineer: confirm the NFCC formula (K = 15), what counts as outstanding works, and the 2% and 5% bid security
+      rates against the current procurement rules (`packages/shared/src/nfcc.ts`), and the two-envelope label wording
+      (`apps/api/src/domain/submissionChecklist.ts`).
+- [ ] Optional AI scan reading uses the same switch as AI drafting; the privacy notice must say that scans are sent to
+      Anthropic when a user presses "Read details from the scan".
 - [ ] Optional AI drafting: set `AI_DRAFTING=on` and `ANTHROPIC_API_KEY`, add a line on AI use to the privacy notice
       (company profile, registers and bid details are sent to Anthropic; the TIN and contact details are not), and try
       one draft per section kind.

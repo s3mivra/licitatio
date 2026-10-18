@@ -54,9 +54,9 @@ export class PacketRepo extends OrgRepo<BidPacket> {
   }
 
   /** Read-modify-write on the item list, guarded by rev. */
-  async saveItems(id: string, items: PacketItem[], rev: number): Promise<BidPacket> {
-    // any change to the packet invalidates an earlier approval
-    return (await this.updateById(id, { $set: { items, approval: null } }, rev)).toObject() as BidPacket;
+  async saveItems(id: string, items: PacketItem[], rev: number, opts: { keepApproval?: boolean } = {}): Promise<BidPacket> {
+    // any change to the packet invalidates an earlier approval, except packing progress
+    return (await this.updateById(id, { $set: opts.keepApproval ? { items } : { items, approval: null } }, rev)).toObject() as BidPacket;
   }
 
   async setApproval(id: string, rev: number, approval: BidPacket['approval']): Promise<BidPacket> {

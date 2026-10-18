@@ -4,7 +4,7 @@ import { PCAB_CATEGORIES } from './constants';
 import { MAX_FILE_BYTES } from './constants';
 import { isValidDateOnly } from './dates';
 import {
-  DOC_CATEGORIES, FILE_MIMES, FULFILLMENTS, GENERATORS, OPPORTUNITY_STATUSES, ORG_ROLES, ORG_TYPES, PACKET_STAGES,
+  DOC_CATEGORIES, FILE_MIMES, FULFILLMENTS, GENERATORS, OPPORTUNITY_STATUSES, ORG_ROLES, ORG_TYPES, PACKET_STAGES, SUBMISSION_COPIES,
   TASK_STATUSES, TEMPLATE_MODES,
 } from './domain';
 
@@ -49,6 +49,12 @@ export const profileBody = z.object({
     pcabClassifications: z.array(text(60)).max(10).optional(),
   }).strict(),
   signatory: z.object({ name: text(120), position: text(120) }).strict().optional(),
+  financials: z.object({
+    fiscalYear: z.number().int().min(1990).max(2100).optional(),
+    currentAssets: z.number().int().min(0).max(10_000_000_000_000).optional(),
+    currentLiabilities: z.number().int().min(0).max(10_000_000_000_000).optional(),
+    otherCommitments: z.number().int().min(0).max(10_000_000_000_000).optional(),
+  }).strict().optional(),
   narrative: z.object({
     about: optText(4000), qualityPolicy: optText(4000), safetyPolicy: optText(4000), environmentalPolicy: optText(4000),
   }).strict(),
@@ -110,6 +116,7 @@ export const experienceBody = z.object({
   name: text(200), clientName: text(200), clientType: z.enum(['government', 'private']), location: text(200),
   category: text(60), role: z.enum(['main', 'subcontractor', 'joint_venture']), contractAmount: centavos,
   startDate: dateOnly.optional(), completionDate: dateOnly.optional(), status: z.enum(['ongoing', 'completed']),
+  percentComplete: z.number().int().min(0).max(100).optional(),
   scopeSummary: optText(2000), completionCertFileId: objectId.optional(), photoFileIds: z.array(objectId).max(6),
 }).strict().refine((v) => v.status !== 'completed' || !!v.completionDate, { path: ['completionDate'], message: 'Required when completed' })
   .refine((v) => !v.startDate || !v.completionDate || v.completionDate >= v.startDate, { path: ['completionDate'], message: 'Must not precede start date' });
@@ -158,6 +165,8 @@ export const patchPacketItemBody = z.discriminatedUnion('action', [
   z.object({ action: z.literal('clear_manual'), rev }).strict(),
   z.object({ action: z.literal('set_export'), rev, include: z.boolean() }).strict(),
   z.object({ action: z.literal('set_notes'), rev, notes: z.string().trim().max(1000) }).strict(),
+  z.object({ action: z.literal('set_submission'), rev, copy: z.enum(SUBMISSION_COPIES).optional(), notarized: z.boolean().optional() }).strict(),
+  z.object({ action: z.literal('set_packed'), rev, packed: z.boolean() }).strict(),
 ]);
 export type PacketItemAction = z.infer<typeof patchPacketItemBody>;
 
@@ -270,6 +279,7 @@ export const patchProposalBody = z.object({
   opportunityId: objectId.nullable().optional(),
 }).strict();
 export const exportProposalBody = z.object({ format: z.enum(['pdf', 'docx']), allowUnresolved: z.boolean().optional() }).strict();
+export const scanDocumentBody = z.object({ fileId: objectId }).strict();
 export const aiDraftBody = z.object({
   kind: z.enum(['company_background', 'method_statement', 'quality_safety', 'custom']),
   instructions: optText(1000),

@@ -267,6 +267,8 @@ footer.doc { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--li
         <li><div>Upload the file. PDF, PNG, JPG and Word (DOCX) files up to 15 MB are accepted.</div></li>
         <li><div>Enter the issue and expiry dates exactly as printed. Reminders depend on the expiry date being right.</div></li>
       </ol>
+      <h3>Reading details from a scan</h3>
+      <p>When AI features are turned on for your workspace, choose the file and then <span class="ui">Read details from the scan</span>. Licitatio reads the document type, reference number, issue date and expiry date from a PDF or photo and fills the form. Always check every detail against the paper before saving: a blurry photo can be misread, and anything Licitatio is unsure of is left blank. The scan is sent to our AI provider only when you press the button.</p>
       <h3>Document types included</h3>
       <p>The vault comes with the documents most invitations to bid ask for, grouped by category: PhilGEPS registration certificate, DTI business name, SEC or CDA registration, Mayor's or business permit, PCAB contractor's license, BIR certificate of registration, tax clearance, income tax return, audited financial statements, NFCC computation, organizational chart, and more.</p>
       <h3>Status of a document</h3>
@@ -285,7 +287,7 @@ footer.doc { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--li
       <div class="tablebox"><table>
         <thead><tr><th>Register</th><th>What to record</th><th>Generates</th></tr></thead>
         <tbody>
-          <tr><td>Experience</td><td>Project name, client, location, contract amount, start and completion dates, status (ongoing or completed), category</td><td>Statements of completed and ongoing contracts</td></tr>
+          <tr><td>Experience</td><td>Project name, client, location, contract amount, start and completion dates, status (ongoing or completed), percent complete for ongoing projects, category</td><td>Statements of completed and ongoing contracts, and the outstanding works in the NFCC</td></tr>
           <tr><td>Personnel</td><td>Name, position, profession, PRC license number and expiry, years of experience, key personnel flag, résumé</td><td>List of key personnel</td></tr>
           <tr><td>Equipment</td><td>Equipment name, make and model, quantity, capacity, ownership (owned, leased or under purchase)</td><td>List of equipment</td></tr>
         </tbody>
@@ -347,7 +349,7 @@ footer.doc { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--li
         <tbody>
           <tr><td>From the vault</td><td>Uses a document from your vault. It must still be valid on the submission date, with any minimum validity the template asks for.</td></tr>
           <tr><td>Upload</td><td>A file made for this bid only, such as a signed bid form or a bid security.</td></tr>
-          <tr><td>Generated</td><td>A schedule Licitatio builds from your registers: completed projects, ongoing projects, key personnel or equipment.</td></tr>
+          <tr><td>Generated</td><td>A schedule Licitatio builds from your records: completed projects, ongoing projects, key personnel, equipment, or the NFCC computation.</td></tr>
           <tr><td>External</td><td>Something handled outside the app, such as a notarized affidavit that is still at the notary.</td></tr>
         </tbody>
       </table></div>
@@ -363,6 +365,19 @@ footer.doc { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--li
         <li><strong>Mark pending outside</strong> for items being handled outside the app, such as at the notary.</li>
         <li><strong>Notes</strong> keep remarks like "original at the office".</li>
       </ul>
+      <h3>Financial capacity (NFCC) and bid security</h3>
+      <p>Public infrastructure bids ask for your Net Financial Contracting Capacity. Licitatio computes it on the bid's <span class="ui">Overview</span> as soon as the bid has an approved budget and your company profile has its financial figures:</p>
+      <div class="note"><b>Formula</b><p>NFCC = (current assets minus current liabilities) x 15, minus the outstanding works on your ongoing contracts and awarded contracts not yet started.</p></div>
+      <ol class="steps">
+        <li><div>In <span class="ui">Settings</span>, <span class="ui">Company profile</span>, fill <span class="ui">Financial figures</span> from your latest audited financial statements.</div></li>
+        <li><div>In <span class="ui">Experience</span>, give each ongoing project its percent complete. A project without one counts at its full contract amount.</div></li>
+        <li><div>Open the bid. The <span class="ui">Financial capacity</span> card shows your NFCC, whether it covers the approved budget, any shortfall, and the bid security to prepare: 2% of the budget in cash or a bank guarantee, or 5% as a surety bond.</div></li>
+        <li><div>In the packet, generate the <span class="ui">NFCC computation</span> item to print the form with your figures.</div></li>
+      </ol>
+      <p>The factor of 15 and the 2% and 5% rates are the common defaults. Always confirm them against the bid documents of each project.</p>
+      <h3>Submission checklist and envelope labels</h3>
+      <p>On submission day, choose <span class="ui">Submission checklist</span> in the packet. Tick each item as it goes into the envelope, set whether it is an original, a certified true copy or a photocopy, and mark notarized papers. It works on a phone, so you can tick items off at the office or at the BAC.</p>
+      <p><span class="ui">Print checklist and envelope labels</span> makes a PDF with a label for the first envelope (eligibility and technical documents) and the second envelope (financial proposal), each with the contract name, reference number, procuring entity, your company and the opening date, followed by the packing checklist. Packing progress never clears a client approval. Follow any marking rules in the bid documents; they take precedence.</p>
       <h3>Client approval</h3>
       <p>If <span class="ui">Require approval before export</span> is turned on in settings, an owner or admin must approve the packet before a final export. Any later change to the packet clears the approval. Without approval, exports are marked "DRAFT: awaiting client approval".</p>
       <h3>Exporting</h3>

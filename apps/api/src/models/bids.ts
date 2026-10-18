@@ -26,6 +26,12 @@ const packetItemSchema = new Schema(
       setBy: oid('User', false),
       setAt: { type: Date },
     },
+    submission: {
+      copy: { type: String, enum: ['original', 'certified_copy', 'photocopy'] },
+      notarized: { type: Boolean },
+      packedAt: { type: Date },
+      packedBy: oid('User', false),
+    },
   },
   { _id: true },
 );

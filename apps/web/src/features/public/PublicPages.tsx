@@ -170,6 +170,9 @@ const FEATURES = [
   { tag: 'Proposals', dot: 'bg-brand-600', title: 'Proposals without starting over', body: 'Reuse saved text, fill in company details automatically and draft sections with AI.' },
   { tag: 'Tracker', dot: 'bg-orange-500', title: 'Every deadline in view', body: 'All bids on one board with countdowns, reminders and assigned tasks.' },
   { tag: 'Analytics', dot: 'bg-violet-500', title: 'Learn from every result', body: 'Record the winning bid and see your win rate and how close your pricing was.' },
+  { tag: 'NFCC', dot: 'bg-emerald-600', title: 'Know if you can bid before you start', body: 'Licitatio computes your NFCC against the approved budget, shows the bid security to prepare and prints the NFCC form for the packet.' },
+  { tag: 'Scan', dot: 'bg-pink-500', title: 'Snap a permit, skip the typing', body: 'Take a photo or upload a PDF. AI reads the type, number and dates and fills the form for you to check.' },
+  { tag: 'Submission', dot: 'bg-amber-600', title: 'Pack the envelopes without panic', body: 'Tick items off on your phone, note originals, certified copies and notarized papers, and print envelope labels.' },
   { tag: 'Local', dot: 'bg-sky-500', title: 'Built for the Philippines', body: 'PhilGEPS and DPWH-style requirements, PCAB categories, GCash, SMS and Filipino.' },
 ];
 
@@ -199,6 +202,9 @@ const FEED = [
   { title: 'Packet ready: Road concreting', sub: '6 of 6 requirements met', dot: 'bg-emerald-400 text-ink', icon: '✓' },
   { title: 'Bid due Friday, 10:00 AM', sub: 'DPWH Rizal 1st DEO', dot: 'bg-brand-600 text-white', icon: '•' },
   { title: 'PCAB license renewed', sub: 'New version saved to the vault', dot: 'bg-sky-400 text-ink', icon: '↻' },
+  { title: 'NFCC check passed: Road widening', sub: 'PHP 85M capacity vs PHP 50M budget', dot: 'bg-emerald-400 text-ink', icon: '₱' },
+  { title: 'Scanned: Mayor\'s permit 2026', sub: 'Number and expiry filled in', dot: 'bg-pink-400 text-ink', icon: '⌁' },
+  { title: 'Envelope 1 packed', sub: '14 of 14 items ticked', dot: 'bg-amber-400 text-ink', icon: '✉' },
   { title: 'Proposal exported', sub: 'Technical proposal.docx', dot: 'bg-violet-400 text-ink', icon: '↓' },
   { title: 'Bid awarded: School building', sub: 'Outcome recorded', dot: 'bg-orange-500 text-white', icon: '★' },
 ];

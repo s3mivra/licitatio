@@ -1,9 +1,13 @@
 import type { Request, Response } from 'express';
 import {
-  addVaultVersionBody, createDocTypeBody, createVaultDocBody, patchVaultDocBody, vaultListQuery,
-} from '@licitatio/shared';
+  addVaultVersionBody, createDocTypeBody, createVaultDocBody, patchVaultDocBody, scanDocumentBody, vaultListQuery } from '@licitatio/shared';
 import { orgAccess, param } from '../../shared/validate';
+import * as scanSvc from './scan.service';
 import * as svc from './vault.service';
+
+export async function scan(req: Request, res: Response): Promise<void> {
+  res.json({ data: await scanSvc.scanDocument(orgAccess(req), scanDocumentBody.parse(req.body).fileId, req.ip) });
+}
 
 export async function listDocTypes(req: Request, res: Response): Promise<void> {
   res.json({ data: await svc.listDocTypes(orgAccess(req)) });

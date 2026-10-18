@@ -113,6 +113,7 @@ const projectSchema = new Schema(
     startDate: { type: String, match: DATE_ONLY_RE },
     completionDate: { type: String, match: DATE_ONLY_RE },
     status: { type: String, enum: ['ongoing', 'completed'], required: true },
+    percentComplete: { type: Number, min: 0, max: 100, validate: Number.isInteger },
     scopeSummary: { type: String, maxlength: 2000 },
     completionCertFileId: oid('FileObject', false),
     photoFileIds: { type: [{ type: Schema.Types.ObjectId, ref: 'FileObject' }], default: [], validate: (v: unknown[]) => v.length <= 6 },

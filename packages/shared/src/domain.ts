@@ -9,6 +9,8 @@ export const OPPORTUNITY_STATUSES = [
   'identified', 'evaluating', 'preparing', 'ready', 'submitted', 'opened', 'awarded', 'lost', 'no_bid', 'cancelled',
 ] as const;
 export const PACKET_STAGES = ['eligibility', 'technical', 'financial', 'post_qualification', 'other'] as const;
+export const SUBMISSION_COPIES = ['original', 'certified_copy', 'photocopy'] as const;
+export type SubmissionCopy = (typeof SUBMISSION_COPIES)[number];
 export const FULFILLMENTS = ['vault', 'upload', 'generated', 'external'] as const;
 export const MANUAL_STATES = ['none', 'waived', 'pending_external'] as const;
 export const ITEM_STATUSES = [
@@ -16,7 +18,7 @@ export const ITEM_STATUSES = [
 ] as const;
 export const TASK_STATUSES = ['todo', 'doing', 'blocked', 'done'] as const;
 export const TEMPLATE_MODES = ['public_bidding', 'small_value', 'private_bid', 'custom'] as const;
-export const GENERATORS = ['completed_projects', 'ongoing_projects', 'personnel_list', 'equipment_list'] as const;
+export const GENERATORS = ['completed_projects', 'ongoing_projects', 'personnel_list', 'equipment_list', 'nfcc'] as const;
 export const DOC_CATEGORIES = [
   'registration', 'license', 'tax', 'financial', 'experience', 'personnel', 'form', 'other',
 ] as const;
@@ -84,6 +86,13 @@ export interface CompanyProfile {
     pcabClassifications?: string[]; // max 10, each max 60
   };
   signatory?: { name: string; position: string };
+  /** from the latest audited financial statements; used for the NFCC computation */
+  financials?: {
+    fiscalYear?: number;
+    currentAssets?: Centavos;
+    currentLiabilities?: Centavos;
+    otherCommitments?: Centavos; // awarded but not started, declared by the bidder
+  };
   narrative: {
     about?: string; // max 4000
     qualityPolicy?: string;
@@ -214,6 +223,7 @@ export interface ExperienceProject extends TenantBase {
   startDate?: DateOnly;
   completionDate?: DateOnly;
   status: 'ongoing' | 'completed';
+  percentComplete?: number; // 0..100, ongoing contracts only; feeds the NFCC
   scopeSummary?: string;
   completionCertFileId?: ObjectIdString;
   photoFileIds: ObjectIdString[];
@@ -301,6 +311,8 @@ export interface PacketItem {
   fileId?: ObjectIdString;
   includeInExport: boolean;
   manual: { state: ManualState; reason?: string; setBy?: ObjectIdString; setAt?: Date };
+  /** how the item goes into the envelope, and whether it is packed; does not affect readiness or approval */
+  submission?: { copy?: SubmissionCopy; notarized?: boolean; packedAt?: Date; packedBy?: ObjectIdString };
 }
 export interface BidPacket extends TenantBase {
   opportunityId: ObjectIdString;

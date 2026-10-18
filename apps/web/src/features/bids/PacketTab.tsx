@@ -3,6 +3,7 @@ import type {
   ExportDto, ItemEvaluationDto, OffsetPage, OpportunityDto, PacketItemDto, PacketResponseDto, PacketStage, RequirementTemplateDto, VaultDocumentDto,
 } from '@licitatio/shared';
 import { useRef, useState } from 'react';
+import { SubmissionChecklist } from './SubmissionChecklist';
 import { Link, useNavigate } from 'react-router-dom';
 import { ApiError, api, request } from '../../lib/api';
 import { formatDateOnly, formatDateTime } from '../../lib/format';
@@ -203,6 +204,7 @@ export function PacketTab({ bid }: { bid: OpportunityDto }) {
     enabled: Boolean(q.data),
   });
   const [adding, setAdding] = useState(false);
+  const [packing, setPacking] = useState(false);
   const [error, setError] = useState<unknown>(null);
   const idem = useNewKey();
   const set = (d: PacketResponseDto) => { qc.setQueryData(key, d); setError(null); };
@@ -256,6 +258,7 @@ export function PacketTab({ bid }: { bid: OpportunityDto }) {
         <div className="flex flex-wrap gap-2">
           {canEdit && <Button variant="secondary" busy={refresh.isPending} onClick={() => refresh.mutate()}>Match vault documents</Button>}
           {canEdit && <Button variant="secondary" onClick={() => setAdding(true)}>Add requirement</Button>}
+          <Button variant="secondary" onClick={() => setPacking(true)}>Submission checklist</Button>
           {canEdit && <Button busy={exportPdf.isPending} onClick={() => exportPdf.mutate()}>{ready ? 'Export packet PDF' : 'Export draft PDF'}</Button>}
         </div>
       </section>
@@ -301,6 +304,8 @@ export function PacketTab({ bid }: { bid: OpportunityDto }) {
         </section>
       )}
       <AddItemDialog open={adding} onClose={() => setAdding(false)} onAdd={(b) => addItem.mutate(b)} />
+      {q.data && <SubmissionChecklist open={packing} onClose={() => setPacking(false)} oppId={bid.id} items={q.data.packet.items} canEdit={canEdit} busy={act.isPending}
+        act={(itemId, body) => act.mutate({ itemId, body })} />}
     </div>
   );
 }

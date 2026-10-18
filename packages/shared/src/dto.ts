@@ -223,6 +223,7 @@ export interface PacketItemDto {
   fileName?: string;
   includeInExport: boolean;
   manual: { state: import('./domain').ManualState; reason?: string; setBy?: string; setAt?: string };
+  submission?: { copy?: import('./domain').SubmissionCopy; notarized?: boolean; packedAt?: string };
 }
 export interface ItemEvaluationDto {
   itemId: string;
@@ -345,4 +346,13 @@ export interface PaymentDto {
   status: 'pending' | 'paid' | 'expired';
   paidAt?: string;
   createdAt: string;
+}
+
+/** Suggested vault form values read from a scan; every field is optional and must be reviewed. */
+export interface DocumentScanDto {
+  docTypeCode?: string;
+  title?: string;
+  referenceNumber?: string;
+  issuedAt?: string;
+  expiresAt?: string;
 }

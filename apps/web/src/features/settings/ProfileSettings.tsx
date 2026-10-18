@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { CompanyProfile, OrganizationDto } from '@licitatio/shared';
-import { PCAB_CATEGORIES } from '@licitatio/shared';
+import { PCAB_CATEGORIES, formatCentavos, toCentavos } from '@licitatio/shared';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ApiError, api } from '../../lib/api';
@@ -14,10 +14,18 @@ interface Values {
   phone: string; email: string; website: string; yearEstablished: string;
   tin: string; philgepsNo: string; dtiSecCdaNo: string; pcabLicenseNo: string; pcabCategory: string; pcabClassifications: string;
   signatoryName: string; signatoryPosition: string;
+  fiscalYear: string; currentAssets: string; currentLiabilities: string; otherCommitments: string;
   about: string; qualityPolicy: string; safetyPolicy: string; environmentalPolicy: string;
 }
 
 const opt = (v: string): string | undefined => (v.trim() === '' ? undefined : v.trim());
+const money = (v: number | undefined): string => (v === undefined ? '' : formatCentavos(v));
+/** blank means not set; text that does not parse becomes NaN so the server rejects it with a field error */
+const toAmount = (v: string): number | undefined => {
+  if (v.trim() === '') return undefined;
+  try { return toCentavosAllowZero(v); } catch { return Number.NaN; }
+};
+const toCentavosAllowZero = (v: string): number => (/^\s*0+(\.0+)?\s*$/.test(v) ? 0 : toCentavos(v));
 
 function toValues(p: CompanyProfile): Values {
   return {
@@ -26,6 +34,8 @@ function toValues(p: CompanyProfile): Values {
     tin: p.registrations?.tin ?? '', philgepsNo: p.registrations?.philgepsNo ?? '', dtiSecCdaNo: p.registrations?.dtiSecCdaNo ?? '', pcabLicenseNo: p.registrations?.pcabLicenseNo ?? '',
     pcabCategory: p.registrations?.pcabCategory ?? '', pcabClassifications: (p.registrations?.pcabClassifications ?? []).join(', '),
     signatoryName: p.signatory?.name ?? '', signatoryPosition: p.signatory?.position ?? '',
+    fiscalYear: p.financials?.fiscalYear ? String(p.financials.fiscalYear) : '',
+    currentAssets: money(p.financials?.currentAssets), currentLiabilities: money(p.financials?.currentLiabilities), otherCommitments: money(p.financials?.otherCommitments),
     about: p.narrative?.about ?? '', qualityPolicy: p.narrative?.qualityPolicy ?? '', safetyPolicy: p.narrative?.safetyPolicy ?? '', environmentalPolicy: p.narrative?.environmentalPolicy ?? '',
   };
 }
@@ -42,6 +52,9 @@ function toProfile(v: Values): Record<string, unknown> {
       pcabClassifications: classifications.length > 0 ? classifications : undefined,
     },
     signatory,
+    financials: [v.fiscalYear, v.currentAssets, v.currentLiabilities, v.otherCommitments].some((x) => x.trim() !== '')
+      ? { fiscalYear: v.fiscalYear ? Number(v.fiscalYear) : undefined, currentAssets: toAmount(v.currentAssets), currentLiabilities: toAmount(v.currentLiabilities), otherCommitments: toAmount(v.otherCommitments) }
+      : undefined,
     narrative: { about: opt(v.about), qualityPolicy: opt(v.qualityPolicy), safetyPolicy: opt(v.safetyPolicy), environmentalPolicy: opt(v.environmentalPolicy) },
   };
 }
@@ -53,6 +66,7 @@ const PATH_MAP: Record<string, keyof Values> = {
   'registrations.tin': 'tin', 'registrations.philgepsNo': 'philgepsNo', 'registrations.dtiSecCdaNo': 'dtiSecCdaNo', 'registrations.pcabLicenseNo': 'pcabLicenseNo',
   'registrations.pcabCategory': 'pcabCategory', 'registrations.pcabClassifications': 'pcabClassifications',
   'signatory.name': 'signatoryName', 'signatory.position': 'signatoryPosition',
+  'financials.fiscalYear': 'fiscalYear', 'financials.currentAssets': 'currentAssets', 'financials.currentLiabilities': 'currentLiabilities', 'financials.otherCommitments': 'otherCommitments',
   'narrative.about': 'about', 'narrative.qualityPolicy': 'qualityPolicy', 'narrative.safetyPolicy': 'safetyPolicy', 'narrative.environmentalPolicy': 'environmentalPolicy',
 };
 
@@ -132,6 +146,12 @@ export function ProfileSettings() {
         <Section title="Authorized signatory">
           <TextInput label="Full name" {...register('signatoryName')} error={errors.signatoryName?.message} />
           <TextInput label="Position" {...register('signatoryPosition')} error={errors.signatoryPosition?.message} />
+        </Section>
+        <Section title="Financial figures (for the NFCC)">
+          <TextInput label="Fiscal year" inputMode="numeric" placeholder="2025" hint="Of your latest audited financial statements" {...register('fiscalYear')} error={errors.fiscalYear?.message} />
+          <TextInput label="Current assets (PHP)" inputMode="decimal" placeholder="10,000,000.00" {...register('currentAssets')} error={errors.currentAssets?.message} />
+          <TextInput label="Current liabilities (PHP)" inputMode="decimal" placeholder="4,000,000.00" {...register('currentLiabilities')} error={errors.currentLiabilities?.message} />
+          <TextInput label="Awarded contracts not yet started (PHP)" inputMode="decimal" hint="Optional. Ongoing contracts come from Experience" {...register('otherCommitments')} error={errors.otherCommitments?.message} />
         </Section>
         <fieldset className="card space-y-4 p-5">
           <h2 className="font-medium">Narrative</h2>

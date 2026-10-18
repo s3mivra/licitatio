@@ -10,6 +10,7 @@ import { Alert, Button, Checkbox, Dialog, ErrorState, Skeleton, TextArea, TextIn
 import { BidForm } from './BidForm';
 import { ProposalsPage } from '../proposals/ProposalPages';
 import { TaskBoard } from '../tasks/TaskBoard';
+import { CapacityCard } from './CapacityCard';
 import { PacketTab } from './PacketTab';
 import { DeadlineChip, NEXT, STATUS_LABEL, StatusChip } from './common';
 
@@ -146,6 +147,7 @@ export function BidDetail() {
               <Row label="Link" value={b.url ? <a href={b.url} target="_blank" rel="noopener noreferrer" className="text-brand-700 underline">Open notice</a> : ''} />
             </dl>
           </section>
+          <CapacityCard bid={b} />
           {b.decision && (
             <section className="card p-4"><h2 className="mb-2 font-medium">Decision</h2>
               <p className="text-sm"><span className="font-medium">{b.decision.goNoGo === 'go' ? 'Go' : 'No-go'}</span> · {formatDateTime(b.decision.decidedAt)}</p>

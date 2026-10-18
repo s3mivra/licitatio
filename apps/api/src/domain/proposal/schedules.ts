@@ -1,5 +1,5 @@
 import type { GeneratorCode } from '@licitatio/shared';
-import { addMonths, formatCentavos } from '@licitatio/shared';
+import { addMonths, computeNfcc, formatCentavos } from '@licitatio/shared';
 import { expandDataTable } from './resolve';
 import type { ResolveData, ResolvedNode, ResolvedProposal } from './resolve';
 
@@ -11,13 +11,14 @@ export const SCHEDULE_TITLES: Record<GeneratorCode, string> = {
   ongoing_projects: 'Statement of ongoing contracts',
   personnel_list: 'List of key personnel',
   equipment_list: 'List of equipment',
+  nfcc: 'Computation of net financial contracting capacity',
 };
 
 const para = (text: string, bold = false): ResolvedNode => ({ type: 'paragraph', runs: [{ text, bold }] });
 
 export class ScheduleEmptyError extends Error {
-  constructor() {
-    super('No records to list');
+  constructor(message = 'No records to list') {
+    super(message);
     this.name = 'ScheduleEmptyError';
   }
 }
@@ -47,6 +48,35 @@ export function buildSchedule(code: GeneratorCode, data: ResolveData): ResolvedP
     const table = expandDataTable({ type: 'dataTable', source: 'personnel', limit: 50, filter: 'key' }, data);
     if (table.rows.length === 0) throw new ScheduleEmptyError();
     nodes.push(table);
+  } else if (code === 'nfcc') {
+    const f = data.org.profile.financials;
+    if (f?.currentAssets === undefined || f.currentLiabilities === undefined) throw new ScheduleEmptyError('Enter current assets and current liabilities in the company profile');
+    const r = computeNfcc({
+      currentAssets: f.currentAssets, currentLiabilities: f.currentLiabilities, otherCommitments: f.otherCommitments,
+      ongoing: data.projects.filter((p) => p.status === 'ongoing').map((p) => ({ name: p.name, contractAmount: p.contractAmount, percentComplete: p.percentComplete })),
+    });
+    const php = (v: number) => `${formatCentavos(v)} PHP`;
+    nodes.push(para(`Based on the audited financial statements${f.fiscalYear ? ` for ${f.fiscalYear}` : ''}.`));
+    nodes.push({ type: 'table', header: ['Item', 'Amount'], rows: [
+      ['Current assets', php(f.currentAssets)],
+      ['Less: current liabilities', php(f.currentLiabilities)],
+      ['Net working capital', php(r.netWorkingCapital)],
+      [`Multiplied by K = ${r.k}`, php(r.capacityBeforeCommitments)],
+      ['Less: outstanding works under ongoing contracts and commitments', php(r.outstandingTotal)],
+      ['Net financial contracting capacity (NFCC)', php(r.nfcc)],
+    ] });
+    if (r.outstandingWorks.length > 0 || f.otherCommitments) {
+      nodes.push(para('Outstanding works', true));
+      nodes.push({ type: 'table', header: ['Contract', 'Value of outstanding works'], rows: [
+        ...r.outstandingWorks.map((w) => [w.name, php(w.outstanding)]),
+        ...(f.otherCommitments ? [['Awarded contracts not yet started and other commitments', php(f.otherCommitments)]] : []),
+      ] });
+    }
+    if (data.opportunity?.approvedBudget) {
+      const abc = data.opportunity.approvedBudget;
+      nodes.push(para(`Approved budget for the contract: ${php(abc)}. The NFCC is ${r.nfcc >= abc ? 'at least' : 'below'} the approved budget.`, true));
+    }
+    nodes.push(para('NFCC = (current assets minus current liabilities) x K minus the value of all outstanding works under ongoing contracts, including awarded contracts yet to be started.'));
   } else {
     const table = expandDataTable({ type: 'dataTable', source: 'equipment', limit: 50 }, data);
     if (table.rows.length === 0) throw new ScheduleEmptyError();

@@ -223,14 +223,15 @@ const projects: RegisterConfig<ExperienceProjectDto> = {
         onChange={(e) => { const c = e.target.value ? amountToCentavos(e.target.value) : Number.NaN; set('minAmount', Number.isFinite(c) ? String(c) : ''); }} />
     </>
   ),
-  defaults: { name: '', clientName: '', clientType: 'government', location: '', category: '', role: 'main', contractAmount: '', status: 'completed', startDate: '', completionDate: '', scopeSummary: '' },
+  defaults: { name: '', clientName: '', clientType: 'government', location: '', category: '', role: 'main', contractAmount: '', status: 'completed', percentComplete: '', startDate: '', completionDate: '', scopeSummary: '' },
   toValues: (p) => ({
     name: p.name, clientName: p.clientName, clientType: p.clientType, location: p.location, category: p.category, role: p.role,
-    contractAmount: formatCentavos(p.contractAmount), status: p.status, startDate: p.startDate ?? '', completionDate: p.completionDate ?? '', scopeSummary: p.scopeSummary ?? '',
+    contractAmount: formatCentavos(p.contractAmount), status: p.status, percentComplete: p.percentComplete === undefined ? '' : String(p.percentComplete), startDate: p.startDate ?? '', completionDate: p.completionDate ?? '', scopeSummary: p.scopeSummary ?? '',
   }),
   toBody: (v, files) => ({
     name: s(v.name), clientName: s(v.clientName), clientType: v.clientType, location: s(v.location), category: s(v.category), role: v.role,
-    contractAmount: amountToCentavos(String(v.contractAmount)), status: v.status, startDate: s(v.startDate),
+    contractAmount: amountToCentavos(String(v.contractAmount)), status: v.status,
+    percentComplete: v.status === 'ongoing' && String(v.percentComplete ?? '').trim() !== '' ? Number(v.percentComplete) : undefined, startDate: s(v.startDate),
     completionDate: v.status === 'completed' ? s(v.completionDate) : s(v.completionDate), scopeSummary: s(v.scopeSummary),
     completionCertFileId: files.completionCertFileId, photoFileIds: [],
   }),
@@ -247,6 +248,10 @@ const projects: RegisterConfig<ExperienceProjectDto> = {
         <TextInput label="Contract amount (PHP)" inputMode="decimal" placeholder="1,250,000.00"
           {...form.register('contractAmount', { required: 'Required', validate: (x) => (amountToCentavos(String(x)) > 0 ? true : 'Enter an amount such as 1,250,000.00') })} error={err(form, 'contractAmount')} />
         <Select label="Status" options={[{ value: 'completed', label: 'Completed' }, { value: 'ongoing', label: 'Ongoing' }]} {...form.register('status')} />
+        {form.watch('status') === 'ongoing' && (
+          <TextInput label="Percent complete" inputMode="numeric" placeholder="0 to 100" hint="Used to compute your NFCC"
+            {...form.register('percentComplete', { validate: (x) => (String(x ?? '').trim() === '' || (/^\d+$/.test(String(x)) && Number(x) <= 100) ? true : 'Enter a whole number from 0 to 100') })} error={err(form, 'percentComplete')} />
+        )}
         <TextInput label="Start date" type="date" {...form.register('startDate')} error={err(form, 'startDate')} />
         <TextInput label="Completion date" type="date" hint="Required when completed"
           {...form.register('completionDate', { validate: (x, all) => (all.status === 'completed' && !x ? 'Required when completed' : all.startDate && x && x < all.startDate ? 'Must not precede the start date' : true) })}

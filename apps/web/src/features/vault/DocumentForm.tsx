@@ -1,5 +1,5 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { DocumentTypeDto, VaultDocumentDto } from '@licitatio/shared';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { DocumentScanDto, DocumentTypeDto, FileDto, VaultDocumentDto } from '@licitatio/shared';
 import { addMonths, isValidDateOnly } from '@licitatio/shared';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -31,6 +31,10 @@ export function DocumentForm({ open, onClose, existing, onSaved }: { open: boole
   const [fileError, setFileError] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [confirmEarlier, setConfirmEarlier] = useState(false);
+  // the file is uploaded early when the user asks to read it, and that upload is reused on save
+  const [uploaded, setUploaded] = useState<FileDto | null>(null);
+  const [scanned, setScanned] = useState(false);
+  const aiOn = useQuery({ queryKey: ['org', orgId, 'ai', 'status'], queryFn: () => api.get<{ data: { enabled: boolean } }>(`/orgs/${orgId}/ai/status`).then((r) => r.data.enabled), staleTime: 300_000 });
   const form = useForm<Values>({ defaultValues: { docTypeCode: existing?.docTypeCode ?? '', title: '', referenceNumber: '', issuedAt: '', expiresAt: '', note: '' } });
   const code = form.watch('docTypeCode');
   const issuedAt = form.watch('issuedAt');
@@ -44,6 +48,8 @@ export function DocumentForm({ open, onClose, existing, onSaved }: { open: boole
       setFileError(null);
       setFormError(null);
       setConfirmEarlier(false);
+      setUploaded(null);
+      setScanned(false);
     }
   }, [open, existing, form]);
 
@@ -63,13 +69,13 @@ export function DocumentForm({ open, onClose, existing, onSaved }: { open: boole
   const save = useMutation({
     mutationFn: async (v: Values) => {
       if (!file) throw new Error('no file');
-      const uploaded = await uploadFile(orgId, file);
+      const stored = uploaded ?? (await uploadFile(orgId, file));
       const dates = { ...(v.issuedAt ? { issuedAt: v.issuedAt } : {}), ...(type?.hasExpiry ? { expiresAt: v.expiresAt || undefined } : {}) };
       if (existing) {
-        return api.post<{ data: VaultDocumentDto }>(`/orgs/${orgId}/vault/documents/${existing.id}/versions`, { fileId: uploaded.id, ...dates, ...(v.note ? { note: v.note } : {}) });
+        return api.post<{ data: VaultDocumentDto }>(`/orgs/${orgId}/vault/documents/${existing.id}/versions`, { fileId: stored.id, ...dates, ...(v.note ? { note: v.note } : {}) });
       }
       return api.post<{ data: VaultDocumentDto }>(`/orgs/${orgId}/vault/documents`, {
-        docTypeCode: v.docTypeCode, title: v.title, fileId: uploaded.id, ...(v.referenceNumber ? { referenceNumber: v.referenceNumber } : {}), ...dates,
+        docTypeCode: v.docTypeCode, title: v.title, fileId: stored.id, ...(v.referenceNumber ? { referenceNumber: v.referenceNumber } : {}), ...dates,
       });
     },
     onSuccess: (res) => {
@@ -90,7 +96,27 @@ export function DocumentForm({ open, onClose, existing, onSaved }: { open: boole
     save.mutate(v);
   });
 
-  const busy = save.isPending;
+  const scan = useMutation({
+    mutationFn: async () => {
+      if (!file) throw new Error('no file');
+      const stored = uploaded ?? (await uploadFile(orgId, file));
+      setUploaded(stored);
+      return api.post<{ data: DocumentScanDto }>(`/orgs/${orgId}/vault/scan`, { fileId: stored.id }).then((r) => r.data);
+    },
+    onSuccess: (d) => {
+      const fill = (name: keyof Values, value: string | undefined) => { if (value) form.setValue(name, value, { shouldDirty: true, shouldValidate: true }); };
+      if (!existing) {
+        fill('docTypeCode', d.docTypeCode);
+        fill('title', d.title);
+        fill('referenceNumber', d.referenceNumber);
+      }
+      fill('issuedAt', d.issuedAt);
+      fill('expiresAt', d.expiresAt);
+      setScanned(true);
+    },
+  });
+  const canScan = Boolean(aiOn.data && file && ['application/pdf', 'image/png', 'image/jpeg'].includes(file.type));
+  const busy = save.isPending || scan.isPending;
   return (
     <Dialog open={open} onClose={() => !busy && onClose()} title={existing ? `Renew: ${existing.title}` : 'Add a document'} wide
       footer={<><Button variant="secondary" onClick={onClose} disabled={busy}>Cancel</Button><Button type="submit" form="doc-form" busy={busy}>{existing ? 'Add new version' : 'Save document'}</Button></>}>
@@ -102,8 +128,16 @@ export function DocumentForm({ open, onClose, existing, onSaved }: { open: boole
         )}
         <Field label="File" htmlFor="doc-file" error={fileError ?? undefined} hint="PDF, PNG, JPEG or DOCX, up to 15 MB">
           <input id="doc-file" type="file" accept={ACCEPT} className="block w-full text-sm file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-brand-800"
-            onChange={(e) => { setFile(e.target.files?.[0] ?? null); setFileError(null); }} />
+            onChange={(e) => { setFile(e.target.files?.[0] ?? null); setFileError(null); setUploaded(null); setScanned(false); scan.reset(); }} />
         </Field>
+        {canScan && !scanned && (
+          <div className="flex flex-wrap items-center gap-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3">
+            <Button variant="secondary" busy={scan.isPending} onClick={() => scan.mutate()}>Read details from the scan</Button>
+            <p className="text-xs text-slate-500">Fills the type, reference number and dates for you to check.</p>
+          </div>
+        )}
+        {scan.error && <Alert tone="warning">{scan.error instanceof Error && 'status' in scan.error ? scan.error.message : 'Could not read the scan.'} You can fill in the details yourself.</Alert>}
+        {scanned && <Alert tone="info">Filled from the scan. Check every detail against the document before saving; scans can be misread.</Alert>}
         {!existing && (
           <div className="grid gap-4 sm:grid-cols-2">
             <TextInput label="Title" {...form.register('title', { required: 'Enter a title' })} error={form.formState.errors.title?.message} />

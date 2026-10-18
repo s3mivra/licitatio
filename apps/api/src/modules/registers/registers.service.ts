@@ -36,7 +36,7 @@ interface KindConfig {
 const KINDS: Record<RegisterKind, KindConfig> = {
   project: {
     audit: 'project',
-    optional: ['startDate', 'completionDate', 'scopeSummary', 'completionCertFileId'],
+    optional: ['startDate', 'completionDate', 'percentComplete', 'scopeSummary', 'completionCertFileId'],
     fileRefs: (b) => [
       ...(typeof b.completionCertFileId === 'string' ? [{ path: 'completionCertFileId', id: b.completionCertFileId, mimes: DOCUMENTS }] : []),
       ...((b.photoFileIds as string[] | undefined) ?? []).map((id, i) => ({ path: `photoFileIds.${i}`, id, mimes: IMAGES })),
