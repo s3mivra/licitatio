@@ -254,7 +254,7 @@ export function AuditSettings() {
         <input type="date" className="input sm:max-w-[11rem]" aria-label="To" value={filters.to} onChange={(e) => setFilters({ ...filters, to: e.target.value })} />
       </div>
       {q.isLoading ? <ListSkeleton /> : q.error ? <ErrorState error={q.error} onRetry={() => void q.refetch()} /> : rows.length === 0 ? <EmptyState title="No activity in this range" /> : (
-        <ul className="card divide-y divide-slate-100 text-sm">
+        <ul className="card overflow-hidden divide-y divide-slate-100 text-sm">
           {rows.map((r) => (
             <li key={r.id} className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-center sm:gap-4">
               <span className="w-44 shrink-0 text-slate-500">{formatDateTime(r.at)}</span>

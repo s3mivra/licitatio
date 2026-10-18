@@ -8,42 +8,58 @@ import { LanguageSwitch } from '../shell/LanguageSwitch';
 // ---------- layout ----------
 
 const LINKS = [
-  { to: '/about', label: 'About' },
+  { to: '/#features', label: 'Features' },
+  { to: '/#pricing', label: 'Pricing' },
   { to: '/gallery', label: 'Gallery' },
+  { to: '/about', label: 'About' },
   { to: '/install', label: 'Install' },
 ];
+
+const PILL_DARK = 'inline-flex items-center justify-center gap-1.5 rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-700';
+const PILL_LIGHT = 'inline-flex items-center justify-center gap-1.5 rounded-full border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-slate-400 hover:bg-slate-50';
+
+/** small monospace label: "01 / Features" */
+function Kicker({ n, children }: { n?: string; children: ReactNode }) {
+  return <p className="font-mono text-xs tracking-wide text-slate-500">{n && <>{n} / </>}{children}</p>;
+}
+
+function Logo({ small }: { small?: boolean }) {
+  return (
+    <span className="flex items-center gap-2">
+      <img src="/icon.svg" alt="" width={small ? 24 : 28} height={small ? 24 : 28} className={small ? 'h-6 w-6' : 'h-7 w-7'} />
+      <span className="font-display text-[15px] font-bold uppercase tracking-[0.14em] text-ink">Licitatio</span>
+    </span>
+  );
+}
 
 function PublicHeader() {
   const [open, setOpen] = useState(false);
   return (
-    <header className="sticky top-0 z-30 border-b-2 border-ink bg-white">
-      <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4">
-        <Link to="/" className="flex items-center gap-2" aria-label="Licitatio home">
-          <img src="/icon.svg" alt="" width={32} height={32} className="h-8 w-8" />
-          <span className="font-display text-xl font-bold tracking-tight text-ink">Licitatio</span>
-        </Link>
-        <nav className="ml-6 hidden items-center gap-1 md:flex" aria-label="Site">
+    <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur">
+      <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4 sm:px-6">
+        <Link to="/" aria-label="Licitatio home"><Logo /></Link>
+        <nav className="mx-auto hidden items-center gap-1 md:flex" aria-label="Site">
           {LINKS.map((l) => (
-            <NavLink key={l.to} to={l.to} className={({ isActive }) => cx('rounded-md px-3 py-2 text-sm font-medium', isActive ? 'bg-accent-400 text-ink ring-2 ring-ink' : 'text-slate-700 hover:bg-paper hover:text-ink')}>{l.label}</NavLink>
+            <NavLink key={l.to} to={l.to} className="rounded-md px-3 py-2 text-sm text-slate-600 transition-colors hover:text-ink">{l.label}</NavLink>
           ))}
         </nav>
-        <div className="ml-auto hidden items-center gap-2 md:flex">
-          <LanguageSwitch />
-          <Link to="/login" className="rounded-md px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100">Sign in</Link>
-          <Link to="/register" className="rounded-md press border-2 border-ink bg-accent-400 text-ink shadow-brut hover:shadow-brut-sm px-4 py-2 text-sm font-bold">Start free trial</Link>
+        <div className="hidden items-center gap-3 md:flex">
+          <span className="hidden items-center gap-1.5 text-xs text-slate-500 lg:flex"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />{TRIAL_DAYS}-day free trial</span>
+          <Link to="/login" className="text-sm font-medium text-slate-700 hover:text-ink">Sign in</Link>
+          <Link to="/register" className={cx(PILL_DARK, 'px-4 py-2')}>Start free</Link>
         </div>
-        <button type="button" className="ml-auto rounded p-2 text-slate-600 md:hidden" aria-label="Menu" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
-          <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><path d={open ? 'M6 6l12 12M18 6L6 18' : 'M4 6h16M4 12h16M4 18h16'} /></svg>
+        <button type="button" className="ml-auto rounded-md p-2 text-slate-700 md:hidden" aria-label="Menu" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
+          <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><path d={open ? 'M6 6l12 12M18 6L6 18' : 'M4 7h16M4 12h16M4 17h16'} /></svg>
         </button>
       </div>
       {open && (
-        <nav className="border-t-2 border-ink bg-white px-4 py-3 md:hidden" aria-label="Site">
-          {LINKS.map((l) => <Link key={l.to} to={l.to} className="block rounded-md px-3 py-2.5 text-base font-medium text-slate-700 hover:bg-slate-100" onClick={() => setOpen(false)}>{l.label}</Link>)}
-          <div className="mt-3 grid grid-cols-2 gap-2 border-t border-slate-100 pt-3">
-            <Link to="/login" className="rounded-md press border-2 border-ink bg-white text-ink shadow-brut hover:shadow-brut-sm px-3 py-2.5 text-center text-sm font-bold">Sign in</Link>
-            <Link to="/register" className="rounded-md press border-2 border-ink bg-accent-400 text-ink shadow-brut hover:shadow-brut-sm px-3 py-2.5 text-center text-sm font-bold">Start free trial</Link>
+        <nav className="border-t border-slate-200 bg-white px-4 pb-4 pt-2 md:hidden" aria-label="Site">
+          {LINKS.map((l) => <Link key={l.to} to={l.to} className="block border-b border-slate-100 py-3 text-base text-slate-800" onClick={() => setOpen(false)}>{l.label}</Link>)}
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <Link to="/login" className={PILL_LIGHT}>Sign in</Link>
+            <Link to="/register" className={PILL_DARK}>Start free</Link>
           </div>
-          <div className="mt-3"><LanguageSwitch /></div>
+          <div className="mt-4"><LanguageSwitch /></div>
         </nav>
       )}
     </header>
@@ -51,38 +67,45 @@ function PublicHeader() {
 }
 
 function PublicFooter() {
+  const col = (title: string, links: Array<[string, string]>) => (
+    <div>
+      <p className="font-mono text-xs text-slate-500">{title}</p>
+      <ul className="mt-4 space-y-2.5 text-sm text-slate-300">
+        {links.map(([to, label]) => <li key={label}><Link className="hover:text-white" to={to}>{label}</Link></li>)}
+      </ul>
+    </div>
+  );
   return (
-    <footer className="border-t-2 border-ink bg-white">
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-3">
+    <footer className="bg-ink text-white">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
-          <div className="flex items-center gap-2"><img src="/icon.svg" alt="" width={28} height={28} className="h-7 w-7" /><span className="font-display text-lg font-bold text-ink">Licitatio</span></div>
-          <p className="mt-3 text-sm text-slate-600">Bid readiness for Philippine contractors. A product of <span className="font-semibold text-slate-800">Semivra</span>.</p>
+          <span className="flex items-center gap-2">
+            <img src="/icon.svg" alt="" width={28} height={28} className="h-7 w-7" />
+            <span className="font-display text-[15px] font-bold uppercase tracking-[0.14em]">Licitatio</span>
+          </span>
+          <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-accent-400">Bid ready, every time</p>
+          <p className="mt-5 max-w-xs text-sm text-slate-400">Bid readiness for Philippine contractors. A product of <span className="font-semibold text-white">Semivra</span>, Angeles City, Pampanga.</p>
         </div>
-        <div>
-          <p className="text-sm font-semibold text-slate-900">Product</p>
-          <ul className="mt-3 space-y-2 text-sm text-slate-600">
-            <li><Link className="hover:text-slate-900" to="/about">About</Link></li>
-            <li><Link className="hover:text-slate-900" to="/gallery">Gallery</Link></li>
-            <li><Link className="hover:text-slate-900" to="/install">Install the app</Link></li>
-          </ul>
-        </div>
-        <div>
-          <p className="text-sm font-semibold text-slate-900">Legal</p>
-          <ul className="mt-3 space-y-2 text-sm text-slate-600">
-            <li><Link className="hover:text-slate-900" to="/privacy">Privacy policy</Link></li>
-            <li><Link className="hover:text-slate-900" to="/terms">Terms of service</Link></li>
-          </ul>
-        </div>
+        {col('Product', [['/#features', 'Features'], ['/#pricing', 'Pricing'], ['/gallery', 'Gallery'], ['/install', 'Install the app']])}
+        {col('Company', [['/about', 'About'], ['/register', 'Start a trial'], ['/login', 'Sign in']])}
+        {col('Legal', [['/privacy', 'Privacy policy'], ['/terms', 'Terms of service']])}
       </div>
-      <div className="border-t-2 border-ink bg-ink py-5 text-center text-xs font-medium text-accent-300">&copy; {new Date().getFullYear()} Semivra. All rights reserved.</div>
+      <div className="mx-auto flex max-w-6xl flex-col gap-2 border-t border-white/10 px-4 py-6 text-xs text-slate-500 sm:flex-row sm:justify-between sm:px-6">
+        <p>&copy; {new Date().getFullYear()} Semivra. All rights reserved.</p>
+        <p>Licitatio is a product of Semivra.</p>
+      </div>
     </footer>
   );
 }
 
 function PublicLayout({ children }: { children: ReactNode }) {
-  useEffect(() => { window.scrollTo(0, 0); }, []);
+  useEffect(() => {
+    const id = window.location.hash.slice(1);
+    const el = id ? document.getElementById(id) : null;
+    if (el) el.scrollIntoView(); else window.scrollTo(0, 0);
+  }, []);
   return (
-    <div className="flex min-h-screen flex-col bg-paper text-ink">
+    <div className="flex min-h-screen flex-col bg-white text-ink">
       <PublicHeader />
       <main id="main" className="flex-1">{children}</main>
       <PublicFooter />
@@ -92,11 +115,11 @@ function PublicLayout({ children }: { children: ReactNode }) {
 
 function PageIntro({ eyebrow, title, children }: { eyebrow: string; title: string; children?: ReactNode }) {
   return (
-    <section className="border-b-2 border-ink bg-paper">
-      <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:py-20">
-        <p className="inline-block rounded-md border-2 border-ink bg-accent-300 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-ink">{eyebrow}</p>
-        <h1 className="mt-5 text-4xl font-bold leading-[1.1] text-ink sm:text-5xl">{title}</h1>
-        {children && <div className="mx-auto mt-5 max-w-2xl text-base text-slate-700 sm:text-lg">{children}</div>}
+    <section className="border-b border-slate-200">
+      <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+        <Kicker>{eyebrow}</Kicker>
+        <h1 className="mt-4 max-w-3xl text-4xl font-bold leading-[1.05] tracking-tight text-ink sm:text-6xl">{title}</h1>
+        {children && <div className="mt-5 max-w-2xl text-base text-slate-600 sm:text-lg">{children}</div>}
       </div>
     </section>
   );
@@ -107,7 +130,7 @@ function PageIntro({ eyebrow, title, children }: { eyebrow: string; title: strin
 const SHOTS = [
   { src: '/gallery/dashboard.png', title: 'Dashboard', body: 'Expiring documents, next deadlines and open tasks at a glance.' },
   { src: '/gallery/bids.png', title: 'Bid tracker', body: 'Every bid on one board, from identified to awarded, with countdowns.' },
-  { src: '/gallery/packet.png', title: 'Bid packet', body: 'Requirements matched to your documents, with a readiness verdict before you export.' },
+  { src: '/gallery/packet.png', title: 'Bid packet', body: 'Requirements matched to your documents, with a readiness check before you export.' },
   { src: '/gallery/vault.png', title: 'Document vault', body: 'Permits, licenses and certificates with versions and expiry alerts.' },
   { src: '/gallery/proposal.png', title: 'Proposal builder', body: 'Sections, reusable text and your company details filled in for you.' },
   { src: '/gallery/outcomes.png', title: 'Outcomes', body: 'Win rate, winning bids and how close your pricing was.' },
@@ -115,9 +138,9 @@ const SHOTS = [
 
 function Shot({ src, title, priority }: { src: string; title: string; priority?: boolean }) {
   return (
-    <div className="overflow-hidden rounded-xl border-2 border-ink bg-white shadow-brut">
-      <div className="flex items-center gap-1.5 border-b-2 border-ink bg-white px-3 py-2" aria-hidden>
-        <span className="h-2.5 w-2.5 rounded-full bg-slate-300" /><span className="h-2.5 w-2.5 rounded-full bg-slate-300" /><span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 shadow-[0_20px_50px_-20px_rgba(11,16,32,0.25)]">
+      <div className="flex items-center gap-1.5 border-b border-slate-200 bg-white px-3 py-2.5" aria-hidden>
+        <span className="h-2.5 w-2.5 rounded-full bg-slate-200" /><span className="h-2.5 w-2.5 rounded-full bg-slate-200" /><span className="h-2.5 w-2.5 rounded-full bg-slate-200" />
       </div>
       <img src={src} alt={`Screenshot: ${title}`} width={1280} height={800} loading={priority ? 'eager' : 'lazy'} decoding="async" className="block aspect-[16/10] w-full object-cover object-top" />
     </div>
@@ -126,112 +149,183 @@ function Shot({ src, title, priority }: { src: string; title: string; priority?:
 
 // ---------- landing ----------
 
+const BAND = [
+  { label: 'Document vault', note: 'Expiry alerts', cls: 'bg-emerald-400 text-ink' },
+  { label: 'Bid packets', note: 'One indexed PDF', cls: 'bg-accent-400 text-ink' },
+  { label: 'Proposals', note: 'Word or PDF', cls: 'bg-brand-600 text-white' },
+  { label: 'Outcomes', note: 'Win rate', cls: 'bg-orange-500 text-white' },
+];
+
 const FEATURES = [
-  { title: 'No more paper disqualifications', body: 'Every permit and certificate is tracked. You get email and SMS warnings weeks before anything expires, and each packet is checked against the requirements before you submit.', icon: 'M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7zM9 12l2 2 4-4' },
-  { title: 'Bid packets in hours', body: 'Pick a template. Licitatio finds the matching documents, fills in your project, personnel and equipment schedules, and exports one indexed PDF.', icon: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6' },
-  { title: 'Proposals without starting over', body: 'Reuse saved text, let your company details fill themselves in, and draft sections with AI. Export to Word or PDF.', icon: 'M4 20h4L19 9l-4-4L4 16zM13 7l4 4' },
-  { title: 'Every deadline in view', body: 'All bids on one board with countdowns, reminders and assigned tasks, so nothing slips.', icon: 'M8 2v4M16 2v4M3 9h18M5 5h14v16H5z' },
-  { title: 'Learn from every result', body: 'Record the winning bid and see your win rate and how far your pricing was from the winner.', icon: 'M4 20V10M10 20V4M16 20v-7M22 20H2' },
-  { title: 'Built for the Philippines', body: 'PhilGEPS and DPWH-style requirements, PCAB categories, GCash payments, SMS reminders and Filipino.', icon: 'M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11zM12 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4' },
+  { tag: 'Vault', dot: 'bg-emerald-500', title: 'No more paper disqualifications', body: 'Every permit and certificate is tracked, with email and SMS warnings weeks before anything expires.' },
+  { tag: 'Packets', dot: 'bg-accent-500', title: 'Bid packets in hours', body: 'Pick a template. Licitatio matches your documents, fills the schedules and exports one indexed PDF.' },
+  { tag: 'Proposals', dot: 'bg-brand-600', title: 'Proposals without starting over', body: 'Reuse saved text, fill in company details automatically and draft sections with AI.' },
+  { tag: 'Tracker', dot: 'bg-orange-500', title: 'Every deadline in view', body: 'All bids on one board with countdowns, reminders and assigned tasks.' },
+  { tag: 'Analytics', dot: 'bg-violet-500', title: 'Learn from every result', body: 'Record the winning bid and see your win rate and how close your pricing was.' },
+  { tag: 'Local', dot: 'bg-sky-500', title: 'Built for the Philippines', body: 'PhilGEPS and DPWH-style requirements, PCAB categories, GCash, SMS and Filipino.' },
 ];
 
 const STEPS = [
-  { n: '1', title: 'Upload your documents once', body: 'Permits, licenses, financial statements and your company profile.' },
-  { n: '2', title: 'Add a bid', body: 'Enter the reference number and deadline, then choose a requirement template.' },
-  { n: '3', title: 'Fix what is flagged', body: 'Missing or expiring items show up in red before the deadline, not after.' },
-  { n: '4', title: 'Export and submit', body: 'One indexed PDF packet and your proposal, ready to print or upload.' },
+  { title: 'Upload your documents once', body: 'Permits, licenses, financial statements and your company profile.', time: 'About 1 hour', bar: 'bg-emerald-400' },
+  { title: 'Add a bid', body: 'Enter the reference number and deadline, then pick a requirement template.', time: '5 minutes', bar: 'bg-accent-400' },
+  { title: 'Fix what is flagged', body: 'Missing or expiring items show up before the deadline, not after.', time: 'As needed', bar: 'bg-brand-600' },
+  { title: 'Export and submit', body: 'One indexed PDF packet and your proposal, ready to print or upload.', time: 'One click', bar: 'bg-orange-500' },
 ];
 
 const PRICING: Array<{ code: 'starter' | 'pro' | 'desk'; name: string; for: string; points: string[]; featured?: boolean }> = [
   { code: 'starter', name: 'Starter', for: 'Small teams starting out', points: ['3 users', '1 GB storage', '10 active bids', '20 packet exports a month'] },
-  { code: 'pro', name: 'Pro', for: 'Contractors who bid every month', points: ['10 users', '5 GB storage', 'Unlimited bids', 'Proposal builder', '100 exports a month'], featured: true },
-  { code: 'desk', name: 'Desk', for: 'Let our team prepare packets for you', points: ['15 users', '10 GB storage', 'Unlimited exports', 'Semivra staff prepare bids with you'] },
+  { code: 'pro', name: 'Pro', for: 'Contractors who bid every month', points: ['10 users', '5 GB storage', 'Unlimited bids', 'Proposal builder and AI drafting', '100 exports a month'], featured: true },
+  { code: 'desk', name: 'Desk', for: 'Our team prepares packets with you', points: ['15 users', '10 GB storage', 'Unlimited exports', 'Semivra staff prepare bids with you'] },
 ];
 
-function Icon({ d }: { d: string }) {
-  return <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d={d} /></svg>;
-}
+const FAQ = [
+  { q: 'Does Licitatio submit bids for us?', a: 'No. Licitatio prepares and checks your packet and proposal. Your team reviews every export and submits it.' },
+  { q: 'Can we pay with GCash?', a: 'Yes. Plans can be paid online with GCash, Maya, GrabPay or card, or by bank transfer.' },
+  { q: 'Does it work on a phone?', a: 'Yes. It works in any modern browser and can be installed on Android, iPhone and computers.' },
+  { q: 'Who owns our documents?', a: 'You do. You can export everything at any time, and each company\'s data is kept separate from every other company.' },
+  { q: 'What happens when the trial ends?', a: `After ${TRIAL_DAYS} days, choose a plan to keep editing. Nothing is deleted, and you can still view and download your documents.` },
+];
+
+const NOTIFS = [
+  { title: 'Mayor\'s permit expires in 18 days', sub: 'SMS and email reminder sent', when: 'now', dot: 'bg-accent-400', icon: '!' },
+  { title: 'Packet ready: Road concreting', sub: '6 of 6 requirements met', when: '2h ago', dot: 'bg-emerald-400', icon: '✓' },
+  { title: 'Bid due Friday, 10:00 AM', sub: 'DPWH Rizal 1st DEO', when: '1d ago', dot: 'bg-brand-600', icon: '•' },
+];
 
 export function Landing() {
   const hero = SHOTS[0];
   return (
     <PublicLayout>
-      <section className="relative overflow-hidden border-b-2 border-ink bg-paper">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 sm:py-20 lg:grid-cols-2">
-          <div>
-            <p className="inline-flex rounded-md border-2 border-ink bg-accent-300 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-ink">For Philippine contractors</p>
-            <h1 className="mt-5 text-4xl font-bold leading-[1.08] text-ink sm:text-[3.25rem]">Never lose a bid to a missing permit again.</h1>
-            <p className="mt-6 text-lg font-medium text-slate-700">Licitatio keeps your documents, track record and bids in one place, warns you before anything expires, and builds your bid packet and proposal in hours instead of days.</p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link to="/register" className="rounded-lg press border-2 border-ink bg-ink text-accent-300 shadow-brut hover:shadow-brut-sm px-6 py-3.5 text-center text-base font-bold">Start your {TRIAL_DAYS}-day free trial</Link>
-              <Link to="/gallery" className="rounded-lg press border-2 border-ink bg-white text-ink shadow-brut hover:shadow-brut-sm px-6 py-3.5 text-center text-base font-bold">See the app</Link>
-            </div>
-            <p className="mt-5 text-sm text-slate-600">No credit card needed. Works on phone, tablet and computer.</p>
+      {/* hero */}
+      <section className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.15fr_1fr]">
+        <div>
+          <p className="font-mono text-xs text-slate-500">Built for Philippine contractors · Public and private bids</p>
+          <h1 className="mt-5 text-[2.75rem] font-bold leading-[1.02] tracking-tight text-ink sm:text-6xl">
+            Never lose a bid to a <span className="whitespace-nowrap rounded-md bg-accent-400 px-2 box-decoration-clone">missing permit</span> again.
+          </h1>
+          <p className="mt-6 max-w-xl text-base text-slate-600 sm:text-lg">Documents, track record and bids in one place. Licitatio warns you before anything expires and builds your bid packet and proposal in hours, not days.</p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Link to="/register" className={PILL_DARK}>Start your {TRIAL_DAYS}-day free trial <span aria-hidden>→</span></Link>
+            <Link to="/gallery" className={PILL_LIGHT}>See the app</Link>
           </div>
-          {hero && <Shot src={hero.src} title={hero.title} priority />}
+          <p className="mt-4 text-xs text-slate-500">No credit card needed. Works on phone, tablet and computer.</p>
         </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:py-20" aria-labelledby="features-h">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 id="features-h" className="text-3xl font-bold text-ink sm:text-4xl">Everything a bid needs, ready when you are</h2>
-          <p className="mt-3 text-slate-600">Made with contractors who bid on government and private projects.</p>
-        </div>
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map((f) => (
-            <div key={f.title} className="press rounded-xl border-2 border-ink bg-white p-6 shadow-brut-sm hover:shadow-brut">
-              <span className="inline-flex h-12 w-12 items-center justify-center rounded-lg border-2 border-ink bg-accent-400 text-ink"><Icon d={f.icon} /></span>
-              <h3 className="mt-5 text-xl font-bold text-ink">{f.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-600">{f.body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="border-y-2 border-ink bg-brand-900 py-16 text-white sm:py-20" aria-labelledby="how-h">
-        <div className="mx-auto max-w-6xl px-4">
-          <h2 id="how-h" className="text-center text-3xl font-bold sm:text-4xl">How it works</h2>
-          <ol className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {STEPS.map((s) => (
-              <li key={s.n} className="rounded-xl border-2 border-ink bg-white p-6 text-ink shadow-[4px_4px_0_0_#ffd60a]">
-                <span className="flex h-11 w-11 items-center justify-center rounded-md border-2 border-ink bg-accent-400 font-display text-lg font-bold text-ink">{s.n}</span>
-                <h3 className="mt-4 text-lg font-bold text-ink">{s.title}</h3>
-                <p className="mt-2 text-sm text-slate-600">{s.body}</p>
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-[0_20px_50px_-24px_rgba(11,16,32,0.25)]">
+          <div className="flex items-center justify-between px-1 pb-3 text-[11px] text-slate-500">
+            <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />Your bid desk, running on Licitatio</span>
+            <span className="font-mono">Example</span>
+          </div>
+          <ul className="space-y-2.5">
+            {NOTIFS.map((n) => (
+              <li key={n.title} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3.5">
+                <span className={cx('flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-bold text-ink', n.dot)} aria-hidden>{n.icon}</span>
+                <div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold">{n.title}</p><p className="truncate font-mono text-[11px] text-slate-500">{n.sub}</p></div>
+                <span className="shrink-0 font-mono text-[11px] text-slate-400">{n.when}</span>
               </li>
             ))}
-          </ol>
+          </ul>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:py-20" aria-labelledby="pricing-h">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 id="pricing-h" className="text-3xl font-bold text-ink sm:text-4xl">Simple monthly pricing</h2>
-          <p className="mt-3 text-slate-600">Every plan starts with a {TRIAL_DAYS}-day free trial. Pay yearly and get 2 months free.</p>
-        </div>
-        <div className="mt-12 grid gap-6 lg:grid-cols-3">
-          {PRICING.map((p) => (
-            <div key={p.code} className={cx('flex flex-col rounded-2xl border-2 p-7', p.featured ? 'border-ink bg-accent-300 shadow-brut' : 'border-ink bg-white shadow-brut-sm')}>
-              {p.featured && <span className="mb-3 self-start rounded-md border-2 border-ink bg-accent-300 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-ink">Most popular</span>}
-              <h3 className="text-2xl font-bold text-ink">{p.name}</h3>
-              <p className="mt-1 text-sm text-slate-500">{p.for}</p>
-              <p className="mt-5"><span className="font-display text-4xl font-bold tracking-tight text-ink">PHP {formatCentavos(PLAN_PRICES[p.code]).replace(/\.00$/, '')}</span><span className="text-sm text-slate-500"> / month</span></p>
-              <ul className="mt-6 flex-1 space-y-2.5 text-sm text-slate-700">
-                {p.points.map((x) => <li key={x} className="flex gap-2"><svg viewBox="0 0 24 24" className="mt-0.5 h-4 w-4 shrink-0 text-ink" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden><path d="M5 12l5 5L20 7" /></svg>{x}</li>)}
-              </ul>
-              <Link to="/register" className={cx('mt-7 rounded-lg px-4 py-3 text-center text-sm font-bold', p.featured ? 'press border-2 border-ink bg-ink text-accent-300 shadow-brut' : 'press border-2 border-ink bg-accent-400 text-ink shadow-brut')}>Start free trial</Link>
+      {/* color band */}
+      <div className="grid grid-cols-2 md:grid-cols-4" aria-hidden>
+        {BAND.map((b) => (
+          <div key={b.label} className={cx('flex items-center justify-between gap-2 px-4 py-3 text-xs font-semibold sm:px-6', b.cls)}>
+            <span>{b.label}</span><span className="hidden font-mono font-normal opacity-80 sm:inline">{b.note}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* features */}
+      <section id="features" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-20 sm:px-6 sm:py-24">
+        <Kicker n="01">Features</Kicker>
+        <h2 className="mt-3 max-w-2xl text-3xl font-bold leading-tight tracking-tight sm:text-4xl">One desk for everything a bid needs.</h2>
+        <p className="mt-3 max-w-xl text-sm text-slate-600 sm:text-base">Start with your documents, then let every bid reuse them.</p>
+        <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {FEATURES.map((f) => (
+            <div key={f.title} className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-6 transition-colors hover:border-slate-300">
+              <p className="flex items-center gap-1.5 font-mono text-[11px] text-slate-500"><span className={cx('h-1.5 w-1.5 rounded-full', f.dot)} aria-hidden />{f.tag}</p>
+              <h3 className="mt-4 text-lg font-semibold tracking-tight">{f.title}</h3>
+              <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">{f.body}</p>
+              <Link to="/gallery" className="mt-5 flex items-center justify-between text-sm font-medium text-ink">See it <span className="transition-transform group-hover:translate-x-1" aria-hidden>→</span></Link>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="px-4 pb-20">
-        <div className="mx-auto max-w-5xl rounded-2xl border-2 border-ink bg-brand-900 px-6 py-12 text-center text-white shadow-[5px_5px_0_0_#ffd60a] sm:px-12">
-          <h2 className="text-2xl font-bold sm:text-4xl">Your next bid deserves a complete packet.</h2>
-          <p className="mx-auto mt-3 max-w-xl text-brand-100">Set up your workspace in minutes. Bring your permits; we will handle the reminders.</p>
-          <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link to="/register" className="rounded-lg press border-2 border-ink bg-accent-400 text-ink shadow-brut hover:shadow-brut-sm px-6 py-3.5 font-bold">Start free trial</Link>
-            <Link to="/install" className="press rounded-lg border-2 border-white px-6 py-3.5 font-bold text-white hover:bg-white/10">Install on your phone</Link>
+      {/* process */}
+      <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6 sm:pb-24">
+        <Kicker n="02">How it works</Kicker>
+        <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Bid ready in four steps.</h2>
+        <p className="mt-3 text-sm text-slate-600 sm:text-base">Set up once. Every bid after that starts mostly done.</p>
+        <ol className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {STEPS.map((s, i) => (
+            <li key={s.title}>
+              <div className="h-0.5 w-full bg-slate-200"><div className={cx('h-0.5 w-3/5', s.bar)} /></div>
+              <p className="mt-4 font-mono text-xs text-slate-400">0{i + 1}</p>
+              <h3 className="mt-1 font-semibold">{s.title}</h3>
+              <p className="mt-1.5 text-sm text-slate-600">{s.body}</p>
+              <p className="mt-3 font-mono text-[11px] text-slate-400">{s.time}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* pricing */}
+      <section id="pricing" className="scroll-mt-16 bg-ink py-20 text-white sm:py-24">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <p className="font-mono text-xs text-slate-400">03 / Pricing</p>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Simple, upfront pricing.</h2>
+          <p className="mt-3 text-sm text-slate-400 sm:text-base">Every plan starts with a {TRIAL_DAYS}-day free trial. Pay yearly and get 2 months free.</p>
+          <div className="mt-10 grid gap-3 lg:grid-cols-3">
+            {PRICING.map((p) => (
+              <div key={p.code} className={cx('flex flex-col rounded-2xl p-6', p.featured ? 'bg-accent-400 text-ink' : 'border border-white/15 bg-white/[0.03]')}>
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold">{p.name}</h3>
+                  {p.featured && <span className="flex items-center gap-1.5 font-mono text-[11px]"><span className="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden />Most popular</span>}
+                </div>
+                <p className={cx('mt-4 font-mono text-[11px]', p.featured ? 'text-ink/60' : 'text-slate-500')}>Per month</p>
+                <p className="mt-1 font-display text-4xl font-bold tracking-tight">PHP {formatCentavos(PLAN_PRICES[p.code]).replace(/\.00$/, '')}</p>
+                <p className={cx('mt-1 text-sm', p.featured ? 'text-ink/70' : 'text-slate-400')}>{p.for}</p>
+                <ul className={cx('mt-6 flex-1 space-y-2.5 border-t pt-6 text-sm', p.featured ? 'border-ink/15' : 'border-white/10 text-slate-300')}>
+                  {p.points.map((x) => <li key={x} className="flex gap-2"><span aria-hidden className={p.featured ? 'text-ink' : 'text-accent-400'}>+</span>{x}</li>)}
+                </ul>
+                <Link to="/register" className={cx('mt-8 rounded-full px-4 py-2.5 text-center text-sm font-semibold transition-colors', p.featured ? 'bg-ink text-white hover:bg-slate-800' : 'border border-white/25 text-white hover:bg-white/10')}>Start free trial <span aria-hidden>→</span></Link>
+              </div>
+            ))}
           </div>
+          <div className="mt-6 flex flex-wrap gap-2 text-xs text-slate-400">
+            {['GCash, Maya and card', 'Cancel anytime', 'Export your data anytime', 'Filipino and English'].map((x) => <span key={x} className="rounded-full border border-white/15 px-3 py-1">{x}</span>)}
+          </div>
+        </div>
+      </section>
+
+      {/* faq */}
+      <section className="mx-auto grid max-w-6xl gap-10 px-4 py-20 sm:px-6 sm:py-24 lg:grid-cols-[1fr_1.6fr]">
+        <div>
+          <Kicker n="04">FAQ</Kicker>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Common<br className="hidden lg:block" /> questions.</h2>
+        </div>
+        <div className="divide-y divide-slate-200 border-y border-slate-200">
+          {FAQ.map((f, i) => (
+            <details key={f.q} className="group py-5" open={i === 0}>
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-medium sm:text-base [&::-webkit-details-marker]:hidden">
+                {f.q}
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-slate-300 text-slate-600 transition-transform group-open:rotate-45 group-open:border-ink group-open:bg-ink group-open:text-white" aria-hidden>+</span>
+              </summary>
+              <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-600">{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      {/* call to action */}
+      <section className="bg-accent-400 px-4 py-20 text-center sm:py-24">
+        <h2 className="mx-auto max-w-3xl text-4xl font-bold leading-[1.05] tracking-tight text-ink sm:text-6xl">Make your next bid complete.</h2>
+        <p className="mt-4 text-sm text-ink/75 sm:text-base">Set up in minutes. Bring your permits; we handle the reminders.</p>
+        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <Link to="/register" className={PILL_DARK}>Start free trial <span aria-hidden>→</span></Link>
+          <Link to="/install" className="inline-flex items-center justify-center rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-ink hover:bg-white/80">Install on your phone</Link>
         </div>
       </section>
     </PublicLayout>
@@ -246,13 +340,13 @@ export function AboutPage() {
       <PageIntro eyebrow="About" title="Built for the people who prepare the bids">
         <p>Licitatio is made by Semivra for Philippine construction firms that compete for public and private projects.</p>
       </PageIntro>
-      <div className="mx-auto max-w-3xl space-y-12 px-4 py-14 text-slate-700">
+      <div className="mx-auto max-w-3xl space-y-14 px-4 py-16 sm:px-6 text-slate-700">
         <section>
-          <h2 className="text-3xl font-bold text-ink">Why we built it</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">Why we built it</h2>
           <p className="mt-4 leading-relaxed">In public bidding, a strong technical offer and a good price can still lose to one expired permit or a missing certificate. Most firms track their documents in folders and spreadsheets, and the same schedules are retyped for every bid. We built Licitatio so that the paperwork is ready before the invitation to bid arrives.</p>
         </section>
         <section>
-          <h2 className="text-3xl font-bold text-ink">What we believe</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">What we believe</h2>
           <ul className="mt-4 grid gap-4 sm:grid-cols-2">
             {[
               ['You stay in control', 'Licitatio prepares and checks. Your team reviews every export and submits it. We never submit bids for you.'],
@@ -260,17 +354,17 @@ export function AboutPage() {
               ['Simple beats clever', 'Clear screens that work on a phone at the site office, not only on a desktop.'],
               ['Local first', 'Philippine requirements, peso pricing, GCash, SMS and Filipino.'],
             ].map(([t, b]) => (
-              <li key={t} className="rounded-xl border-2 border-ink bg-white p-5 shadow-brut"><p className="font-semibold text-slate-900">{t}</p><p className="mt-1.5 text-sm">{b}</p></li>
+              <li key={t} className="rounded-2xl border border-slate-200 bg-white p-5"><p className="font-semibold text-slate-900">{t}</p><p className="mt-1.5 text-sm">{b}</p></li>
             ))}
           </ul>
         </section>
         <section>
-          <h2 className="text-3xl font-bold text-ink">About Semivra</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">About Semivra</h2>
           <p className="mt-4 leading-relaxed">Semivra is the company behind Licitatio. Besides the software, our desk team can prepare bid packets with you on the Desk plan, working inside your workspace only with access you grant, for a limited time, with every action recorded in your audit log.</p>
         </section>
-        <div className="rounded-xl border-2 border-ink bg-accent-400 p-6 text-center shadow-brut-sm">
+        <div className="rounded-2xl bg-accent-400 p-8 text-center">
           <p className="font-semibold text-slate-900">Want to see it with your own documents?</p>
-          <Link to="/register" className="mt-4 inline-block rounded-lg press border-2 border-ink bg-white text-ink shadow-brut hover:shadow-brut-sm px-6 py-3 font-bold">Start free trial</Link>
+          <Link to="/register" className="mt-4 inline-block rounded-full bg-ink text-white hover:bg-slate-700 px-6 py-3 font-bold">Start free trial</Link>
         </div>
       </div>
     </PublicLayout>
@@ -297,26 +391,26 @@ export function GalleryPage() {
       <PageIntro eyebrow="Gallery" title="A look inside Licitatio">
         <p>Screens from a demo workspace. Tap any picture to enlarge it.</p>
       </PageIntro>
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 md:grid-cols-2">
+      <div className="mx-auto grid max-w-6xl gap-x-8 gap-y-12 px-4 py-16 sm:px-6 md:grid-cols-2">
         {SHOTS.map((s, i) => (
           <figure key={s.src}>
-            <button type="button" className="press block w-full text-left" onClick={() => setZoom(i)} aria-label={`Enlarge ${s.title}`}>
+            <button type="button" className="block w-full text-left" onClick={() => setZoom(i)} aria-label={`Enlarge ${s.title}`}>
               <Shot src={s.src} title={s.title} priority={i < 2} />
             </button>
-            <figcaption className="mt-4"><p className="font-display text-xl font-bold text-ink">{s.title}</p><p className="mt-1 text-sm text-slate-600">{s.body}</p></figcaption>
+            <figcaption className="mt-4"><p className="text-lg font-semibold">{s.title}</p><p className="mt-1 text-sm text-slate-600">{s.body}</p></figcaption>
           </figure>
         ))}
       </div>
       {current && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/90 p-4" role="dialog" aria-modal="true" aria-label={current.title} onClick={() => setZoom(null)}>
           <div className="w-full max-w-6xl" onClick={(e) => e.stopPropagation()}>
-            <img src={current.src} alt={`Screenshot: ${current.title}`} className="max-h-[80vh] w-full rounded-lg border-2 border-accent-400 object-contain" />
+            <img src={current.src} alt={`Screenshot: ${current.title}`} className="max-h-[80vh] w-full rounded-xl object-contain" />
             <div className="mt-3 flex items-center justify-between gap-3 text-white">
               <button type="button" className="rounded-md bg-white/10 px-4 py-2 text-sm hover:bg-white/20" onClick={() => setZoom((zoom! - 1 + SHOTS.length) % SHOTS.length)}>Previous</button>
               <p className="text-center text-sm font-medium">{current.title}</p>
               <div className="flex gap-2">
                 <button type="button" className="rounded-md bg-white/10 px-4 py-2 text-sm hover:bg-white/20" onClick={() => setZoom((zoom! + 1) % SHOTS.length)}>Next</button>
-                <button type="button" className="rounded-md border-2 border-ink bg-accent-400 px-4 py-2 text-sm font-bold text-ink" onClick={() => setZoom(null)}>Close</button>
+                <button type="button" className="rounded-md border border-slate-200 bg-accent-400 px-4 py-2 text-sm font-bold text-ink" onClick={() => setZoom(null)}>Close</button>
               </div>
             </div>
           </div>
@@ -330,14 +424,14 @@ export function GalleryPage() {
 
 function DraftNotice() {
   return (
-    <div className="mb-8 rounded-lg border-2 border-ink bg-accent-200 p-4 text-sm font-medium text-ink shadow-brut" role="note">
+    <div className="mb-8 rounded-xl border border-accent-400 bg-accent-100 p-4 text-sm text-ink" role="note">
       This policy is being reviewed by our lawyer. The reviewed version will replace this page, and account holders will be told by email before any material change takes effect.
     </div>
   );
 }
 
 function Prose({ children }: { children: ReactNode }) {
-  return <div className="mx-auto max-w-3xl px-4 py-12 text-slate-700 [&_h2]:mt-10 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-ink [&_li]:mt-1.5 [&_p]:mt-3 [&_p]:leading-relaxed [&_ul]:mt-3 [&_ul]:list-disc [&_ul]:pl-5">{children}</div>;
+  return <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 text-slate-700 [&_h2]:mt-10 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-ink [&_li]:mt-1.5 [&_p]:mt-3 [&_p]:leading-relaxed [&_ul]:mt-3 [&_ul]:list-disc [&_ul]:pl-5">{children}</div>;
 }
 
 export function PrivacyPage() {
@@ -439,14 +533,14 @@ export function InstallPage() {
       <PageIntro eyebrow="Install" title="Put Licitatio on your phone or computer">
         <p>Licitatio installs straight from your browser. No app store, no large download, and it updates itself.</p>
       </PageIntro>
-      <div className="mx-auto max-w-5xl px-4 py-14">
-        <div className="rounded-2xl border-2 border-ink bg-accent-300 p-6 text-center shadow-brut-sm sm:p-8">
+      <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center sm:p-8">
           {installed ? (
             <p className="font-bold text-ink">Licitatio is installed on this device.</p>
           ) : event ? (
             <>
               <p className="font-semibold text-slate-900">Your browser can install Licitatio now.</p>
-              <button type="button" onClick={() => void install()} className="mt-4 rounded-lg press border-2 border-ink bg-ink text-accent-300 shadow-brut hover:shadow-brut-sm px-6 py-3 font-bold">Install Licitatio</button>
+              <button type="button" onClick={() => void install()} className="mt-4 rounded-lg border border-slate-200 bg-ink text-accent-300 px-6 py-3 font-bold">Install Licitatio</button>
             </>
           ) : (
             <p className="text-slate-700">Follow the steps for your device below. If you do not see an install option, open this page in Chrome, Edge or Safari.</p>
@@ -454,10 +548,10 @@ export function InstallPage() {
         </div>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
           {PLATFORMS.map((p) => (
-            <section key={p.name} className="rounded-xl border-2 border-ink bg-white p-6 shadow-brut-sm">
+            <section key={p.name} className="rounded-2xl border border-slate-200 bg-white p-6">
               <h2 className="text-xl font-bold text-ink">{p.name}</h2>
               <ol className="mt-4 space-y-3 text-sm text-slate-700">
-                {p.steps.map((s, i) => <li key={s} className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 border-ink bg-accent-400 text-xs font-bold text-ink">{i + 1}</span><span>{s}</span></li>)}
+                {p.steps.map((s, i) => <li key={s} className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ink font-mono text-[11px] text-white">{i + 1}</span><span>{s}</span></li>)}
               </ol>
             </section>
           ))}

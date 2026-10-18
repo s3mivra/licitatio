@@ -40,7 +40,7 @@ export function AdminPage() {
       </div>
       <input type="search" className="input mb-4 max-w-sm" placeholder="Search organization name" aria-label="Search organizations" value={search} onChange={(e) => setSearch(e.target.value)} />
       {list.isLoading ? <ListSkeleton /> : list.error ? <ErrorState error={list.error} onRetry={() => void list.refetch()} /> : list.data?.data.length === 0 ? <EmptyState title="No organizations match" /> : (
-        <ul className="card divide-y divide-slate-100">
+        <ul className="card overflow-hidden divide-y divide-slate-100">
           {list.data?.data.map((o) => (
             <li key={o.id} className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center">
               <div className="min-w-0 flex-1"><p className="truncate font-medium">{o.name}</p><p className="text-xs text-slate-500">{o.slug} · since {formatDate(o.createdAt)}</p></div>

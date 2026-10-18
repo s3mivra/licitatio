@@ -26,8 +26,8 @@ function Preview({ orgId, doc }: { orgId: string; doc: VaultDocumentDetailDto })
   if (url.isLoading) return <Skeleton className="h-96 w-full" />;
   if (url.error || !url.data) return <ErrorAlert error={url.error} />;
   return file.mime === 'application/pdf'
-    ? <iframe title={`Preview of ${doc.title}`} src={url.data} className="h-[32rem] w-full rounded-md border-2 border-ink" />
-    : <img src={url.data} alt={`Scan of ${doc.title}`} className="max-h-[32rem] rounded-md border-2 border-ink" />;
+    ? <iframe title={`Preview of ${doc.title}`} src={url.data} className="h-[32rem] w-full rounded-md border border-slate-200" />
+    : <img src={url.data} alt={`Scan of ${doc.title}`} className="max-h-[32rem] rounded-md border border-slate-200" />;
 }
 
 export function VaultDetail() {

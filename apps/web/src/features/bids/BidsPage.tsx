@@ -21,7 +21,7 @@ const readView = (): 'board' | 'table' => {
 
 function Card({ o, base }: { o: OpportunityDto; base: string }) {
   return (
-    <Link to={`${base}/${o.id}`} className="press block rounded-md border-2 border-ink bg-white p-3 shadow-brut-xs hover:shadow-brut-sm">
+    <Link to={`${base}/${o.id}`} className="block rounded-md border border-slate-200 bg-white p-3">
       <p className="line-clamp-2 text-sm font-medium text-slate-900">{o.title}</p>
       <p className="mt-1 truncate text-xs text-slate-500">{o.procuringEntity}</p>
       <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-600">
@@ -63,8 +63,8 @@ export function BidsPage() {
     <>
       <PageHeader title="Bids" description="Every tender you are evaluating or pursuing, by stage."
         actions={<>
-          <div className="flex rounded-md border-2 border-ink bg-white p-0.5 text-sm" role="group" aria-label="View">
-            {(['board', 'table'] as const).map((v) => <button key={v} type="button" aria-pressed={view === v} onClick={() => setView(v)} className={cx('rounded px-3 py-1 capitalize', view === v ? 'bg-accent-400 font-semibold text-ink' : 'text-slate-700')}>{v}</button>)}
+          <div className="flex rounded-md border border-slate-200 bg-white p-0.5 text-sm" role="group" aria-label="View">
+            {(['board', 'table'] as const).map((v) => <button key={v} type="button" aria-pressed={view === v} onClick={() => setView(v)} className={cx('rounded px-3 py-1 capitalize', view === v ? 'bg-ink font-medium text-white' : 'text-slate-700')}>{v}</button>)}
           </div>
           {canCreate && <Button onClick={() => setCreating(true)}>New bid</Button>}
         </>} />

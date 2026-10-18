@@ -45,7 +45,7 @@ export function ExportPage() {
           <>
             <p className="text-sm text-slate-700">{e.fileName}{e.pageCount ? ` · ${e.pageCount} pages` : ''}</p>
             {e.fileName?.includes('_DRAFT') && <Alert tone="warning">This is a draft: some mandatory requirements are unresolved. The cover page says so.</Alert>}
-            {e.downloadUrl ? <a href={e.downloadUrl} className="inline-flex press rounded-md border-2 border-ink bg-ink px-4 py-2 text-sm font-semibold text-white shadow-brut-xs hover:bg-brand-900">Download</a> : <Alert tone="info">This export has expired.</Alert>}
+            {e.downloadUrl ? <a href={e.downloadUrl} className="inline-flex rounded-md border border-slate-200 bg-ink px-4 py-2 text-sm font-semibold text-white hover:bg-brand-900">Download</a> : <Alert tone="info">This export has expired.</Alert>}
           </>
         )}
         {e.warnings.length > 0 && (

@@ -20,14 +20,14 @@ const ORG_TYPE_LABELS: Record<(typeof ORG_TYPES)[number], string> = {
 
 function AuthCard({ title, subtitle, children, footer }: { title: string; subtitle?: string; children: ReactNode; footer?: ReactNode }) {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-paper px-4 py-10">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4 py-10">
       <div className="w-full max-w-md">
         <div className="mb-6 flex items-center justify-center gap-2">
           <img src="/icon.svg" alt="" className="h-9 w-9" />
-          <span className="font-display text-2xl font-bold text-ink">Licitatio</span>
+          <span className="font-display text-base font-bold uppercase tracking-[0.14em] text-ink">Licitatio</span>
           <LanguageSwitch className="ml-3" />
         </div>
-        <div className="card p-6 shadow-brut sm:p-8">
+        <div className="card p-6 shadow-[0_20px_50px_-24px_rgba(11,16,32,0.2)] sm:p-8">
           <h1 className="text-xl font-semibold">{title}</h1>
           {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}
           <div className="mt-6">{children}</div>
@@ -162,7 +162,7 @@ export function VerifyEmailScreen() {
   }
   return (
     <AuthCard title={t('Email verified')} subtitle={t('Your account is ready.')}>
-      <Link to="/login" className="inline-flex w-full justify-center press rounded-md border-2 border-ink bg-ink px-4 py-2 text-sm font-semibold text-white shadow-brut-xs hover:bg-brand-900">{t('Sign in')}</Link>
+      <Link to="/login" className="inline-flex w-full justify-center rounded-md border border-slate-200 bg-ink px-4 py-2 text-sm font-semibold text-white hover:bg-brand-900">{t('Sign in')}</Link>
     </AuthCard>
   );
 }
@@ -210,7 +210,7 @@ export function ResetPasswordScreen() {
   if (done) {
     return (
       <AuthCard title={t('Password updated')} subtitle={t('You were signed out on every device.')}>
-        <Link to="/login" className="inline-flex w-full justify-center press rounded-md border-2 border-ink bg-ink px-4 py-2 text-sm font-semibold text-white shadow-brut-xs">{t('Sign in')}</Link>
+        <Link to="/login" className="inline-flex w-full justify-center rounded-md border border-slate-200 bg-ink px-4 py-2 text-sm font-semibold text-white">{t('Sign in')}</Link>
       </AuthCard>
     );
   }
@@ -250,10 +250,10 @@ export function AcceptInviteScreen() {
     <AuthCard title={t('Join your team')} subtitle="Accept the invitation to start working in the workspace.">
       <form onSubmit={onSubmit} className="space-y-4" noValidate>
         {error && <Alert>{error}</Alert>}
-        <div className="flex rounded-md border-2 border-ink bg-white p-1 text-sm" role="tablist">
+        <div className="flex rounded-md border border-slate-200 bg-white p-1 text-sm" role="tablist">
           {[false, true].map((v) => (
             <button key={String(v)} type="button" role="tab" aria-selected={hasAccount === v} onClick={() => setHasAccount(v)}
-              className={`flex-1 rounded px-3 py-1.5 ${hasAccount === v ? 'bg-accent-400 font-semibold text-ink' : 'text-slate-600'}`}>
+              className={`flex-1 rounded px-3 py-1.5 ${hasAccount === v ? 'bg-ink font-medium text-white' : 'text-slate-600'}`}>
               {v ? 'I have an account' : "I'm new here"}
             </button>
           ))}

@@ -98,7 +98,7 @@ export function TaskBoard({ opportunityId }: { opportunityId?: string }) {
                   <h2 className="mb-2 flex justify-between px-1 text-xs font-semibold uppercase tracking-wide text-slate-600">{col.label}<span>{tasks.length}</span></h2>
                   <ul className="space-y-2">
                     {tasks.map((t) => (
-                      <li key={t.id} className="rounded-md border-2 border-ink bg-white p-3 shadow-brut-xs">
+                      <li key={t.id} className="rounded-md border border-slate-200 bg-white p-3">
                         <button type="button" className="text-left text-sm font-medium text-slate-900 hover:underline" onClick={() => canEdit && setEditing(t)} disabled={!canEdit}>{t.title}</button>
                         <div className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
                           {t.priority === 'high' && <Chip tone="red">High</Chip>}

@@ -156,7 +156,7 @@ export function BidDetail() {
         </div>
       )}
       {tab === 'Activity' && (
-        <ol className="card divide-y divide-slate-100 text-sm">
+        <ol className="card overflow-hidden divide-y divide-slate-100 text-sm">
           {[...b.statusHistory].reverse().map((h, i) => (
             <li key={i} className="px-4 py-3">
               <p><span className="font-medium">{h.from ? `${STATUS_LABEL[h.from]} → ${STATUS_LABEL[h.to]}` : `Created as ${STATUS_LABEL[h.to]}`}</span>{h.byName ? ` by ${h.byName}` : ''}</p>

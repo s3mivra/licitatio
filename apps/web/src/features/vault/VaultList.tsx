@@ -69,7 +69,7 @@ export function VaultList() {
           {FILTERS.map((f) => (
             <button key={f.value} type="button" aria-pressed={status === f.value && !archived} disabled={archived}
               onClick={() => update({ status: f.value })}
-              className={cx('rounded-md border-2 px-3 py-1 text-sm', status === f.value && !archived ? 'border-ink bg-accent-400 font-semibold text-ink' : 'border-ink bg-white text-ink hover:bg-slate-50', archived && 'opacity-50')}>
+              className={cx('rounded-full border px-3 py-1 text-sm', status === f.value && !archived ? 'border-ink bg-ink font-medium text-white' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50', archived && 'opacity-50')}>
               {f.label}
             </button>
           ))}

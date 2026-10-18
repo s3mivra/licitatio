@@ -4,7 +4,7 @@
 
 @layer base {
   :focus-visible {
-    outline: 3px solid #1d4ed8;
+    outline: 2px solid #1d4ed8;
     outline-offset: 2px;
   }
   h1, h2, h3 {
@@ -13,18 +13,14 @@
 }
 
 @layer components {
-  /* App strength: 2px ink outlines and small hard shadows. The public site uses heavier variants inline. */
+  /* Clean style: hairline borders, soft radius, no heavy shadows. */
   .input {
-    @apply block w-full rounded-md border-2 border-ink bg-white px-3 py-2 text-sm placeholder:text-slate-400 transition-shadow focus:shadow-brut-xs focus:outline-none disabled:border-slate-300 disabled:bg-slate-100;
+    @apply block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm placeholder:text-slate-400 transition-colors focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/10 disabled:bg-slate-100;
   }
   .input-error {
-    @apply border-red-600 focus:shadow-[2px_2px_0_0_#dc2626];
+    @apply border-red-500 focus:border-red-600 focus:ring-red-600/15;
   }
   .card {
-    @apply rounded-lg border-2 border-ink bg-white shadow-brut-sm;
-  }
-  /* pressable: lifts on hover, sinks onto its shadow when pressed */
-  .press {
-    @apply transition-[transform,box-shadow] duration-100 hover:-translate-x-px hover:-translate-y-px active:translate-x-[2px] active:translate-y-[2px] active:shadow-none;
+    @apply rounded-2xl border border-slate-200 bg-white;
   }
 }

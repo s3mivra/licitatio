@@ -31,7 +31,7 @@ export function Home() {
       {memberships.length === 0 ? (
         <EmptyState title="You are not a member of any organization" body="Ask an owner to invite you, or sign up to create your own workspace." />
       ) : (
-        <ul className="card divide-y divide-slate-100">
+        <ul className="card overflow-hidden divide-y divide-slate-100">
           {memberships.map((m) => (
             <li key={m.orgId}>
               <Link to={`/o/${m.orgId}/dashboard`} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50">
@@ -56,7 +56,7 @@ export function StaffHome() {
       {q.error && <ErrorState error={q.error} onRetry={() => void q.refetch()} />}
       {q.data && q.data.staffGrants.length === 0 && <EmptyState title="No active grants" body="When a client grants you access from their staff access settings, the organization appears here." />}
       {q.data && q.data.staffGrants.length > 0 && (
-        <ul className="card divide-y divide-slate-100">
+        <ul className="card overflow-hidden divide-y divide-slate-100">
           {q.data.staffGrants.map((g) => (
             <li key={g.id}>
               <Link to={`/o/${g.orgId}/dashboard`} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50">

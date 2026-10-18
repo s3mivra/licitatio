@@ -16,11 +16,11 @@ const GAP_LABELS: Record<string, string> = {
 
 function StatCard({ label, value, tone, to }: { label: string; value: number | undefined; tone: string; to: string }) {
   return (
-    <Link to={to} className="card press group relative block overflow-hidden p-4 hover:shadow-brut">
-      <span className={cx('absolute inset-x-0 top-0 h-1.5 bg-current', tone)} aria-hidden />
-      <p className="text-sm font-medium text-slate-500">{label}</p>
-      {value === undefined ? <Skeleton className="mt-2 h-8 w-12" /> : <p className={cx('mt-1 font-display text-4xl font-bold tabular-nums', tone)}>{value}</p>}
-      <span className="absolute bottom-3 right-4 font-bold text-ink transition group-hover:translate-x-0.5" aria-hidden>&rarr;</span>
+    <Link to={to} className="card group relative block overflow-hidden p-5 transition-colors hover:border-slate-300">
+      <span className={cx('absolute left-5 top-5 h-1.5 w-1.5 rounded-full bg-current', tone)} aria-hidden />
+      <p className="pl-3.5 font-mono text-xs text-slate-500">{label}</p>
+      {value === undefined ? <Skeleton className="mt-2 h-8 w-12" /> : <p className={cx('mt-1 mt-2 font-display text-4xl font-bold tracking-tight tabular-nums', tone)}>{value}</p>}
+      <span className="absolute bottom-3 right-4 text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-ink" aria-hidden>&rarr;</span>
     </Link>
   );
 }
@@ -69,7 +69,7 @@ export function Dashboard() {
         {deadlines.isLoading ? <div className="card p-4"><Skeleton className="h-16 w-full" /></div> : deadlines.error ? <ErrorState error={deadlines.error} onRetry={() => void deadlines.refetch()} /> : deadlines.data?.length === 0 ? (
           <EmptyState title={t('No upcoming deadlines')} body="Bids you are evaluating or preparing show here." action={<Link to={`/o/${orgId}/bids`} className="text-sm font-medium text-brand-700 underline">{t('Go to bids')}</Link>} />
         ) : (
-          <ul className="card divide-y divide-slate-100">
+          <ul className="card overflow-hidden divide-y divide-slate-100">
             {deadlines.data?.map((o) => (
               <li key={o.id}>
                 <Link to={`/o/${orgId}/bids/${o.id}`} className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-slate-50">
@@ -88,7 +88,7 @@ export function Dashboard() {
           {attention.isLoading ? <div className="card p-4"><Skeleton className="h-24 w-full" /></div> : attention.error ? <ErrorState error={attention.error} onRetry={() => void attention.refetch()} /> : attention.data?.length === 0 ? (
             <EmptyState title={t('Nothing is expired or expiring')} body="Documents inside your reminder window show up here." />
           ) : (
-            <ul className="card divide-y divide-slate-100">
+            <ul className="card overflow-hidden divide-y divide-slate-100">
               {attention.data?.map((d) => (
                 <li key={d.id}>
                   <Link to={`${base}/${d.id}`} className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-slate-50">

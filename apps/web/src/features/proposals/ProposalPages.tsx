@@ -42,7 +42,7 @@ export function ProposalsPage({ opportunity }: { opportunity?: OpportunityDto })
       {q.isLoading ? <ListSkeleton rows={3} /> : q.error ? <ErrorState error={q.error} onRetry={() => void q.refetch()} /> : q.data?.data.length === 0 ? (
         <EmptyState title="No proposals yet" body="Proposals are built from reusable content and your company records, and export to Word or PDF." action={canEdit && <Button onClick={() => setCreating(true)}>New proposal</Button>} />
       ) : (
-        <ul className="card divide-y divide-slate-100">
+        <ul className="card overflow-hidden divide-y divide-slate-100">
           {q.data?.data.map((p) => (
             <li key={p.id}>
               <Link to={`/o/${orgId}/proposals/${p.id}`} className="flex flex-col gap-1 px-4 py-3 hover:bg-slate-50 sm:flex-row sm:items-center sm:justify-between">
@@ -67,7 +67,7 @@ export function ProposalsPage({ opportunity }: { opportunity?: OpportunityDto })
   return (
     <>
       <PageHeader title="Proposals" description="Technical proposals built from your content blocks and records."
-        actions={<><Link to={`/o/${orgId}/blocks`} className="press inline-flex items-center rounded-md border-2 border-ink bg-white px-3.5 py-2 text-sm font-semibold text-ink shadow-brut-xs hover:bg-slate-50">Content blocks</Link>{canEdit && <Button onClick={() => setCreating(true)}>New proposal</Button>}</>} />
+        actions={<><Link to={`/o/${orgId}/blocks`} className="inline-flex items-center rounded-md border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-ink hover:bg-slate-50">Content blocks</Link>{canEdit && <Button onClick={() => setCreating(true)}>New proposal</Button>}</>} />
       {body}
     </>
   );
@@ -119,7 +119,7 @@ function AiDraft({ proposalId, onInsert, onClose }: { proposalId: string; onInse
           <textarea className="input mt-1 min-h-20" maxLength={1000} value={instructions} onChange={(e) => setInstructions(e.target.value)} placeholder="For example: stress our flood-control experience in Region III" />
         </label>
         {draft.error && <ErrorAlert error={draft.error} />}
-        {draft.data && <div className="space-y-2 rounded-md border-2 border-ink bg-paper p-3 text-sm">{draft.data.map((n, i) => <p key={i}>{n.type === 'paragraph' ? n.runs.map((r) => r.text).join('') : ''}</p>)}</div>}
+        {draft.data && <div className="space-y-2 rounded-md border border-slate-200 bg-paper p-3 text-sm">{draft.data.map((n, i) => <p key={i}>{n.type === 'paragraph' ? n.runs.map((r) => r.text).join('') : ''}</p>)}</div>}
       </div>
     </Dialog>
   );
@@ -290,7 +290,7 @@ export function BlocksPage() {
       {q.isLoading ? <ListSkeleton /> : q.error ? <ErrorState error={q.error} onRetry={() => void q.refetch()} /> : q.data?.length === 0 ? (
         <EmptyState title="No blocks yet" body="Good first blocks: company background, quality policy, safety policy, method statement." />
       ) : (
-        <ul className="card divide-y divide-slate-100">
+        <ul className="card overflow-hidden divide-y divide-slate-100">
           {q.data?.map((b) => (
             <li key={b.id} className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center">
               <div className="min-w-0 flex-1"><p className="font-medium">{b.title}</p><p className="text-xs text-slate-500">{b.key}{b.tags.length > 0 ? ` · ${b.tags.join(', ')}` : ''} · {b.nodes.length} items</p></div>
