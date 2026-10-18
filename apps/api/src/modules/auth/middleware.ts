@@ -1,5 +1,5 @@
 import type { CookieOptions, NextFunction, Request, Response } from 'express';
-import { env } from '../../config/env';
+import { env, allowedOrigins } from '../../config/env';
 import { findAuthSnapshot } from '../../repositories/identity';
 import { AppError } from '../../shared/errors';
 import { verifyAccessToken } from './auth.service';
@@ -41,7 +41,7 @@ export async function authenticate(req: Request, _res: Response, next: NextFunct
 /** Guards the two cookie-authenticated routes against cross-site requests. */
 export function requireCookieCsrf(req: Request, _res: Response, next: NextFunction): void {
   const origin = req.header('Origin');
-  if (req.header('X-Requested-With') !== 'licitatio' || (origin !== undefined && origin !== env.APP_ORIGIN)) {
+  if (req.header('X-Requested-With') !== 'licitatio' || (origin !== undefined && !allowedOrigins.includes(origin))) {
     return next(new AppError(403, 'forbidden', 'Invalid request origin'));
   }
   next();

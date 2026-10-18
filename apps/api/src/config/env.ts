@@ -5,7 +5,9 @@ const schema = z
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
     PORT: z.coerce.number().int().min(1).max(65535).default(8080),
     LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
-    APP_ORIGIN: z.string().url(), // https://app.example.com, no trailing slash, the only CORS origin
+    APP_ORIGIN: z.string().url(), // https://app.example.com, no trailing slash, the main CORS origin
+    // Development only: more web origins, comma separated (e.g. http://192.168.1.20:5174 for other PCs on the network)
+    EXTRA_APP_ORIGINS: z.string().optional(),
     APP_URL: z.string().url(), // base for links in emails
     COOKIE_DOMAIN: z.string().min(3).optional(), // example.com so app and api share the site
     MONGODB_URI: z.string().startsWith('mongodb'),
@@ -44,6 +46,9 @@ const schema = z
     if (v.SMS_PROVIDER === 'semaphore' && !v.SEMAPHORE_API_KEY) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['SEMAPHORE_API_KEY'], message: 'required when SMS_PROVIDER is semaphore' });
     }
+    if (v.NODE_ENV === 'production' && v.EXTRA_APP_ORIGINS) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['EXTRA_APP_ORIGINS'], message: 'development only' });
+    }
     if (v.NODE_ENV === 'production' && !v.APP_ORIGIN.startsWith('https://')) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['APP_ORIGIN'], message: 'must be https in production' });
     }
@@ -59,3 +64,6 @@ if (!parsed.success) {
 }
 
 export const env = parsed.data;
+
+/** The web origins allowed to call the API: APP_ORIGIN plus any development extras. */
+export const allowedOrigins: readonly string[] = [env.APP_ORIGIN, ...(env.EXTRA_APP_ORIGINS ?? '').split(',').map((o) => o.trim().replace(/\/$/, '')).filter(Boolean)];

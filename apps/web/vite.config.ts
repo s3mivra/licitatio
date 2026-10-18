@@ -35,5 +35,7 @@ export default defineConfig({
       },
     },
   },
-  server: { port: 5173, strictPort: true },
+  // host: true listens on the local network; /api is proxied so other PCs need only this address
+  server: { port: 5173, strictPort: true, host: true, proxy: { '/api': 'http://localhost:8080' } },
+  preview: { host: true, proxy: { '/api': 'http://localhost:8080' } },
 });

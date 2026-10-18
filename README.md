@@ -58,6 +58,25 @@ With Docker running you can use `docker compose up -d` (MongoDB + MinIO) instead
 `dev-services.ts`. For local storage set `R2_ENDPOINT=http://localhost:9000`. The API refuses
 `R2_ENDPOINT` in production.
 
+### Open it from another PC on your network
+
+The web dev server listens on your network and forwards `/api` to the API, so the other PC only
+needs one address. Files are served by the storage stand-in on port 9000.
+
+1. Start everything as above on this PC.
+2. Find this PC's address: run `ipconfig` and note the IPv4 address, for example `192.168.1.20`.
+3. In `apps/api/.env` set `R2_ENDPOINT=http://192.168.1.20:9000` and
+   `EXTRA_APP_ORIGINS=http://192.168.1.20:5173`. Leave `VITE_API_URL` empty in `apps/web/.env`.
+4. Restart `npm run dev:api` and `npm run dev:web`.
+5. Allow the ports through Windows Firewall once. In an administrator PowerShell:
+   `New-NetFirewallRule -DisplayName "Licitatio dev" -Direction Inbound -Protocol TCP -LocalPort 5173,5174,9000 -Action Allow -Profile Private`
+   (your network must be set to Private in Windows settings).
+6. On the other PC, open `http://192.168.1.20:5173` (or port 5174 if you started the web server with `--port 5174`, as the desktop preview does; then use 5174 in step 3 too).
+
+Your router can give this PC a new address after a restart. If the other PC stops connecting, run
+`ipconfig` again and update the two lines in step 3. This setup is for development on a trusted
+network only; the API refuses `EXTRA_APP_ORIGINS` in production.
+
 With `MAIL_PROVIDER=console` in development, the API logs verification, reset and invite
 links (`dev mail link: ...`) so you can finish sign-up without a mail provider.
 

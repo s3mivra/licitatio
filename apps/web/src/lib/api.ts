@@ -1,6 +1,7 @@
 import type { ErrorPayload, SessionDto } from '@licitatio/shared';
 
-const API_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? 'http://localhost:8080/api/v1';
+// In development the Vite server proxies /api, so the app works from other PCs on the network too
+const API_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? (import.meta.env.DEV ? '/api/v1' : 'http://localhost:8080/api/v1');
 
 export class ApiError extends Error {
   constructor(

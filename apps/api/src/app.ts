@@ -4,7 +4,7 @@ import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import { pinoHttp } from 'pino-http';
-import { env } from './config/env';
+import { allowedOrigins } from './config/env';
 import * as billing from './modules/billing/billing.controller';
 import { apiRouter } from './routes';
 import { AppError, errorHandler } from './shared/errors';
@@ -24,7 +24,7 @@ export function createApp(): express.Express {
   app.use(helmet({ hsts: { maxAge: 15_552_000, includeSubDomains: true } }));
   app.use(
     cors({
-      origin: env.APP_ORIGIN,
+      origin: [...allowedOrigins],
       credentials: true,
       methods: ['GET', 'POST', 'PATCH', 'DELETE'],
       allowedHeaders: ['Authorization', 'Content-Type', 'Idempotency-Key', 'X-Requested-With'],
