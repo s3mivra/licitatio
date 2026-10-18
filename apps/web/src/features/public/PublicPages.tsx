@@ -193,7 +193,6 @@ const NOTIFS = [
 ];
 
 export function Landing() {
-  const hero = SHOTS[0];
   return (
     <PublicLayout>
       {/* hero */}
