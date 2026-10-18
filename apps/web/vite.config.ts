@@ -22,5 +22,18 @@ export default defineConfig({
       workbox: { navigateFallbackDenylist: [/^\/api\//], runtimeCaching: [] },
     }),
   ],
+  build: {
+    target: 'es2020',
+    rollupOptions: {
+      output: {
+        // stable vendor chunks cache across releases; pages load on demand
+        manualChunks: {
+          react: ['react', 'react-dom', 'react-router-dom'],
+          query: ['@tanstack/react-query'],
+          forms: ['react-hook-form', 'zod'],
+        },
+      },
+    },
+  },
   server: { port: 5173, strictPort: true },
 });

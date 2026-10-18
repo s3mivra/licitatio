@@ -1,30 +1,52 @@
-import * as Sentry from '@sentry/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { StrictMode } from 'react';
+import { StrictMode, Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { registerSW } from 'virtual:pwa-register';
 import { AcceptInviteScreen, ForgotPasswordScreen, LoginScreen, RegisterScreen, ResetPasswordScreen, VerifyEmailScreen } from './features/auth/AuthScreens';
-import { BidDetail } from './features/bids/BidDetail';
-import { BidsPage } from './features/bids/BidsPage';
-import { AdminPage } from './features/admin/AdminPage';
-import { AnalyticsPage } from './features/analytics/AnalyticsPage';
-import { Dashboard } from './features/dashboard/Dashboard';
-import { TaskBoard } from './features/tasks/TaskBoard';
-import { ExportPage } from './features/exports/ExportPage';
-import { BlocksPage, ProposalEditor, ProposalsPage } from './features/proposals/ProposalPages';
-import { EquipmentPage, PersonnelPage, ProjectsPage } from './features/registers/Registers';
-import { MembersSettings } from './features/settings/MembersSettings';
-import { AuditSettings, NotificationSettings, PlanSettings, StaffAccessSettings } from './features/settings/OtherSettings';
-import { ProfileSettings } from './features/settings/ProfileSettings';
-import { SettingsLayout } from './features/settings/SettingsLayout';
-import { AppShell } from './features/shell/AppShell';
-import { Home, StaffHome } from './features/shell/Home';
-import { VaultDetail } from './features/vault/VaultDetail';
-import { VaultList } from './features/vault/VaultList';
 import { ApiError } from './lib/api';
 import { AuthProvider, useAuth } from './lib/auth';
 import './index.css';
+
+const BidDetail = lazy(() => import('./features/bids/BidDetail').then((m) => ({ default: m.BidDetail })));
+const BidsPage = lazy(() => import('./features/bids/BidsPage').then((m) => ({ default: m.BidsPage })));
+const AdminPage = lazy(() => import('./features/admin/AdminPage').then((m) => ({ default: m.AdminPage })));
+const AnalyticsPage = lazy(() => import('./features/analytics/AnalyticsPage').then((m) => ({ default: m.AnalyticsPage })));
+const Dashboard = lazy(() => import('./features/dashboard/Dashboard').then((m) => ({ default: m.Dashboard })));
+const TaskBoard = lazy(() => import('./features/tasks/TaskBoard').then((m) => ({ default: m.TaskBoard })));
+const ExportPage = lazy(() => import('./features/exports/ExportPage').then((m) => ({ default: m.ExportPage })));
+const BlocksPage = lazy(() => import('./features/proposals/ProposalPages').then((m) => ({ default: m.BlocksPage })));
+const ProposalEditor = lazy(() => import('./features/proposals/ProposalPages').then((m) => ({ default: m.ProposalEditor })));
+const ProposalsPage = lazy(() => import('./features/proposals/ProposalPages').then((m) => ({ default: m.ProposalsPage })));
+const EquipmentPage = lazy(() => import('./features/registers/Registers').then((m) => ({ default: m.EquipmentPage })));
+const PersonnelPage = lazy(() => import('./features/registers/Registers').then((m) => ({ default: m.PersonnelPage })));
+const ProjectsPage = lazy(() => import('./features/registers/Registers').then((m) => ({ default: m.ProjectsPage })));
+const MembersSettings = lazy(() => import('./features/settings/MembersSettings').then((m) => ({ default: m.MembersSettings })));
+const AuditSettings = lazy(() => import('./features/settings/OtherSettings').then((m) => ({ default: m.AuditSettings })));
+const NotificationSettings = lazy(() => import('./features/settings/OtherSettings').then((m) => ({ default: m.NotificationSettings })));
+const PlanSettings = lazy(() => import('./features/settings/OtherSettings').then((m) => ({ default: m.PlanSettings })));
+const StaffAccessSettings = lazy(() => import('./features/settings/OtherSettings').then((m) => ({ default: m.StaffAccessSettings })));
+const ProfileSettings = lazy(() => import('./features/settings/ProfileSettings').then((m) => ({ default: m.ProfileSettings })));
+const SettingsLayout = lazy(() => import('./features/settings/SettingsLayout').then((m) => ({ default: m.SettingsLayout })));
+const AppShell = lazy(() => import('./features/shell/AppShell').then((m) => ({ default: m.AppShell })));
+const Home = lazy(() => import('./features/shell/Home').then((m) => ({ default: m.Home })));
+const StaffHome = lazy(() => import('./features/shell/Home').then((m) => ({ default: m.StaffHome })));
+const VaultDetail = lazy(() => import('./features/vault/VaultDetail').then((m) => ({ default: m.VaultDetail })));
+const VaultList = lazy(() => import('./features/vault/VaultList').then((m) => ({ default: m.VaultList })));
+const Landing = lazy(() => import('./features/public/PublicPages').then((m) => ({ default: m.Landing })));
+const AboutPage = lazy(() => import('./features/public/PublicPages').then((m) => ({ default: m.AboutPage })));
+const GalleryPage = lazy(() => import('./features/public/PublicPages').then((m) => ({ default: m.GalleryPage })));
+const PrivacyPage = lazy(() => import('./features/public/PublicPages').then((m) => ({ default: m.PrivacyPage })));
+const TermsPage = lazy(() => import('./features/public/PublicPages').then((m) => ({ default: m.TermsPage })));
+const InstallPage = lazy(() => import('./features/public/PublicPages').then((m) => ({ default: m.InstallPage })));
+
+const Loading = () => <div className="flex min-h-[50vh] items-center justify-center text-sm text-slate-500" role="status">Loading…</div>;
+
+function HomeOrLanding() {
+  const { status } = useAuth();
+  if (status === 'loading') return <Loading />;
+  return status === 'authenticated' ? <Home /> : <Landing />;
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -51,14 +73,20 @@ function PublicOnly({ children }: { children: React.ReactElement }) {
 
 function App() {
   return (
+    <Suspense fallback={<Loading />}>
     <Routes>
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/gallery" element={<GalleryPage />} />
+      <Route path="/privacy" element={<PrivacyPage />} />
+      <Route path="/terms" element={<TermsPage />} />
+      <Route path="/install" element={<InstallPage />} />
       <Route path="/login" element={<PublicOnly><LoginScreen /></PublicOnly>} />
       <Route path="/register" element={<PublicOnly><RegisterScreen /></PublicOnly>} />
       <Route path="/verify-email" element={<VerifyEmailScreen />} />
       <Route path="/forgot-password" element={<ForgotPasswordScreen />} />
       <Route path="/reset-password" element={<ResetPasswordScreen />} />
       <Route path="/accept-invite" element={<AcceptInviteScreen />} />
-      <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
+      <Route path="/" element={<HomeOrLanding />} />
       <Route path="/staff" element={<RequireAuth><StaffHome /></RequireAuth>} />
       <Route path="/admin" element={<RequireAuth><AdminPage /></RequireAuth>} />
       <Route path="/o/:orgId" element={<RequireAuth><AppShell /></RequireAuth>}>
@@ -90,6 +118,7 @@ function App() {
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </Suspense>
   );
 }
 
@@ -97,7 +126,7 @@ registerSW({ immediate: true });
 
 // Off unless VITE_SENTRY_DSN is set. No replays, no default PII; add the ingest host to the CSP connect-src.
 const sentryDsn = import.meta.env.VITE_SENTRY_DSN as string | undefined;
-if (sentryDsn) Sentry.init({ dsn: sentryDsn, sendDefaultPii: false, tracesSampleRate: 0 });
+if (sentryDsn) void import('@sentry/react').then((Sentry) => Sentry.init({ dsn: sentryDsn, sendDefaultPii: false, tracesSampleRate: 0 }));
 
 const root = document.getElementById('root');
 if (!root) throw new Error('missing #root');
