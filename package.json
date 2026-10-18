@@ -10,6 +10,7 @@
     "node": ">=20"
   },
   "scripts": {
+    "start": "node scripts/start-local.mjs",
     "build": "npm run build -w @licitatio/api && npm run build -w @licitatio/web",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "eslint .",

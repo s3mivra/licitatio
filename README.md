@@ -42,6 +42,21 @@ docs/             launch checklist, restore drill, onboarding guide, legal draft
 e2e/              Playwright smoke test for staging
 ```
 
+## Quick start (try it on your computer)
+
+Install [Node.js 20 or newer](https://nodejs.org), then run one command in the project folder:
+
+```bash
+npm start
+```
+
+On Windows you can also double-click `start-licitatio.cmd`. The first run installs the packages, creates
+`apps/api/.env` with fresh development secrets, downloads a local MongoDB, loads the requirement templates and
+the demo account, starts the API and the web app, and opens the browser. Sign in with
+`demo@licitatio.test` / `demo-password-123`. Press Ctrl+C to stop. Emails are printed in the window instead of
+being sent. This is for trying and testing only; a real server needs its own settings (see
+[docs/launch-checklist.md](docs/launch-checklist.md)).
+
 ## Develop
 
 ```bash
