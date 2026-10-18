@@ -1,0 +1,604 @@
+<title>Licitatio User Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky contents rail on the left, one readable column of guide text on the right. */
+:root {
+  --bg: #ffffff;
+  --panel: #f6f7f9;
+  --fg: #0b1020;
+  --muted: #586174;
+  --line: #e3e6ec;
+  --accent: #ffd60a;
+  --accent-ink: #0b1020;
+  --link: #1e40af;
+  --red: #b91c1c; --red-bg: #fdecec;
+  --amber: #a14f00; --amber-bg: #fff4dc;
+  --green: #047857; --green-bg: #e6f6ef;
+  --display: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0d1220; --panel: #151b2c; --fg: #eef1f7; --muted: #a2aabb; --line: #273049;
+  --accent: #ffd60a; --accent-ink: #0b1020; --link: #8fb3ff;
+  --red: #ff8a8a; --red-bg: #3a1a1f; --amber: #ffc46b; --amber-bg: #3a2a12; --green: #6fe0b4; --green-bg: #12332a;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0d1220; --panel: #151b2c; --fg: #eef1f7; --muted: #a2aabb; --line: #273049;
+  --accent: #ffd60a; --accent-ink: #0b1020; --link: #8fb3ff;
+  --red: #ff8a8a; --red-bg: #3a1a1f; --amber: #ffc46b; --amber-bg: #3a2a12; --green: #6fe0b4; --green-bg: #12332a;
+  color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 400 16px/1.65 var(--body); }
+a { color: var(--link); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; border-radius: 4px; }
+
+.top { border-bottom: 1px solid var(--line); padding-block: 14px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); position: sticky; top: env(safe-area-inset-top, 0px); background: var(--bg); z-index: 5; }
+.top-in { max-width: 1180px; margin: 0 auto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.mark { width: 26px; height: 26px; border-radius: 7px; background: var(--fg); display: grid; place-items: center; }
+.mark span { color: var(--accent); font: 700 15px/1 var(--display); }
+.brand { font: 700 14px/1 var(--display); letter-spacing: .14em; text-transform: uppercase; }
+.top .meta { margin-left: auto; font: 400 12px/1.4 var(--mono); color: var(--muted); }
+
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 48px; padding-block: 40px 80px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+nav.toc { position: sticky; top: 76px; align-self: start; max-height: calc(100vh - 100px); overflow-y: auto; font-size: 14px; }
+.toc p { font: 500 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; counter-reset: s; }
+.toc li { counter-increment: s; }
+.toc a { display: flex; gap: 10px; padding: 6px 10px; border-radius: 8px; color: var(--fg); text-decoration: none; }
+.toc a::before { content: counter(s, decimal-leading-zero); font: 400 11px/1.9 var(--mono); color: var(--muted); }
+.toc a:hover { background: var(--panel); }
+
+main { min-width: 0; max-width: 760px; }
+.hero { padding-bottom: 32px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+.kicker { font: 400 12px/1.4 var(--mono); color: var(--muted); margin: 0; }
+h1 { font: 700 clamp(2.1rem, 5vw, 3.2rem)/1.05 var(--display); letter-spacing: -.02em; margin: 14px 0 16px; text-wrap: balance; }
+h1 mark { background: var(--accent); color: var(--accent-ink); padding: 0 .18em; border-radius: 6px; }
+.lead { font-size: 1.1rem; color: var(--muted); margin: 0; max-width: 62ch; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+.facts span { font: 400 12px/1 var(--mono); border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; color: var(--muted); }
+
+section { padding-top: 44px; scroll-margin-top: 70px; }
+h2 { font: 700 1.75rem/1.15 var(--display); letter-spacing: -.01em; margin: 6px 0 14px; text-wrap: balance; }
+h3 { font: 600 1.1rem/1.3 var(--display); margin: 28px 0 8px; }
+p, li { max-width: 68ch; }
+p { margin: 0 0 14px; }
+ul, ol { padding-left: 1.3em; margin: 0 0 16px; }
+li { margin: 4px 0; }
+strong { font-weight: 600; }
+.ui { font-weight: 600; white-space: nowrap; }
+
+.steps { list-style: none; padding: 0; counter-reset: st; display: grid; gap: 12px; }
+.steps li { counter-increment: st; display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 12px; margin: 0; }
+.steps li::before { content: counter(st); width: 26px; height: 26px; border-radius: 50%; background: var(--fg); color: var(--bg); font: 500 12px/26px var(--mono); text-align: center; }
+
+.note { border: 1px solid var(--line); background: var(--panel); border-radius: 14px; padding: 14px 16px; margin: 18px 0; }
+.note.warn { border-color: color-mix(in srgb, var(--accent) 70%, var(--line)); background: color-mix(in srgb, var(--accent) 14%, var(--bg)); }
+.note b { display: block; font: 500 11px/1.4 var(--mono); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px; }
+.note p:last-child, .note ul:last-child { margin-bottom: 0; }
+
+.tablebox { overflow-x: auto; margin: 16px 0 20px; border: 1px solid var(--line); border-radius: 14px; }
+table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 500 11px/1.4 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); background: var(--panel); }
+tr:last-child td { border-bottom: 0; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.yes { color: var(--green); font-weight: 600; } .no { color: var(--muted); }
+
+.flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 14px 0 18px; }
+.flow span { font: 500 12.5px/1 var(--body); border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; }
+.flow i { font-style: normal; color: var(--muted); }
+.flow .end { background: var(--panel); }
+
+.chip { display: inline-block; font: 500 12px/1 var(--body); border-radius: 999px; padding: 4px 9px; border: 1px solid transparent; white-space: nowrap; }
+.c-red { color: var(--red); background: var(--red-bg); }
+.c-amber { color: var(--amber); background: var(--amber-bg); }
+.c-green { color: var(--green); background: var(--green-bg); }
+.c-grey { color: var(--muted); background: var(--panel); border-color: var(--line); }
+
+dl.gloss { display: grid; grid-template-columns: minmax(0, 190px) minmax(0, 1fr); gap: 10px 20px; margin: 10px 0; }
+dl.gloss dt { font-weight: 600; }
+dl.gloss dd { margin: 0; color: var(--muted); }
+
+details.faq { border-bottom: 1px solid var(--line); padding: 14px 0; }
+details.faq summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+details.faq summary::-webkit-details-marker { display: none; }
+details.faq summary::after { content: "+"; font: 400 18px/1 var(--mono); color: var(--muted); }
+details.faq[open] summary::after { content: "−"; }
+details.faq p { margin: 10px 0 0; color: var(--muted); }
+
+footer.doc { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+
+@media (max-width: 900px) {
+  .wrap { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  nav.toc { position: static; max-height: none; border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+  .toc ol { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+  dl.gloss { grid-template-columns: minmax(0, 1fr); gap: 2px 0; }
+  dl.gloss dd { margin-bottom: 10px; }
+  .top .meta { display: none; }
+}
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+
+<header class="top">
+  <div class="top-in">
+    <div class="mark" aria-hidden="true"><span>L</span></div>
+    <span class="brand">Licitatio</span>
+    <span class="meta">User and administrator guide · Version 1.0 · October 2026</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="toc" aria-label="Contents">
+    <p>Contents</p>
+    <ol>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#start">Getting started</a></li>
+      <li><a href="#roles">Roles and permissions</a></li>
+      <li><a href="#profile">Company profile</a></li>
+      <li><a href="#vault">Document vault</a></li>
+      <li><a href="#registers">Registers</a></li>
+      <li><a href="#bids">Bids</a></li>
+      <li><a href="#packets">Bid packets</a></li>
+      <li><a href="#proposals">Proposals</a></li>
+      <li><a href="#tasks">Tasks</a></li>
+      <li><a href="#notifications">Reminders and notifications</a></li>
+      <li><a href="#outcomes">Outcomes</a></li>
+      <li><a href="#plans">Plans and billing</a></li>
+      <li><a href="#desk">Semivra desk service</a></li>
+      <li><a href="#devices">Language, phones and install</a></li>
+      <li><a href="#security">Security and privacy</a></li>
+      <li><a href="#admin">For Semivra staff</a></li>
+      <li><a href="#faq">Troubleshooting and FAQ</a></li>
+      <li><a href="#glossary">Glossary</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <div class="hero">
+      <p class="kicker">Licitatio Bid Desk · Documentation</p>
+      <h1>Everything your team needs to be <mark>bid ready</mark>.</h1>
+      <p class="lead">This guide explains how to use Licitatio, from creating your workspace to exporting a complete bid packet. It is written for company owners, bid coordinators, engineers who help prepare bids, and Semivra staff.</p>
+      <div class="facts"><span>14-day free trial</span><span>Works on phone and computer</span><span>English and Filipino</span><span>A product of Semivra</span></div>
+    </div>
+
+    <!-- 01 -->
+    <section id="overview">
+      <p class="kicker">01 / Overview</p>
+      <h2>What Licitatio does</h2>
+      <p>Licitatio is a bid readiness workspace for Philippine construction firms that compete for public and private projects. It keeps your eligibility documents, track record and bids in one place, warns you before anything expires, and assembles your bid packet and technical proposal.</p>
+      <h3>The problem it solves</h3>
+      <p>In public bidding, a strong offer can still be disqualified because of one expired permit or a missing certificate. Most firms keep documents in folders and spreadsheets and retype the same schedules for every bid. Licitatio makes the paperwork ready before the invitation to bid arrives.</p>
+      <h3>The main parts</h3>
+      <ul>
+        <li><strong>Document vault.</strong> Permits, licenses, tax and financial documents with versions and expiry dates.</li>
+        <li><strong>Registers.</strong> Your projects (experience), key personnel and equipment.</li>
+        <li><strong>Bids.</strong> Each opportunity you are considering, from first sighting to award.</li>
+        <li><strong>Bid packets.</strong> The checklist of requirements for one bid, matched to your documents, with a readiness check and a single indexed PDF export.</li>
+        <li><strong>Proposals.</strong> Technical proposals built from sections and reusable text, exported to Word or PDF.</li>
+        <li><strong>Tasks, reminders and outcomes.</strong> Who does what, what is about to expire or fall due, and how your bids turned out.</li>
+      </ul>
+      <div class="note warn"><b>Important</b><p>Licitatio prepares and checks your documents. It never submits a bid on your behalf. Your team always reviews every export and submits it to the procuring entity.</p></div>
+    </section>
+
+    <!-- 02 -->
+    <section id="start">
+      <p class="kicker">02 / Getting started</p>
+      <h2>Getting started</h2>
+      <h3>Create your workspace</h3>
+      <ol class="steps">
+        <li><div>Open the Licitatio website and choose <span class="ui">Start free trial</span>.</div></li>
+        <li><div>Enter your name, work email, a password of at least 10 characters, your company name and company type (contractor, design and build, consultant or developer).</div></li>
+        <li><div>Open the verification email and select the link. Links work once and expire after 24 hours. If yours expired, sign in and request a new one.</div></li>
+        <li><div>Sign in. You are the <strong>owner</strong> of the new workspace, and your 14-day trial starts.</div></li>
+      </ol>
+      <h3>Your first hour</h3>
+      <p>Most teams are ready for their first bid after about an hour of setup. Work in this order, because each step feeds the next.</p>
+      <ol class="steps">
+        <li><div><strong>Company profile.</strong> Fill in the legal name, address and authorized signatory. Exports cannot be produced without them.</div></li>
+        <li><div><strong>Document vault.</strong> Upload the documents every bid asks for, with their issue and expiry dates.</div></li>
+        <li><div><strong>Registers.</strong> Add your completed and ongoing projects, key personnel and major equipment. You can import these from a spreadsheet.</div></li>
+        <li><div><strong>Team.</strong> Invite your colleagues and give each one the right role.</div></li>
+        <li><div><strong>First bid.</strong> Add a bid, choose a requirement template and work the packet until it shows Ready.</div></li>
+      </ol>
+      <h3>Joining a team</h3>
+      <p>If a colleague invited you, open the invitation email and choose <span class="ui">Accept invitation</span>. If you already have an account, sign in; otherwise set your name and password. Invitations expire after 7 days; ask the owner or an admin to send a new one if needed.</p>
+      <h3>Signing in and passwords</h3>
+      <ul>
+        <li>After several wrong passwords the account is locked for a short time to protect it. Wait and try again, or reset your password.</li>
+        <li><span class="ui">Forgot your password?</span> sends a reset link that expires in 1 hour. Resetting signs you out on every device.</li>
+        <li>You stay signed in on a device until you sign out or your session ends.</li>
+      </ul>
+    </section>
+
+    <!-- 03 -->
+    <section id="roles">
+      <p class="kicker">03 / Roles and permissions</p>
+      <h2>Roles and permissions</h2>
+      <p>Every member of a workspace has one of four roles. Give people the lowest role that lets them do their work.</p>
+      <div class="tablebox"><table>
+        <thead><tr><th>What they can do</th><th>Owner</th><th>Admin</th><th>Editor</th><th>Viewer</th></tr></thead>
+        <tbody>
+          <tr><td>View documents, registers, bids, packets and proposals</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+          <tr><td>Download files and exports</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+          <tr><td>Upload documents, edit registers, bids, packets and proposals</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="no">No</td></tr>
+          <tr><td>Export packets and proposals, use AI drafting</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="no">No</td></tr>
+          <tr><td>Edit the company profile, templates and settings</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td></tr>
+          <tr><td>Invite and remove members, change roles</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td></tr>
+          <tr><td>View the audit log</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td></tr>
+          <tr><td>Approve packets for export (when approval is required)</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td></tr>
+          <tr><td>Grant or revoke Semivra staff access</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td><td class="no">No</td></tr>
+          <tr><td>Change or pay for the plan</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td><td class="no">No</td></tr>
+        </tbody>
+      </table></div>
+      <p>Every member can change their own reminder preferences and leave a workspace. A workspace always keeps at least one owner.</p>
+    </section>
+
+    <!-- 04 -->
+    <section id="profile">
+      <p class="kicker">04 / Company profile</p>
+      <h2>Company profile</h2>
+      <p>Open <span class="ui">Settings, Company profile</span>. The profile supplies the details that appear on every export and fill the placeholders in proposals.</p>
+      <div class="tablebox"><table>
+        <thead><tr><th>Group</th><th>Fields</th></tr></thead>
+        <tbody>
+          <tr><td>Identity</td><td>Registered legal name (required), trade name, year established, phone, email, website</td></tr>
+          <tr><td>Address</td><td>Street address, city and province (required)</td></tr>
+          <tr><td>Registrations</td><td>TIN, PhilGEPS number, PCAB license number, PCAB category (AAAA to Trade/E) and classifications</td></tr>
+          <tr><td>Signatory</td><td>Name and position of the authorized signatory (required)</td></tr>
+          <tr><td>Narrative</td><td>About the company, quality policy, safety policy, environmental policy</td></tr>
+        </tbody>
+      </table></div>
+      <p>The dashboard shows which required fields are still missing. Exports stay blocked until they are complete.</p>
+    </section>
+
+    <!-- 05 -->
+    <section id="vault">
+      <p class="kicker">05 / Document vault</p>
+      <h2>Document vault</h2>
+      <p>The vault holds every document you reuse across bids. Each document has a type, a title, its file, and optional issue and expiry dates.</p>
+      <h3>Adding a document</h3>
+      <ol class="steps">
+        <li><div>Open <span class="ui">Document vault</span> and choose <span class="ui">Add document</span>.</div></li>
+        <li><div>Pick the document type, such as Mayor's or business permit, PCAB contractor's license or Tax clearance certificate.</div></li>
+        <li><div>Upload the file. PDF, PNG, JPG and Word (DOCX) files up to 15 MB are accepted.</div></li>
+        <li><div>Enter the issue and expiry dates exactly as printed. Reminders depend on the expiry date being right.</div></li>
+      </ol>
+      <h3>Document types included</h3>
+      <p>The vault comes with the documents most invitations to bid ask for, grouped by category: PhilGEPS registration certificate, DTI business name, SEC or CDA registration, Mayor's or business permit, PCAB contractor's license, BIR certificate of registration, tax clearance, income tax return, audited financial statements, NFCC computation, organizational chart, and more.</p>
+      <h3>Status of a document</h3>
+      <p><span class="chip c-red">Expired</span> past its expiry date. <span class="chip c-amber">Expiring soon</span> inside the reminder window. <span class="chip c-green">Valid</span> current. <span class="chip c-grey">No expiry</span> documents such as an SEC registration.</p>
+      <h3>Renewing a document</h3>
+      <p>When you receive a renewed permit, open the document and upload a <strong>new version</strong> instead of adding a new document. Older versions stay in the history, and every bid packet that uses the document picks up the current version automatically.</p>
+      <h3>Archiving</h3>
+      <p>Archive documents you no longer use. Archived documents leave the main list and stop sending reminders, but stay available under the archived filter.</p>
+    </section>
+
+    <!-- 06 -->
+    <section id="registers">
+      <p class="kicker">06 / Registers</p>
+      <h2>Registers: experience, personnel and equipment</h2>
+      <p>The registers hold your track record. Licitatio uses them to generate the standard schedules that public bids ask for and to fill tables in proposals.</p>
+      <div class="tablebox"><table>
+        <thead><tr><th>Register</th><th>What to record</th><th>Generates</th></tr></thead>
+        <tbody>
+          <tr><td>Experience</td><td>Project name, client, location, contract amount, start and completion dates, status (ongoing or completed), category</td><td>Statements of completed and ongoing contracts</td></tr>
+          <tr><td>Personnel</td><td>Name, position, profession, PRC license number and expiry, years of experience, key personnel flag, résumé</td><td>List of key personnel</td></tr>
+          <tr><td>Equipment</td><td>Equipment name, make and model, quantity, capacity, ownership (owned, leased or under purchase)</td><td>List of equipment</td></tr>
+        </tbody>
+      </table></div>
+      <h3>Importing from a spreadsheet</h3>
+      <ol class="steps">
+        <li><div>On any register, choose <span class="ui">Import</span> and download the template.</div></li>
+        <li><div>Fill it in a spreadsheet program and save it as CSV. Up to 500 rows per import.</div></li>
+        <li><div>Upload the file. Licitatio shows a preview with any problems row by row before anything is saved.</div></li>
+        <li><div>Fix the flagged rows or continue with the valid ones, then confirm.</div></li>
+      </ol>
+      <p>Record PRC license expiry dates for key personnel. The personnel list shows which licenses have lapsed or are close to lapsing, so you can renew them before they appear in a bid.</p>
+    </section>
+
+    <!-- 07 -->
+    <section id="bids">
+      <p class="kicker">07 / Bids</p>
+      <h2>Bids</h2>
+      <p>A bid is one opportunity: a project you have seen on PhilGEPS, received from a private client, or heard about. Add the title, procuring entity, reference number, location, approved budget for the contract and the submission deadline.</p>
+      <h3>Stages of a bid</h3>
+      <div class="flow" aria-label="Bid stages">
+        <span>Identified</span><i>→</i><span>Evaluating</span><i>→</i><span>Preparing</span><i>→</i><span>Ready</span><i>→</i><span>Submitted</span><i>→</i><span>Opened</span><i>→</i><span class="end">Awarded or Lost</span>
+      </div>
+      <p>A bid can also end as <strong>No bid</strong> (you decided not to bid) or <strong>Cancelled</strong> (the procuring entity cancelled it). The rules that keep the tracker honest:</p>
+      <ul>
+        <li>To move from Evaluating to Preparing, record a <strong>go decision</strong> first.</li>
+        <li>A bid can only move to <strong>Ready</strong> when its packet has no blockers.</li>
+        <li>No bid, Cancelled and Lost need a short reason, so the team remembers why.</li>
+        <li>When you mark a bid Awarded or Lost, you can record your bid amount, the winning amount, the winner and whether you were disqualified. These feed the Outcomes page.</li>
+        <li>A bid in Preparing or Ready can step back one stage if plans change.</li>
+      </ul>
+      <h3>Board and table views</h3>
+      <p>The board shows bids as cards in columns by stage. The table view suits long lists and sorting. Countdown chips show how many days are left before the deadline.</p>
+      <h3>Inside a bid</h3>
+      <p>Each bid has tabs for <span class="ui">Overview</span>, <span class="ui">Packet</span>, <span class="ui">Proposal</span>, <span class="ui">Tasks</span> and <span class="ui">Activity</span>. Activity records every change: who moved the bid, who changed the packet, and when.</p>
+    </section>
+
+    <!-- 08 -->
+    <section id="packets">
+      <p class="kicker">08 / Bid packets</p>
+      <h2>Bid packets</h2>
+      <p>The packet is the checklist of everything one bid requires, grouped into eligibility, technical, financial, post-qualification and other documents. Licitatio checks every item and tells you whether the packet is ready.</p>
+      <h3>Creating a packet</h3>
+      <ol class="steps">
+        <li><div>Open the bid, go to <span class="ui">Packet</span> and choose a requirement template.</div></li>
+        <li><div>Licitatio matches each requirement to a current document in your vault.</div></li>
+        <li><div>Work through the items that are not yet complete until the summary says Ready.</div></li>
+      </ol>
+      <h3>Requirement templates</h3>
+      <ul>
+        <li><strong>Public bidding: infrastructure</strong> (default for government works)</li>
+        <li><strong>Private bid: basic</strong></li>
+        <li><strong>Small value procurement</strong>, <strong>Public bidding: design and build</strong> and <strong>Consulting services</strong>, marked as drafts while our engineer reviews them</li>
+      </ul>
+      <p>Admins can copy a template and adjust it, or add a requirement to a single packet. Always compare the template with the actual invitation to bid: requirements change between agencies and projects.</p>
+      <h3>How each item is fulfilled</h3>
+      <div class="tablebox"><table>
+        <thead><tr><th>Type</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>From the vault</td><td>Uses a document from your vault. It must still be valid on the submission date, with any minimum validity the template asks for.</td></tr>
+          <tr><td>Upload</td><td>A file made for this bid only, such as a signed bid form or a bid security.</td></tr>
+          <tr><td>Generated</td><td>A schedule Licitatio builds from your registers: completed projects, ongoing projects, key personnel or equipment.</td></tr>
+          <tr><td>External</td><td>Something handled outside the app, such as a notarized affidavit that is still at the notary.</td></tr>
+        </tbody>
+      </table></div>
+      <h3>Item status</h3>
+      <p><span class="chip c-green">Complete</span> <span class="chip c-amber">Expiring</span> <span class="chip c-red">Expired</span> <span class="chip c-red">Missing</span> <span class="chip c-grey">Waived</span> <span class="chip c-grey">Pending outside</span></p>
+      <p>A document that expires before the submission date counts as expired for that bid, even if it is valid today. Mandatory items that are missing or expired are <strong>blockers</strong>.</p>
+      <h3>Item actions</h3>
+      <ul>
+        <li><strong>Change</strong> picks a different vault document or file.</li>
+        <li><strong>Unassign</strong> removes the current document from the item.</li>
+        <li><strong>Waive</strong> marks an optional item as not needed for this bid, with a reason. Mandatory items cannot be waived by Semivra staff.</li>
+        <li><strong>Exclude</strong> removes an item that does not apply to this bid.</li>
+        <li><strong>Mark pending outside</strong> for items being handled outside the app, such as at the notary.</li>
+        <li><strong>Notes</strong> keep remarks like "original at the office".</li>
+      </ul>
+      <h3>Client approval</h3>
+      <p>If <span class="ui">Require approval before export</span> is turned on in settings, an owner or admin must approve the packet before a final export. Any later change to the packet clears the approval. Without approval, exports are marked "DRAFT: awaiting client approval".</p>
+      <h3>Exporting</h3>
+      <p>Choose <span class="ui">Export PDF</span>. Licitatio merges every document into one PDF with a cover and an index of items and page numbers. Large packets take a minute; you get a notification when the export is ready, and the download stays available for 30 days. A packet with blockers can only be exported as a marked draft.</p>
+    </section>
+
+    <!-- 09 -->
+    <section id="proposals">
+      <p class="kicker">09 / Proposals</p>
+      <h2>Proposals</h2>
+      <p>The proposal builder writes technical proposals: company background, method statement, work plan, quality and safety approach, and any section the bid asks for. Proposals are available on the Pro and Desk plans.</p>
+      <h3>Building a proposal</h3>
+      <ul>
+        <li>Create a proposal and link it to a bid so bid details fill in automatically.</li>
+        <li>Add sections and fill them with paragraphs, headings, lists, tables and images.</li>
+        <li>Use <span class="ui">Insert block</span> to copy saved text from the content library, such as your standard safety policy. Inserted text is a copy, so each proposal stays editable on its own.</li>
+      </ul>
+      <h3>Placeholders</h3>
+      <p>Placeholders are filled from your profile, registers and the linked bid when you export. The side panel lists every placeholder and warns about any that have no value yet.</p>
+      <div class="tablebox"><table>
+        <thead><tr><th>Group</th><th>Available values</th></tr></thead>
+        <tbody>
+          <tr><td>Company</td><td>Legal name, trade name, address, phone, email, website, year established, years in business, PCAB license number and category, TIN, PhilGEPS number</td></tr>
+          <tr><td>Signatory</td><td>Name and position</td></tr>
+          <tr><td>Bid</td><td>Title, reference number, procuring entity, location, approved budget, submission date and deadline</td></tr>
+          <tr><td>Track record</td><td>Number and total value of completed projects</td></tr>
+          <tr><td>Date</td><td>Today's date</td></tr>
+        </tbody>
+      </table></div>
+      <h3>Draft with AI</h3>
+      <p>When AI drafting is turned on for your workspace, each section has a <span class="ui">Draft with AI</span> button. Choose company background, method statement and work plan, quality and safety approach, or describe another section, and add instructions if you like.</p>
+      <ul>
+        <li>The draft uses your company profile, registers and linked bid. Your TIN and contact details are never sent.</li>
+        <li>Nothing is inserted until you review the draft and choose <span class="ui">Insert into section</span>.</li>
+        <li>Drafts can be wrong. Read every sentence and check every fact before you submit.</li>
+        <li>A workspace can request up to 50 drafts per day.</li>
+      </ul>
+      <h3>Exporting a proposal</h3>
+      <p>Export to Word (DOCX) for final edits, or PDF for submission. If placeholders are still empty, Licitatio asks before exporting with blanks.</p>
+    </section>
+
+    <!-- 10 -->
+    <section id="tasks">
+      <p class="kicker">10 / Tasks</p>
+      <h2>Tasks</h2>
+      <p>Tasks track the work that has to happen outside the app: signing forms, notarizing, getting the bid security, delivering originals. Each task has a title, an assignee, a due date and an optional link to a bid.</p>
+      <p>Tasks move through <strong>To do</strong>, <strong>Doing</strong>, <strong>Blocked</strong> and <strong>Done</strong> on the task board. Assignees get a notification when a task is given to them, and the dashboard shows each member's open tasks.</p>
+    </section>
+
+    <!-- 11 -->
+    <section id="notifications">
+      <p class="kicker">11 / Reminders and notifications</p>
+      <h2>Reminders and notifications</h2>
+      <div class="tablebox"><table>
+        <thead><tr><th>Event</th><th>When</th></tr></thead>
+        <tbody>
+          <tr><td>Document expiring</td><td class="num">60, 30 and 7 days before expiry (adjustable)</td></tr>
+          <tr><td>Document expired</td><td class="num">On the expiry date</td></tr>
+          <tr><td>Bid deadline approaching</td><td class="num">7, 3 and 1 day before the deadline</td></tr>
+          <tr><td>Ready packet has a new blocker</td><td>As soon as it happens, for example when a document in it expires</td></tr>
+          <tr><td>Task assigned to you</td><td>As soon as it happens</td></tr>
+          <tr><td>Export ready</td><td>When the PDF or Word file finishes</td></tr>
+        </tbody>
+      </table></div>
+      <h3>Where reminders appear</h3>
+      <ul>
+        <li><strong>In the app.</strong> The bell in the header shows unread notifications.</li>
+        <li><strong>Daily email digest.</strong> One email a day summarizing what needs attention. Each member can turn it off.</li>
+        <li><strong>SMS.</strong> Members who add a Philippine mobile number and turn on SMS reminders get short text alerts for the most urgent items.</li>
+      </ul>
+      <p>Admins can change the expiry reminder days for the whole workspace under <span class="ui">Settings, Notifications</span>. Each member sets their own email and SMS preferences under <span class="ui">Your reminders</span>.</p>
+    </section>
+
+    <!-- 12 -->
+    <section id="outcomes">
+      <p class="kicker">12 / Outcomes</p>
+      <h2>Outcomes</h2>
+      <p>The Outcomes page turns your bid history into lessons. It shows:</p>
+      <ul>
+        <li>Win rate across decided bids (awarded compared with awarded plus lost).</li>
+        <li>Total value of awarded bids.</li>
+        <li>How often bids were disqualified, and for what.</li>
+        <li>The most common reasons for losing and for deciding not to bid.</li>
+        <li>The packet requirements that most often blocked a bid.</li>
+        <li>The median number of days from adding a bid to submitting it.</li>
+        <li>Counts of bids by stage, for any date range you choose.</li>
+      </ul>
+      <p>The numbers are only as good as the outcomes you record, so enter the winning amount and winner whenever results are posted.</p>
+    </section>
+
+    <!-- 13 -->
+    <section id="plans">
+      <p class="kicker">13 / Plans and billing</p>
+      <h2>Plans and billing</h2>
+      <div class="tablebox"><table>
+        <thead><tr><th></th><th>Starter</th><th>Pro</th><th>Desk</th></tr></thead>
+        <tbody>
+          <tr><td>Price per month</td><td class="num">PHP 1,500</td><td class="num">PHP 3,500</td><td class="num">PHP 12,000</td></tr>
+          <tr><td>Users</td><td class="num">3</td><td class="num">10</td><td class="num">15</td></tr>
+          <tr><td>Storage</td><td class="num">1 GB</td><td class="num">5 GB</td><td class="num">10 GB</td></tr>
+          <tr><td>Active bids</td><td class="num">10</td><td>Unlimited</td><td>Unlimited</td></tr>
+          <tr><td>Packet exports per month</td><td class="num">20</td><td class="num">100</td><td>Unlimited</td></tr>
+          <tr><td>Proposal builder</td><td class="no">No</td><td class="yes">Yes, 100 exports a month</td><td class="yes">Yes, unlimited</td></tr>
+          <tr><td>Semivra staff access</td><td class="no">No</td><td class="yes">Yes</td><td class="yes">Yes, with desk service</td></tr>
+        </tbody>
+      </table></div>
+      <p>Active bids are those in Identified, Evaluating, Preparing, Ready or Submitted. Settled bids do not count.</p>
+      <h3>Paying</h3>
+      <p>Owners renew under <span class="ui">Settings, Plan</span>. Choose the plan and 1, 3 or 12 months; 12 months costs the same as 10. Pay online with GCash, Maya, GrabPay or card on PayMongo's secure page, or arrange a bank transfer or invoice with Semivra. Time is added from your current expiry date, so renewing early never loses days.</p>
+      <h3>When a plan expires</h3>
+      <div class="flow" aria-label="Plan expiry"><span>Active</span><i>→</i><span>Grace period, 7 days</span><i>→</i><span class="end">Read-only</span></div>
+      <p>During the grace period everything still works and a banner reminds you to renew. After that the workspace becomes read-only: you can view and download every document and export, but not change anything until the plan is renewed. Nothing is deleted.</p>
+    </section>
+
+    <!-- 14 -->
+    <section id="desk">
+      <p class="kicker">14 / Semivra desk service</p>
+      <h2>Semivra desk service</h2>
+      <p>On the Desk plan, Semivra staff help prepare your bids inside your workspace. On Pro you can also grant staff access for help and support.</p>
+      <ul>
+        <li>The owner grants access under <span class="ui">Settings, Staff access</span>, naming the staff member and the number of days, from 1 to 90 (30 by default).</li>
+        <li>The owner can revoke access at any time, and it ends on its own when the period runs out.</li>
+        <li>A yellow banner reminds staff they are working in a client workspace, and every action they take is recorded in your audit log as Semivra staff.</li>
+        <li>Staff sign in with two-factor authentication.</li>
+        <li>Staff cannot waive mandatory requirements, approve packets, manage members, staff access or plans, or read the audit log.</li>
+      </ul>
+    </section>
+
+    <!-- 15 -->
+    <section id="devices">
+      <p class="kicker">15 / Language, phones and install</p>
+      <h2>Language, phones and install</h2>
+      <h3>Language</h3>
+      <p>Switch between English and Filipino from the language menu in the header or on the sign-in page. Navigation, sign-in screens and the dashboard are translated today; other screens follow. Your choice is remembered on that device.</p>
+      <h3>Phones and tablets</h3>
+      <p>Every screen works on a phone. On small screens the menu opens from the button at the top left, and wide tables scroll sideways inside their box.</p>
+      <h3>Installing the app</h3>
+      <div class="tablebox"><table>
+        <thead><tr><th>Device</th><th>Steps</th></tr></thead>
+        <tbody>
+          <tr><td>Android (Chrome)</td><td>Open the menu, then <span class="ui">Install app</span> or <span class="ui">Add to Home screen</span>.</td></tr>
+          <tr><td>iPhone and iPad (Safari)</td><td>Tap Share, then <span class="ui">Add to Home Screen</span>, then Add.</td></tr>
+          <tr><td>Windows and Mac (Chrome or Edge)</td><td>Click the install icon at the right end of the address bar, then Install.</td></tr>
+        </tbody>
+      </table></div>
+      <p>The installed app opens quickly and updates itself. It needs an internet connection to load your data.</p>
+    </section>
+
+    <!-- 16 -->
+    <section id="security">
+      <p class="kicker">16 / Security and privacy</p>
+      <h2>Security and privacy</h2>
+      <ul>
+        <li><strong>Separation.</strong> Each company's data is kept apart from every other company's.</li>
+        <li><strong>Encryption.</strong> Data is encrypted in transit and at rest. Staff two-factor secrets get an extra layer of encryption.</li>
+        <li><strong>Passwords.</strong> Stored only as a secure hash. Nobody at Semivra can see your password.</li>
+        <li><strong>Downloads.</strong> File links are short-lived and work only for signed-in members.</li>
+        <li><strong>Audit log.</strong> Owners and admins can see who did what and when under <span class="ui">Settings, Audit log</span>.</li>
+        <li><strong>Backups.</strong> Encrypted backups run nightly and are kept for 30 days.</li>
+      </ul>
+      <h3>Retention</h3>
+      <div class="tablebox"><table>
+        <thead><tr><th>Data</th><th>Kept for</th></tr></thead>
+        <tbody>
+          <tr><td>Workspace data</td><td>While the subscription is active, then a limited period after it ends</td></tr>
+          <tr><td>Generated exports</td><td class="num">30 days</td></tr>
+          <tr><td>Unfinished uploads</td><td class="num">24 hours</td></tr>
+          <tr><td>Application logs</td><td class="num">14 days</td></tr>
+          <tr><td>Encrypted backups</td><td class="num">30 days</td></tr>
+        </tbody>
+      </table></div>
+      <h3>Your rights</h3>
+      <p>Under the Data Privacy Act of 2012 you may ask to access, correct, export or delete your data. Owners can request a full export of the workspace (records and files) or its deletion at any time by contacting Semivra. The full privacy policy and terms of service are linked at the bottom of every page.</p>
+    </section>
+
+    <!-- 17 -->
+    <section id="admin">
+      <p class="kicker">17 / For Semivra staff</p>
+      <h2>For Semivra staff</h2>
+      <h3>Onboarding a client</h3>
+      <p>Plan about 60 minutes with the client's owner. Before you start, ask how long their last packet took to assemble; the goal is under 30 minutes for the next one.</p>
+      <ol class="steps">
+        <li><div>The owner registers and verifies their email. A platform admin sets the plan after payment is recorded.</div></li>
+        <li><div>The owner grants you staff access (default 30 days).</div></li>
+        <li><div>Complete the company profile: legal name, address and signatory first.</div></li>
+        <li><div>Upload the core documents with careful expiry dates.</div></li>
+        <li><div>Enter projects, key personnel with PRC license expiry, and equipment.</div></li>
+        <li><div>Create the first bid, record the go decision, choose a template and work the packet to Ready.</div></li>
+        <li><div>Create tasks for what only the client can do, such as signing and notarizing, and assign them to the client's members.</div></li>
+        <li><div>Export the packet. The client reviews it and submits the bid themselves.</div></li>
+      </ol>
+      <h3>Platform administration</h3>
+      <ul>
+        <li>Platform admins see all organizations on the admin page and can change a plan and its expiry date, for example after a bank transfer.</li>
+        <li>Staff accounts, authenticator resets, client data exports and deletion requests are handled by the operations team with the support tools described in the operations runbook. Deletions need a written request from the owner.</li>
+      </ul>
+    </section>
+
+    <!-- 18 -->
+    <section id="faq">
+      <p class="kicker">18 / Troubleshooting and FAQ</p>
+      <h2>Troubleshooting and FAQ</h2>
+      <details class="faq"><summary>I did not receive the verification or reset email.</summary><p>Check spam and promotions folders, then request a new link from the sign-in page. Verification links expire after 24 hours and reset links after 1 hour.</p></details>
+      <details class="faq"><summary>My bid will not move to Ready.</summary><p>The packet still has blockers. Open the Packet tab: the summary shows how many mandatory items are missing or expired. A document that expires before the submission date counts as expired.</p></details>
+      <details class="faq"><summary>I cannot move a bid from Evaluating to Preparing.</summary><p>Record a go decision on the bid's Overview tab first.</p></details>
+      <details class="faq"><summary>Export says the company profile is incomplete.</summary><p>Fill in the legal name, street address, city, province, and the signatory's name and position under Settings, Company profile.</p></details>
+      <details class="faq"><summary>My export is marked DRAFT.</summary><p>Either the packet still has blockers, or approval before export is required and an owner or admin has not approved it yet, or the packet changed after approval.</p></details>
+      <details class="faq"><summary>Upload fails.</summary><p>Only PDF, PNG, JPG and DOCX files up to 15 MB are accepted, and your plan's storage must have room. Scan large documents at a lower resolution or split them.</p></details>
+      <details class="faq"><summary>The workspace is read-only.</summary><p>The plan expired more than 7 days ago. The owner can renew under Settings, Plan. Everything is still there and can be downloaded.</p></details>
+      <details class="faq"><summary>I do not see Draft with AI.</summary><p>AI drafting must be turned on for the workspace, the plan must include proposals, and you need the editor role or higher.</p></details>
+      <details class="faq"><summary>I am not getting SMS reminders.</summary><p>Add a Philippine mobile number and turn on SMS reminders under Settings, Notifications, Your reminders. SMS covers only the most urgent items.</p></details>
+      <details class="faq"><summary>Can Licitatio submit the bid for us?</summary><p>No. Your team reviews and submits every bid. Licitatio prepares and checks the documents.</p></details>
+    </section>
+
+    <!-- 19 -->
+    <section id="glossary">
+      <p class="kicker">19 / Glossary</p>
+      <h2>Glossary</h2>
+      <dl class="gloss">
+        <dt>ABC</dt><dd>Approved budget for the contract: the ceiling price set by the procuring entity.</dd>
+        <dt>Blocker</dt><dd>A mandatory packet item that is missing or expired. A bid cannot be Ready while it has blockers.</dd>
+        <dt>Go decision</dt><dd>The recorded choice to pursue a bid, needed before preparing it.</dd>
+        <dt>NFCC</dt><dd>Net financial contracting capacity, a financial eligibility requirement in public bidding.</dd>
+        <dt>PCAB</dt><dd>Philippine Contractors Accreditation Board, which licenses contractors and sets categories from AAAA to Trade/E.</dd>
+        <dt>PhilGEPS</dt><dd>Philippine Government Electronic Procurement System, where public bids are posted and suppliers register.</dd>
+        <dt>Post-qualification</dt><dd>The procuring entity's check of the lowest bidder's documents after bid opening.</dd>
+        <dt>Procuring entity</dt><dd>The agency or company that runs the bidding.</dd>
+        <dt>RA 9184</dt><dd>The Government Procurement Reform Act and its implementing rules.</dd>
+        <dt>Requirement template</dt><dd>A standard list of packet requirements that Licitatio uses to start a packet.</dd>
+        <dt>Vault</dt><dd>Licitatio's store of reusable company documents.</dd>
+      </dl>
+    </section>
+
+    <footer class="doc">
+      <span>Licitatio is a product of Semivra, Angeles City, Pampanga.</span>
+      <span>© 2026 Semivra. Licitatio User Guide, version 1.0.</span>
+    </footer>
+  </main>
+</div>
