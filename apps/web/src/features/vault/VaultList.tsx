@@ -106,7 +106,7 @@ export function VaultList() {
                     <td className="px-4 py-3 font-medium text-slate-900"><Link to={d.id} className="hover:underline" onClick={(e) => e.stopPropagation()}>{d.title}</Link></td>
                     <td className="px-4 py-3 text-slate-600">{d.docTypeName}</td>
                     <td className="px-4 py-3 text-slate-600">{d.referenceNumber}</td>
-                    <td className="px-4 py-3 text-slate-600">{d.current.expiresAt ? formatDateOnly(d.current.expiresAt) : '—'}</td>
+                    <td className="px-4 py-3 text-slate-600">{d.current.expiresAt ? formatDateOnly(d.current.expiresAt) : 'Not set'}</td>
                     <td className="px-4 py-3"><ExpiryChip expiry={d.expiry} archived={Boolean(d.archivedAt)} /></td>
                     <td className="px-4 py-3 text-right text-slate-600">{d.versionCount}</td>
                   </tr>

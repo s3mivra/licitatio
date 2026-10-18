@@ -62,10 +62,10 @@ export function AnalyticsPage() {
             : (
               <div className="space-y-6">
                 <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-                  <Tile label="Win rate" value={d.decided.winRatePercent === null ? '—' : `${d.decided.winRatePercent}%`} hint={`${d.decided.awarded} won of ${d.decided.awarded + d.decided.lost} decided`} />
+                  <Tile label="Win rate" value={d.decided.winRatePercent === null ? 'No data' : `${d.decided.winRatePercent}%`} hint={`${d.decided.awarded} won of ${d.decided.awarded + d.decided.lost} decided`} />
                   <Tile label="Awarded value (PHP)" value={formatCentavos(d.awardedValue)} hint="Our bid amount, or the approved budget" />
                   <Tile label="Disqualifications" value={String(d.disqualifications)} hint="Lost bids marked disqualified" />
-                  <Tile label="Median days to submit" value={d.medianDaysToSubmit === null ? '—' : String(d.medianDaysToSubmit)} hint="From adding the bid to submission" />
+                  <Tile label="Median days to submit" value={d.medianDaysToSubmit === null ? 'No data' : String(d.medianDaysToSubmit)} hint="From adding the bid to submission" />
                 </div>
                 <div className="grid gap-4 lg:grid-cols-2">
                   <Bars title="Bids by status" rows={Object.entries(d.byStatus).map(([k, n]) => ({ label: STATUS_LABEL[k as keyof typeof STATUS_LABEL] ?? k, count: n })).sort((a, b) => b.count - a.count)} empty="No bids." />

@@ -77,7 +77,7 @@ function TransitionDialog({ bid, to, onClose }: { bid: OpportunityDto; to: Oppor
 }
 
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
-  return <div className="flex justify-between gap-4 py-1.5"><dt className="text-slate-500">{label}</dt><dd className="text-right">{value || '—'}</dd></div>;
+  return <div className="flex justify-between gap-4 py-1.5"><dt className="text-slate-500">{label}</dt><dd className="text-right">{value || 'Not set'}</dd></div>;
 }
 
 export function BidDetail() {

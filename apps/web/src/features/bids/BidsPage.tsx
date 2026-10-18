@@ -114,8 +114,8 @@ export function BidsPage() {
                     <td className="px-4 py-3"><Link to={`${base}/${o.id}`} onClick={(e) => e.stopPropagation()} className="font-medium text-slate-900 hover:underline">{o.title}</Link><p className="text-xs text-slate-500">{o.procuringEntity}</p></td>
                     <td className="px-4 py-3"><StatusChip status={o.status} /></td>
                     <td className="px-4 py-3 text-slate-700"><span className="flex flex-wrap items-center gap-2">{formatDateTime(o.submissionDeadlineAt)}<DeadlineChip iso={o.submissionDeadlineAt} status={o.status} /></span></td>
-                    <td className="px-4 py-3 text-slate-600">{o.assigneeName ?? '—'}</td>
-                    <td className="px-4 py-3 text-right tabular-nums text-slate-700">{o.approvedBudget ? formatCentavos(o.approvedBudget) : '—'}</td>
+                    <td className="px-4 py-3 text-slate-600">{o.assigneeName ?? 'Not set'}</td>
+                    <td className="px-4 py-3 text-right tabular-nums text-slate-700">{o.approvedBudget ? formatCentavos(o.approvedBudget) : 'Not set'}</td>
                   </tr>
                 ))}
               </tbody>

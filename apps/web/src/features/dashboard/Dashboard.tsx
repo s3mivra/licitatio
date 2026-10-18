@@ -16,9 +16,11 @@ const GAP_LABELS: Record<string, string> = {
 
 function StatCard({ label, value, tone, to }: { label: string; value: number | undefined; tone: string; to: string }) {
   return (
-    <Link to={to} className="card block p-4 hover:border-slate-300">
-      <p className="text-sm text-slate-500">{label}</p>
-      {value === undefined ? <Skeleton className="mt-2 h-8 w-12" /> : <p className={cx('mt-1 text-3xl font-semibold', tone)}>{value}</p>}
+    <Link to={to} className="card group relative block overflow-hidden p-4 transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md">
+      <span className={cx('absolute inset-x-0 top-0 h-1 bg-current opacity-70', tone)} aria-hidden />
+      <p className="text-sm font-medium text-slate-500">{label}</p>
+      {value === undefined ? <Skeleton className="mt-2 h-8 w-12" /> : <p className={cx('mt-1 text-3xl font-semibold tabular-nums', tone)}>{value}</p>}
+      <span className="absolute bottom-3 right-4 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-slate-500" aria-hidden>&rarr;</span>
     </Link>
   );
 }

@@ -206,7 +206,7 @@ const projects: RegisterConfig<ExperienceProjectDto> = {
     { label: 'Project', render: (p) => <span className="font-medium text-slate-900">{p.name}</span> },
     { label: 'Client', render: (p) => `${p.clientName} (${p.clientType === 'government' ? 'Gov' : 'Private'})` },
     { label: 'Status', render: (p) => <Chip tone={p.status === 'ongoing' ? 'blue' : 'slate'}>{p.status === 'ongoing' ? 'Ongoing' : 'Completed'}</Chip> },
-    { label: 'Completed', render: (p) => formatDateOnly(p.completionDate) || '—' },
+    { label: 'Completed', render: (p) => formatDateOnly(p.completionDate) || 'Not set' },
     { label: 'Amount (PHP)', render: (p) => formatCentavos(p.contractAmount), align: 'right' },
   ],
   cardTitle: (p) => p.name,
@@ -269,9 +269,9 @@ const personnel: RegisterConfig<PersonnelDto> = {
     { label: 'Name', render: (p) => <span className="font-medium text-slate-900">{p.fullName}</span> },
     { label: 'Position', render: (p) => p.position },
     { label: 'Key', render: (p) => (p.isKeyPersonnel ? <Chip tone="blue">Key</Chip> : '') },
-    { label: 'License', render: (p) => p.licenseNo ?? '—' },
+    { label: 'License', render: (p) => p.licenseNo ?? 'Not set' },
     {
-      label: 'License expiry', render: (p) => !p.licenseExpiry ? '—' : (
+      label: 'License expiry', render: (p) => !p.licenseExpiry ? 'Not set' : (
         <span className="flex items-center gap-2">{formatDateOnly(p.licenseExpiresAt)}
           {p.licenseExpiry.state === 'expired' ? <Chip tone="red">Expired</Chip> : p.licenseExpiry.state === 'expiring' ? <Chip tone="amber">{relativeDays(p.licenseExpiry.daysRemaining)}</Chip> : null}
         </span>
@@ -324,7 +324,7 @@ const equipment: RegisterConfig<EquipmentDto> = {
   columns: [
     { label: 'Name', render: (e) => <span className="font-medium text-slate-900">{e.name}</span> },
     { label: 'Type', render: (e) => e.type },
-    { label: 'Make and model', render: (e) => [e.make, e.model].filter(Boolean).join(' ') || '—' },
+    { label: 'Make and model', render: (e) => [e.make, e.model].filter(Boolean).join(' ') || 'Not set' },
     { label: 'Ownership', render: (e) => (e.ownership === 'owned' ? 'Owned' : 'Leased') },
     { label: 'Condition', render: (e) => <Chip tone={e.condition === 'good' ? 'green' : e.condition === 'fair' ? 'amber' : 'red'}>{CONDITION_LABEL[e.condition]}</Chip> },
     { label: 'Qty', render: (e) => e.quantity, align: 'right' },

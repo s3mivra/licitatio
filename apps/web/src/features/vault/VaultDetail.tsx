@@ -88,9 +88,9 @@ export function VaultDetail() {
           <section className="card p-4" aria-labelledby="details-h">
             <h2 id="details-h" className="mb-3 font-medium">Details</h2>
             <dl className="space-y-2 text-sm">
-              <div className="flex justify-between gap-4"><dt className="text-slate-500">Issued</dt><dd>{doc.current.issuedAt ? formatDateOnly(doc.current.issuedAt) : '—'}</dd></div>
+              <div className="flex justify-between gap-4"><dt className="text-slate-500">Issued</dt><dd>{doc.current.issuedAt ? formatDateOnly(doc.current.issuedAt) : 'Not set'}</dd></div>
               <div className="flex justify-between gap-4"><dt className="text-slate-500">Valid until</dt><dd>{doc.current.expiresAt ? formatDateOnly(doc.current.expiresAt) : 'No expiry'}</dd></div>
-              <div className="flex justify-between gap-4"><dt className="text-slate-500">File</dt><dd className="truncate">{doc.current.file ? `${doc.current.file.originalName} (${formatBytes(doc.current.file.size)})` : '—'}</dd></div>
+              <div className="flex justify-between gap-4"><dt className="text-slate-500">File</dt><dd className="truncate">{doc.current.file ? `${doc.current.file.originalName} (${formatBytes(doc.current.file.size)})` : 'Not set'}</dd></div>
               <div className="flex justify-between gap-4"><dt className="text-slate-500">Updated</dt><dd>{formatDateTime(doc.updatedAt)}</dd></div>
             </dl>
           </section>
