@@ -20,14 +20,14 @@ const ORG_TYPE_LABELS: Record<(typeof ORG_TYPES)[number], string> = {
 
 function AuthCard({ title, subtitle, children, footer }: { title: string; subtitle?: string; children: ReactNode; footer?: ReactNode }) {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-paper bg-[radial-gradient(#0b10201f_1px,transparent_1px)] [background-size:18px_18px] px-4 py-10">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-paper px-4 py-10">
       <div className="w-full max-w-md">
         <div className="mb-6 flex items-center justify-center gap-2">
           <img src="/icon.svg" alt="" className="h-9 w-9" />
           <span className="font-display text-2xl font-bold text-ink">Licitatio</span>
           <LanguageSwitch className="ml-3" />
         </div>
-        <div className="card p-6 shadow-brut-lg sm:p-8">
+        <div className="card p-6 shadow-brut sm:p-8">
           <h1 className="text-xl font-semibold">{title}</h1>
           {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}
           <div className="mt-6">{children}</div>
@@ -162,7 +162,7 @@ export function VerifyEmailScreen() {
   }
   return (
     <AuthCard title={t('Email verified')} subtitle={t('Your account is ready.')}>
-      <Link to="/login" className="inline-flex w-full justify-center press rounded-md border-2 border-ink bg-accent-400 px-4 py-2 text-sm font-semibold text-ink shadow-brut-xs hover:bg-accent-300">{t('Sign in')}</Link>
+      <Link to="/login" className="inline-flex w-full justify-center press rounded-md border-2 border-ink bg-ink px-4 py-2 text-sm font-semibold text-white shadow-brut-xs hover:bg-brand-900">{t('Sign in')}</Link>
     </AuthCard>
   );
 }
@@ -210,7 +210,7 @@ export function ResetPasswordScreen() {
   if (done) {
     return (
       <AuthCard title={t('Password updated')} subtitle={t('You were signed out on every device.')}>
-        <Link to="/login" className="inline-flex w-full justify-center press rounded-md border-2 border-ink bg-accent-400 px-4 py-2 text-sm font-semibold text-ink shadow-brut-xs">{t('Sign in')}</Link>
+        <Link to="/login" className="inline-flex w-full justify-center press rounded-md border-2 border-ink bg-ink px-4 py-2 text-sm font-semibold text-white shadow-brut-xs">{t('Sign in')}</Link>
       </AuthCard>
     );
   }

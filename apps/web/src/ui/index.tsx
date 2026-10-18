@@ -7,7 +7,7 @@ const cx = (...parts: Array<string | false | null | undefined>): string => parts
 // ---------- buttons ----------
 type Variant = 'primary' | 'secondary' | 'danger' | 'ghost';
 const VARIANTS: Record<Variant, string> = {
-  primary: 'press border-2 border-ink bg-accent-400 text-ink shadow-brut-xs hover:bg-accent-300 hover:shadow-brut-sm disabled:border-slate-400 disabled:bg-slate-200 disabled:text-slate-500 disabled:shadow-none',
+  primary: 'press border-2 border-ink bg-ink text-white shadow-brut-xs hover:bg-brand-900 hover:shadow-brut-sm disabled:border-slate-400 disabled:bg-slate-200 disabled:text-slate-500 disabled:shadow-none',
   secondary: 'press border-2 border-ink bg-white text-ink shadow-brut-xs hover:bg-paper hover:shadow-brut-sm disabled:border-slate-300 disabled:text-slate-400 disabled:shadow-none',
   danger: 'press border-2 border-ink bg-red-600 text-white shadow-brut-xs hover:bg-red-700 hover:shadow-brut-sm disabled:bg-red-600/50 disabled:shadow-none',
   ghost: 'border-2 border-transparent text-slate-800 hover:border-ink hover:bg-white disabled:text-slate-400 disabled:hover:border-transparent',
@@ -176,7 +176,7 @@ export function Dialog({ open, onClose, title, children, footer, wide }: { open:
     >
       {open && (
         <div className="flex max-h-[85vh] flex-col">
-          <div className="flex items-center justify-between border-b-2 border-ink bg-accent-300 px-5 py-3.5">
+          <div className="flex items-center justify-between border-b-2 border-ink bg-white px-5 py-3.5">
             <h2 id="dialog-title" className="text-lg font-bold">{title}</h2>
             <button type="button" onClick={onClose} className="flex h-8 w-8 items-center justify-center rounded-md border-2 border-ink bg-white font-bold hover:bg-paper" aria-label="Close">✕</button>
           </div>
