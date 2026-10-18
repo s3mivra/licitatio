@@ -404,3 +404,11 @@ export interface Job extends Base {
   lastError?: string;
   dedupeKey?: string;
 }
+
+// ---------- bid price builder ----------
+export interface PriceSheet extends TenantBase {
+  opportunityId: ObjectIdString;
+  items: import('./pricing').PriceItem[];
+  markups: import('./pricing').Markups;
+  updatedBy?: ObjectIdString;
+}

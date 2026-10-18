@@ -279,6 +279,19 @@ export const patchProposalBody = z.object({
   opportunityId: objectId.nullable().optional(),
 }).strict();
 export const exportProposalBody = z.object({ format: z.enum(['pdf', 'docx']), allowUnresolved: z.boolean().optional() }).strict();
+const qty4 = z.number().min(0).max(1_000_000_000).refine((n) => Math.abs(n * 10_000 - Math.round(n * 10_000)) < 1e-6, 'Up to 4 decimals');
+export const priceSheetBody = z.object({
+  rev: z.number().int().min(0),
+  markups: z.object({ ocmPercent: z.number().min(0).max(100), profitPercent: z.number().min(0).max(100), vatPercent: z.number().min(0).max(100) }).strict(),
+  items: z.array(z.object({
+    id: z.string().uuid(), itemNo: z.string().trim().max(30), description: z.string().trim().min(1).max(500), unit: z.string().trim().max(20), quantity: qty4,
+    components: z.array(z.object({
+      kind: z.enum(['material', 'labor', 'equipment']), description: z.string().trim().min(1).max(200), unit: z.string().trim().max(20), quantity: qty4,
+      unitCost: z.number().int().min(0).max(10_000_000_000_000),
+    }).strict()).max(40),
+  }).strict()).max(300),
+}).strict();
+export const priceExportBody = z.object({ format: z.literal('pdf') }).strict();
 export const readNoticeBody = z.object({ text: z.string().trim().min(40, 'Paste more of the notice').max(30_000).optional(), fileId: objectId.optional() }).strict()
   .refine((v) => Boolean(v.text) !== Boolean(v.fileId), { message: 'Paste the notice text or attach its PDF' });
 export const scanDocumentBody = z.object({ fileId: objectId }).strict();

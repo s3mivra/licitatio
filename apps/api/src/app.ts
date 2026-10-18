@@ -26,7 +26,7 @@ export function createApp(): express.Express {
     cors({
       origin: [...allowedOrigins],
       credentials: true,
-      methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
       allowedHeaders: ['Authorization', 'Content-Type', 'Idempotency-Key', 'X-Requested-With'],
       exposedHeaders: ['X-Request-Id', 'Idempotent-Replay', 'Retry-After'],
       maxAge: 600,

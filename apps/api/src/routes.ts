@@ -14,6 +14,7 @@ import * as opportunities from './modules/opportunities/opportunities.controller
 import * as orgs from './modules/orgs/orgs.controller';
 import * as calendar from './modules/calendar/calendar.controller';
 import * as packets from './modules/packets/packets.controller';
+import * as pricing from './modules/pricing/pricing.controller';
 import * as platform from './modules/platform/platform.controller';
 import * as proposals from './modules/proposals/proposals.controller';
 import * as tasks from './modules/tasks/tasks.controller';
@@ -111,6 +112,9 @@ org.patch('/opportunities/:id/packet/items/:itemId', editor, packets.updateItem)
 org.delete('/opportunities/:id/packet/items/:itemId', editor, packets.deleteItem);
 org.post('/opportunities/:id/packet/items/:itemId/generate', editor, packets.generate);
 org.post('/opportunities/:id/packet/checklist', editor, packets.checklist);
+org.get('/opportunities/:id/price-sheet', viewer, pricing.get);
+org.put('/opportunities/:id/price-sheet', editor, pricing.save);
+org.post('/opportunities/:id/price-sheet/export', editor, exportLimiter, pricing.exportSheet);
 org.post('/opportunities/:id/packet/export', editor, exportLimiter, packets.exportPacket);
 org.get('/opportunities/:id/packet/exports', viewer, packets.packetExports);
 org.get('/exports/:id', viewer, packets.getExportRecord);

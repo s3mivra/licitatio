@@ -43,6 +43,8 @@ automated test in `apps/api/test` or `apps/api/src/**/*.test.ts` that runs in CI
 - [ ] Civil engineer: confirm the NFCC formula (K = 15), what counts as outstanding works, and the 2% and 5% bid security
       rates against the current procurement rules (`packages/shared/src/nfcc.ts`), and the two-envelope label wording
       (`apps/api/src/domain/submissionChecklist.ts`).
+- [ ] Estimator or civil engineer: confirm the price builder markups (OCM 10%, profit 10%, VAT 12% on direct cost plus
+      markups) and the PDF layout of the bill of quantities and unit price analysis (`packages/shared/src/pricing.ts`).
 - [ ] Set `API_PUBLIC_URL` to the public API address so calendar links work outside the app.
 - [ ] Optional AI notice reading also uses the AI switch; the privacy notice should say pasted notices and notice PDFs
       are sent to Anthropic when a user presses "Read notice".

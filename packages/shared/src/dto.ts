@@ -362,3 +362,11 @@ export interface NoticeReadDto {
   title?: string; procuringEntity?: string; referenceNo?: string; location?: string; approvedBudget?: number; bidSecurityRequired?: boolean;
   preBidAt?: string; clarificationDeadlineAt?: string; submissionDeadlineAt?: string; openingAt?: string;
 }
+
+export interface PriceSheetDto {
+  opportunityId: string;
+  rev: number; // 0 until first saved
+  items: import('./pricing').PriceItem[];
+  markups: import('./pricing').Markups;
+  updatedAt?: string;
+}

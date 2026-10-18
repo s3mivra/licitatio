@@ -12,10 +12,11 @@ import { ProposalsPage } from '../proposals/ProposalPages';
 import { TaskBoard } from '../tasks/TaskBoard';
 import { CapacityCard } from './CapacityCard';
 import { PacketTab } from './PacketTab';
+import { PricingTab } from './PricingTab';
 import { DeadlineChip, NEXT, STATUS_LABEL, StatusChip } from './common';
 
 const NEEDS_REASON: OpportunityStatus[] = ['no_bid', 'cancelled', 'lost'];
-const TABS = ['Overview', 'Packet', 'Proposal', 'Tasks', 'Activity'] as const;
+const TABS = ['Overview', 'Packet', 'Pricing', 'Proposal', 'Tasks', 'Activity'] as const;
 
 function TransitionDialog({ bid, to, onClose }: { bid: OpportunityDto; to: OpportunityStatus | null; onClose: () => void }) {
   const orgId = useOrgId();
@@ -168,6 +169,7 @@ export function BidDetail() {
         </ol>
       )}
       {tab === 'Packet' && <PacketTab bid={b} />}
+      {tab === 'Pricing' && <PricingTab bid={b} />}
       {tab === 'Proposal' && <ProposalsPage opportunity={b} />}
       {tab === 'Tasks' && <TaskBoard opportunityId={b.id} />}
       <TransitionDialog key={to ?? 'none'} bid={b} to={to} onClose={() => setTo(null)} />

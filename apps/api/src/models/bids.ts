@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import type { BidPacket, ContentBlock, ExportRecord, Proposal, Task } from '@licitatio/shared';
+import type { BidPacket, ContentBlock, ExportRecord, PriceSheet, Proposal, Task } from '@licitatio/shared';
 import { FULFILLMENTS, GENERATORS, MANUAL_STATES, PACKET_STAGES, TASK_STATUSES } from '@licitatio/shared';
 import { baseSchemaOptions, oid, rev } from './base';
 
@@ -134,3 +134,42 @@ taskSchema.index({ orgId: 1, status: 1, dueAt: 1 });
 taskSchema.index({ orgId: 1, assigneeId: 1, status: 1 });
 taskSchema.index({ orgId: 1, opportunityId: 1 });
 export const TaskModel = model<Task>('Task', taskSchema);
+
+const priceComponentSchema = new Schema(
+  {
+    kind: { type: String, enum: ['material', 'labor', 'equipment'], required: true },
+    description: { type: String, required: true, maxlength: 200 },
+    unit: { type: String, maxlength: 20, default: '' },
+    quantity: { type: Number, required: true, min: 0 },
+    unitCost: { type: Number, required: true, min: 0, validate: Number.isInteger },
+  },
+  { _id: false },
+);
+const priceItemSchema = new Schema(
+  {
+    id: { type: String, required: true },
+    itemNo: { type: String, maxlength: 30, default: '' },
+    description: { type: String, required: true, maxlength: 500 },
+    unit: { type: String, maxlength: 20, default: '' },
+    quantity: { type: Number, required: true, min: 0 },
+    components: { type: [priceComponentSchema], default: [] },
+  },
+  { _id: false },
+);
+const priceSheetSchema = new Schema(
+  {
+    orgId: oid('Organization'),
+    opportunityId: oid('Opportunity'),
+    items: { type: [priceItemSchema], default: [], validate: (v: unknown[]) => v.length <= 300 },
+    markups: {
+      ocmPercent: { type: Number, min: 0, max: 100, default: 10 },
+      profitPercent: { type: Number, min: 0, max: 100, default: 10 },
+      vatPercent: { type: Number, min: 0, max: 100, default: 12 },
+    },
+    updatedBy: oid('User', false),
+    rev,
+  },
+  baseSchemaOptions,
+);
+priceSheetSchema.index({ orgId: 1, opportunityId: 1 }, { unique: true });
+export const PriceSheetModel = model<PriceSheet>('PriceSheet', priceSheetSchema);

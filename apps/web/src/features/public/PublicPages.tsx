@@ -173,7 +173,7 @@ const FEATURES = [
   { tag: 'NFCC', dot: 'bg-emerald-600', title: 'Know if you can bid before you start', body: 'Licitatio computes your NFCC against the approved budget, shows the bid security to prepare and prints the NFCC form for the packet.' },
   { tag: 'Scan', dot: 'bg-pink-500', title: 'Snap a permit, skip the typing', body: 'Take a photo or upload a PDF. AI reads the type, number and dates and fills the form for you to check.' },
   { tag: 'Submission', dot: 'bg-amber-600', title: 'Pack the envelopes without panic', body: 'Tick items off on your phone, note originals, certified copies and notarized papers, and print envelope labels.' },
-  { tag: 'Local', dot: 'bg-sky-500', title: 'Built for the Philippines', body: 'PhilGEPS and DPWH-style requirements, PCAB categories, GCash, SMS and Filipino.' },
+  { tag: 'Pricing', dot: 'bg-sky-500', title: 'Price the bid in the same place', body: 'Build each unit price from materials, labor and equipment, add OCM, profit and VAT, and see at once if you are over the approved budget.' },
 ];
 
 const STEPS = [
@@ -185,7 +185,7 @@ const STEPS = [
 
 const PRICING: Array<{ code: 'starter' | 'pro' | 'desk'; name: string; for: string; points: string[]; featured?: boolean }> = [
   { code: 'starter', name: 'Starter', for: 'Small teams starting out', points: ['3 users', '1 GB storage', '10 active bids', '20 packet exports a month'] },
-  { code: 'pro', name: 'Pro', for: 'Contractors who bid every month', points: ['10 users', '5 GB storage', 'Unlimited bids', 'Proposal builder and AI drafting', '100 exports a month'], featured: true },
+  { code: 'pro', name: 'Pro', for: 'Contractors who bid every month', points: ['10 users', '5 GB storage', 'Unlimited bids', 'Proposal and price builder', 'AI drafting', '100 exports a month'], featured: true },
   { code: 'desk', name: 'Desk', for: 'Our team prepares packets with you', points: ['15 users', '10 GB storage', 'Unlimited exports', 'Semivra staff prepare bids with you'] },
 ];
 
@@ -205,6 +205,7 @@ const FEED = [
   { title: 'NFCC check passed: Road widening', sub: 'PHP 85M capacity vs PHP 50M budget', dot: 'bg-emerald-400 text-ink', icon: '₱' },
   { title: 'Scanned: Mayor\'s permit 2026', sub: 'Number and expiry filled in', dot: 'bg-pink-400 text-ink', icon: '⌁' },
   { title: 'Envelope 1 packed', sub: '14 of 14 items ticked', dot: 'bg-amber-400 text-ink', icon: '✉' },
+  { title: 'Bid price within budget', sub: 'PHP 4.62M, 95.3% of the ABC', dot: 'bg-sky-400 text-ink', icon: '=' },
   { title: 'Proposal exported', sub: 'Technical proposal.docx', dot: 'bg-violet-400 text-ink', icon: '↓' },
   { title: 'Bid awarded: School building', sub: 'Outcome recorded', dot: 'bg-orange-500 text-white', icon: '★' },
 ];

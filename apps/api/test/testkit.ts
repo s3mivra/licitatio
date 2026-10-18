@@ -55,6 +55,7 @@ export function api(app: Express, auth: Pick<Auth, 'token' | 'orgId'>) {
     get: (path: string) => bind(request(app).get(base + path)),
     post: (path: string, body: object = {}) => bind(request(app).post(base + path).send(body)),
     patch: (path: string, body: object) => bind(request(app).patch(base + path).send(body)),
+    put: (path: string, body: object) => bind(request(app).put(base + path).send(body)),
     del: (path: string) => bind(request(app).delete(base + path)),
   };
 }
