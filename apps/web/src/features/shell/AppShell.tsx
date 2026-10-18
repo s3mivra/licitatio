@@ -91,9 +91,9 @@ function OrgSwitcher({ currentName }: { currentName: string }) {
   const { memberships, user } = useAuth();
   const navigate = useNavigate();
   const orgId = useOrgId();
-  if (memberships.length <= 1 && user?.platformRole === 'none') return <span className="truncate text-sm font-semibold text-slate-800">{currentName}</span>;
+  if (memberships.length <= 1 && user?.platformRole === 'none') return <span className="block truncate text-sm font-semibold text-slate-800" title={currentName}>{currentName}</span>;
   return (
-    <select aria-label="Switch organization" className="max-w-[14rem] truncate rounded-md border-slate-300 py-1 text-sm font-semibold" value={orgId}
+    <select aria-label="Switch organization" className="w-full max-w-[14rem] truncate rounded-md border-slate-300 py-1 text-sm font-semibold" value={orgId}
       onChange={(e) => (e.target.value === '__staff' ? navigate('/staff') : navigate(`/o/${e.target.value}/dashboard`))}>
       {!memberships.some((m) => m.orgId === orgId) && <option value={orgId}>{currentName}</option>}
       {memberships.map((m) => <option key={m.orgId} value={m.orgId}>{m.orgName}</option>)}
