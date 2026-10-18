@@ -16,6 +16,20 @@ export default {
         sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
         display: ['"Space Grotesk Variable"', 'Inter', 'system-ui', 'sans-serif'],
       },
+      keyframes: {
+        caret: { '0%, 49%': { opacity: '1' }, '50%, 100%': { opacity: '0' } },
+        'pulse-ring': { '0%': { opacity: '0.55', transform: 'scale(1)' }, '70%, 100%': { opacity: '0', transform: 'scale(2.6)' } },
+        drop: { '0%': { opacity: '0', transform: 'translateY(-14px)' }, '100%': { opacity: '1', transform: 'none' } },
+        marquee: { '0%': { transform: 'translateX(0)' }, '100%': { transform: 'translateX(-33.3333%)' } },
+        enter: { '0%': { opacity: '0', transform: 'translateY(8px)' }, '100%': { opacity: '1', transform: 'none' } },
+      },
+      animation: {
+        caret: 'caret 1s step-end infinite',
+        'pulse-ring': 'pulse-ring 1.8s ease-out infinite',
+        drop: 'drop 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both',
+        marquee: 'marquee 40s linear infinite',
+        enter: 'enter 0.6s ease-out both',
+      },
       boxShadow: {
         // hard offset shadows, no blur
         'brut-xs': `2px 2px 0 0 ${INK}`,

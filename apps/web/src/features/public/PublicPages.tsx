@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { cx } from '../../ui';
 import { LanguageSwitch } from '../shell/LanguageSwitch';
+import { CountUp, LiveDot, LiveFeed, Marquee, Reveal, TypedWord } from './motion';
 
 // ---------- layout ----------
 
@@ -15,7 +16,7 @@ const LINKS = [
   { to: '/install', label: 'Install' },
 ];
 
-const PILL_DARK = 'inline-flex items-center justify-center gap-1.5 rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-700';
+const PILL_DARK = 'group/pill inline-flex items-center justify-center gap-1.5 rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white transition-[background-color,transform] hover:bg-slate-700 active:scale-[0.98] [&>span]:transition-transform hover:[&>span]:translate-x-0.5';
 const PILL_LIGHT = 'inline-flex items-center justify-center gap-1.5 rounded-full border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-slate-400 hover:bg-slate-50';
 
 /** small monospace label: "01 / Features" */
@@ -40,11 +41,11 @@ function PublicHeader() {
         <Link to="/" aria-label="Licitatio home"><Logo /></Link>
         <nav className="mx-auto hidden items-center gap-1 md:flex" aria-label="Site">
           {LINKS.map((l) => (
-            <NavLink key={l.to} to={l.to} className="rounded-md px-3 py-2 text-sm text-slate-600 transition-colors hover:text-ink">{l.label}</NavLink>
+            <NavLink key={l.to} to={l.to} className="group relative rounded-md px-3 py-2 text-sm text-slate-600 transition-colors hover:text-ink">{l.label}<span className="absolute inset-x-3 bottom-1 h-px origin-left scale-x-0 bg-ink transition-transform duration-300 group-hover:scale-x-100" aria-hidden /></NavLink>
           ))}
         </nav>
         <div className="hidden items-center gap-3 md:flex">
-          <span className="hidden items-center gap-1.5 text-xs text-slate-500 lg:flex"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />{TRIAL_DAYS}-day free trial</span>
+          <span className="hidden items-center gap-2 text-xs text-slate-500 lg:flex"><LiveDot />{TRIAL_DAYS}-day free trial</span>
           <Link to="/login" className="text-sm font-medium text-slate-700 hover:text-ink">Sign in</Link>
           <Link to="/register" className={cx(PILL_DARK, 'px-4 py-2')}>Start free</Link>
         </div>
@@ -156,6 +157,13 @@ const BAND = [
   { label: 'Outcomes', note: 'Win rate', cls: 'bg-orange-500 text-white' },
 ];
 
+const STATS = [
+  { label: 'Day free trial', value: TRIAL_DAYS, suffix: '' },
+  { label: 'Requirement templates', value: 5, suffix: '' },
+  { label: 'Days of warning by default', value: 60, suffix: '' },
+  { label: 'Click to export a packet', value: 1, suffix: '' },
+];
+
 const FEATURES = [
   { tag: 'Vault', dot: 'bg-emerald-500', title: 'No more paper disqualifications', body: 'Every permit and certificate is tracked, with email and SMS warnings weeks before anything expires.' },
   { tag: 'Packets', dot: 'bg-accent-500', title: 'Bid packets in hours', body: 'Pick a template. Licitatio matches your documents, fills the schedules and exports one indexed PDF.' },
@@ -186,21 +194,26 @@ const FAQ = [
   { q: 'What happens when the trial ends?', a: `After ${TRIAL_DAYS} days, choose a plan to keep editing. Nothing is deleted, and you can still view and download your documents.` },
 ];
 
-const NOTIFS = [
-  { title: 'Mayor\'s permit expires in 18 days', sub: 'SMS and email reminder sent', when: 'now', dot: 'bg-accent-400', icon: '!' },
-  { title: 'Packet ready: Road concreting', sub: '6 of 6 requirements met', when: '2h ago', dot: 'bg-emerald-400', icon: '✓' },
-  { title: 'Bid due Friday, 10:00 AM', sub: 'DPWH Rizal 1st DEO', when: '1d ago', dot: 'bg-brand-600', icon: '•' },
+const FEED = [
+  { title: 'Mayor\'s permit expires in 18 days', sub: 'SMS and email reminder sent', dot: 'bg-accent-400 text-ink', icon: '!' },
+  { title: 'Packet ready: Road concreting', sub: '6 of 6 requirements met', dot: 'bg-emerald-400 text-ink', icon: '✓' },
+  { title: 'Bid due Friday, 10:00 AM', sub: 'DPWH Rizal 1st DEO', dot: 'bg-brand-600 text-white', icon: '•' },
+  { title: 'PCAB license renewed', sub: 'New version saved to the vault', dot: 'bg-sky-400 text-ink', icon: '↻' },
+  { title: 'Proposal exported', sub: 'Technical proposal.docx', dot: 'bg-violet-400 text-ink', icon: '↓' },
+  { title: 'Bid awarded: School building', sub: 'Outcome recorded', dot: 'bg-orange-500 text-white', icon: '★' },
 ];
+
+const MISSING = ['permit', 'certificate', 'license', 'signature', 'deadline'] as const;
 
 export function Landing() {
   return (
     <PublicLayout>
       {/* hero */}
       <section className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.15fr_1fr]">
-        <div>
+        <div className="motion-safe:animate-enter">
           <p className="font-mono text-xs text-slate-500">Built for Philippine contractors · Public and private bids</p>
           <h1 className="mt-5 text-[2.75rem] font-bold leading-[1.02] tracking-tight text-ink sm:text-6xl">
-            Never lose a bid to a <span className="whitespace-nowrap rounded-md bg-accent-400 px-2 box-decoration-clone">missing permit</span> again.
+            Never lose a bid to a missing <TypedWord words={MISSING} className="rounded-md bg-accent-400 px-2" /> again.
           </h1>
           <p className="mt-6 max-w-xl text-base text-slate-600 sm:text-lg">Documents, track record and bids in one place. Licitatio warns you before anything expires and builds your bid packet and proposal in hours, not days.</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -209,31 +222,35 @@ export function Landing() {
           </div>
           <p className="mt-4 text-xs text-slate-500">No credit card needed. Works on phone, tablet and computer.</p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-[0_20px_50px_-24px_rgba(11,16,32,0.25)]">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-[0_20px_50px_-24px_rgba(11,16,32,0.25)] motion-safe:animate-enter [animation-delay:150ms]">
           <div className="flex items-center justify-between px-1 pb-3 text-[11px] text-slate-500">
-            <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />Your bid desk, running on Licitatio</span>
+            <span className="flex items-center gap-2"><LiveDot />Your bid desk, running on Licitatio</span>
             <span className="font-mono">Example</span>
           </div>
-          <ul className="space-y-2.5">
-            {NOTIFS.map((n) => (
-              <li key={n.title} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3.5">
-                <span className={cx('flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-bold text-ink', n.dot)} aria-hidden>{n.icon}</span>
-                <div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold">{n.title}</p><p className="truncate font-mono text-[11px] text-slate-500">{n.sub}</p></div>
-                <span className="shrink-0 font-mono text-[11px] text-slate-400">{n.when}</span>
-              </li>
-            ))}
-          </ul>
+          <div className="h-[13.5rem] overflow-hidden sm:h-[13.75rem]"><LiveFeed items={FEED} /></div>
         </div>
       </section>
 
-      {/* color band */}
-      <div className="grid grid-cols-2 md:grid-cols-4" aria-hidden>
+      {/* color band, scrolling */}
+      <Marquee seconds={36}>
         {BAND.map((b) => (
-          <div key={b.label} className={cx('flex items-center justify-between gap-2 px-4 py-3 text-xs font-semibold sm:px-6', b.cls)}>
-            <span>{b.label}</span><span className="hidden font-mono font-normal opacity-80 sm:inline">{b.note}</span>
+          <div key={b.label} className={cx('flex w-64 shrink-0 items-center justify-between gap-3 px-5 py-3 text-xs font-semibold sm:w-80', b.cls)}>
+            <span>{b.label}</span><span className="font-mono font-normal opacity-80">{b.note}</span>
           </div>
         ))}
-      </div>
+      </Marquee>
+
+      {/* numbers */}
+      <section className="border-b border-slate-200">
+        <dl className="mx-auto grid max-w-6xl grid-cols-2 px-4 sm:px-6 md:grid-cols-4">
+          {STATS.map((x, i) => (
+            <div key={x.label} className={cx('py-8', i > 0 && 'md:border-l md:border-slate-200 md:pl-8', i % 2 === 1 && 'border-l border-slate-200 pl-6 md:pl-8')}>
+              <dt className="font-mono text-[11px] text-slate-500">{x.label}</dt>
+              <dd className="mt-2 font-display text-4xl font-bold tracking-tight"><CountUp to={x.value} suffix={x.suffix} /></dd>
+            </div>
+          ))}
+        </dl>
+      </section>
 
       {/* features */}
       <section id="features" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-20 sm:px-6 sm:py-24">
@@ -241,13 +258,15 @@ export function Landing() {
         <h2 className="mt-3 max-w-2xl text-3xl font-bold leading-tight tracking-tight sm:text-4xl">One desk for everything a bid needs.</h2>
         <p className="mt-3 max-w-xl text-sm text-slate-600 sm:text-base">Start with your documents, then let every bid reuse them.</p>
         <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map((f) => (
-            <div key={f.title} className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-6 transition-colors hover:border-slate-300">
+          {FEATURES.map((f, i) => (
+            <Reveal key={f.title} delay={(i % 3) * 90} className="h-full">
+            <div className="group flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 transition-[border-color,transform,box-shadow] duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-[0_16px_40px_-24px_rgba(11,16,32,0.3)]">
               <p className="flex items-center gap-1.5 font-mono text-[11px] text-slate-500"><span className={cx('h-1.5 w-1.5 rounded-full', f.dot)} aria-hidden />{f.tag}</p>
               <h3 className="mt-4 text-lg font-semibold tracking-tight">{f.title}</h3>
               <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">{f.body}</p>
               <Link to="/gallery" className="mt-5 flex items-center justify-between text-sm font-medium text-ink">See it <span className="transition-transform group-hover:translate-x-1" aria-hidden>→</span></Link>
             </div>
+            </Reveal>
           ))}
         </div>
       </section>
@@ -260,11 +279,13 @@ export function Landing() {
         <ol className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((s, i) => (
             <li key={s.title}>
+              <Reveal delay={i * 120}>
               <div className="h-0.5 w-full bg-slate-200"><div className={cx('h-0.5 w-3/5', s.bar)} /></div>
               <p className="mt-4 font-mono text-xs text-slate-400">0{i + 1}</p>
               <h3 className="mt-1 font-semibold">{s.title}</h3>
               <p className="mt-1.5 text-sm text-slate-600">{s.body}</p>
               <p className="mt-3 font-mono text-[11px] text-slate-400">{s.time}</p>
+              </Reveal>
             </li>
           ))}
         </ol>
@@ -277,8 +298,9 @@ export function Landing() {
           <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Simple, upfront pricing.</h2>
           <p className="mt-3 text-sm text-slate-400 sm:text-base">Every plan starts with a {TRIAL_DAYS}-day free trial. Pay yearly and get 2 months free.</p>
           <div className="mt-10 grid gap-3 lg:grid-cols-3">
-            {PRICING.map((p) => (
-              <div key={p.code} className={cx('flex flex-col rounded-2xl p-6', p.featured ? 'bg-accent-400 text-ink' : 'border border-white/15 bg-white/[0.03]')}>
+            {PRICING.map((p, i) => (
+              <Reveal key={p.code} delay={i * 100} className="h-full">
+              <div className={cx('flex h-full flex-col rounded-2xl p-6 transition-transform duration-300 hover:-translate-y-1', p.featured ? 'bg-accent-400 text-ink' : 'border border-white/15 bg-white/[0.03]')}>
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold">{p.name}</h3>
                   {p.featured && <span className="flex items-center gap-1.5 font-mono text-[11px]"><span className="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden />Most popular</span>}
@@ -291,6 +313,7 @@ export function Landing() {
                 </ul>
                 <Link to="/register" className={cx('mt-8 rounded-full px-4 py-2.5 text-center text-sm font-semibold transition-colors', p.featured ? 'bg-ink text-white hover:bg-slate-800' : 'border border-white/25 text-white hover:bg-white/10')}>Start free trial <span aria-hidden>→</span></Link>
               </div>
+              </Reveal>
             ))}
           </div>
           <div className="mt-6 flex flex-wrap gap-2 text-xs text-slate-400">
@@ -320,12 +343,14 @@ export function Landing() {
 
       {/* call to action */}
       <section className="bg-accent-400 px-4 py-20 text-center sm:py-24">
+        <Reveal>
         <h2 className="mx-auto max-w-3xl text-4xl font-bold leading-[1.05] tracking-tight text-ink sm:text-6xl">Make your next bid complete.</h2>
         <p className="mt-4 text-sm text-ink/75 sm:text-base">Set up in minutes. Bring your permits; we handle the reminders.</p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
           <Link to="/register" className={PILL_DARK}>Start free trial <span aria-hidden>→</span></Link>
           <Link to="/install" className="inline-flex items-center justify-center rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-ink hover:bg-white/80">Install on your phone</Link>
         </div>
+        </Reveal>
       </section>
     </PublicLayout>
   );

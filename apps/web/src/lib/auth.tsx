@@ -53,7 +53,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setSessionListener(apply);
-    void refreshSession().then((s) => apply(s));
+    // if the API cannot be reached, treat the visitor as signed out so public pages still render
+    void refreshSession().then((s) => apply(s), () => apply(null));
   }, [apply]);
 
   // refresh a minute before the 15 minute access token expires
