@@ -16,32 +16,32 @@ const LINKS = [
 function PublicHeader() {
   const [open, setOpen] = useState(false);
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b-[3px] border-ink bg-white">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4">
         <Link to="/" className="flex items-center gap-2" aria-label="Licitatio home">
           <img src="/icon.svg" alt="" width={32} height={32} className="h-8 w-8" />
-          <span className="text-lg font-bold tracking-tight text-brand-900">Licitatio</span>
+          <span className="font-display text-xl font-bold tracking-tight text-ink">Licitatio</span>
         </Link>
         <nav className="ml-6 hidden items-center gap-1 md:flex" aria-label="Site">
           {LINKS.map((l) => (
-            <NavLink key={l.to} to={l.to} className={({ isActive }) => cx('rounded-md px-3 py-2 text-sm font-medium', isActive ? 'text-brand-800' : 'text-slate-600 hover:text-slate-900')}>{l.label}</NavLink>
+            <NavLink key={l.to} to={l.to} className={({ isActive }) => cx('rounded-md px-3 py-2 text-sm font-medium', isActive ? 'bg-accent-400 text-ink ring-2 ring-ink' : 'text-slate-700 hover:bg-paper hover:text-ink')}>{l.label}</NavLink>
           ))}
         </nav>
         <div className="ml-auto hidden items-center gap-2 md:flex">
           <LanguageSwitch />
           <Link to="/login" className="rounded-md px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100">Sign in</Link>
-          <Link to="/register" className="rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-800">Start free trial</Link>
+          <Link to="/register" className="rounded-md press border-[3px] border-ink bg-accent-400 text-ink shadow-brut hover:shadow-brut-lg px-4 py-2 text-sm font-bold">Start free trial</Link>
         </div>
         <button type="button" className="ml-auto rounded p-2 text-slate-600 md:hidden" aria-label="Menu" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
           <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><path d={open ? 'M6 6l12 12M18 6L6 18' : 'M4 6h16M4 12h16M4 18h16'} /></svg>
         </button>
       </div>
       {open && (
-        <nav className="border-t border-slate-200 bg-white px-4 py-3 md:hidden" aria-label="Site">
+        <nav className="border-t-[3px] border-ink bg-white px-4 py-3 md:hidden" aria-label="Site">
           {LINKS.map((l) => <Link key={l.to} to={l.to} className="block rounded-md px-3 py-2.5 text-base font-medium text-slate-700 hover:bg-slate-100" onClick={() => setOpen(false)}>{l.label}</Link>)}
           <div className="mt-3 grid grid-cols-2 gap-2 border-t border-slate-100 pt-3">
-            <Link to="/login" className="rounded-md border border-slate-300 px-3 py-2.5 text-center text-sm font-medium">Sign in</Link>
-            <Link to="/register" className="rounded-md bg-brand-700 px-3 py-2.5 text-center text-sm font-semibold text-white">Start free trial</Link>
+            <Link to="/login" className="rounded-md press border-[3px] border-ink bg-white text-ink shadow-brut hover:shadow-brut-lg px-3 py-2.5 text-center text-sm font-bold">Sign in</Link>
+            <Link to="/register" className="rounded-md press border-[3px] border-ink bg-accent-400 text-ink shadow-brut hover:shadow-brut-lg px-3 py-2.5 text-center text-sm font-bold">Start free trial</Link>
           </div>
           <div className="mt-3"><LanguageSwitch /></div>
         </nav>
@@ -52,10 +52,10 @@ function PublicHeader() {
 
 function PublicFooter() {
   return (
-    <footer className="border-t border-slate-200 bg-white">
+    <footer className="border-t-[3px] border-ink bg-white">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-3">
         <div>
-          <div className="flex items-center gap-2"><img src="/icon.svg" alt="" width={28} height={28} className="h-7 w-7" /><span className="font-bold text-brand-900">Licitatio</span></div>
+          <div className="flex items-center gap-2"><img src="/icon.svg" alt="" width={28} height={28} className="h-7 w-7" /><span className="font-display text-lg font-bold text-ink">Licitatio</span></div>
           <p className="mt-3 text-sm text-slate-600">Bid readiness for Philippine contractors. A product of <span className="font-semibold text-slate-800">Semivra</span>.</p>
         </div>
         <div>
@@ -74,7 +74,7 @@ function PublicFooter() {
           </ul>
         </div>
       </div>
-      <div className="border-t border-slate-100 py-5 text-center text-xs text-slate-500">&copy; {new Date().getFullYear()} Semivra. All rights reserved.</div>
+      <div className="border-t-2 border-ink bg-ink py-5 text-center text-xs font-medium text-accent-300">&copy; {new Date().getFullYear()} Semivra. All rights reserved.</div>
     </footer>
   );
 }
@@ -82,7 +82,7 @@ function PublicFooter() {
 function PublicLayout({ children }: { children: ReactNode }) {
   useEffect(() => { window.scrollTo(0, 0); }, []);
   return (
-    <div className="flex min-h-screen flex-col bg-white text-slate-800">
+    <div className="flex min-h-screen flex-col bg-paper text-ink">
       <PublicHeader />
       <main id="main" className="flex-1">{children}</main>
       <PublicFooter />
@@ -92,11 +92,11 @@ function PublicLayout({ children }: { children: ReactNode }) {
 
 function PageIntro({ eyebrow, title, children }: { eyebrow: string; title: string; children?: ReactNode }) {
   return (
-    <section className="border-b border-slate-100 bg-gradient-to-b from-brand-50 to-white">
+    <section className="border-b-[3px] border-ink bg-accent-400 bg-[radial-gradient(#0b102026_1.5px,transparent_1.5px)] [background-size:22px_22px]">
       <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:py-20">
-        <p className="text-sm font-semibold uppercase tracking-wider text-brand-700">{eyebrow}</p>
-        <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-5xl">{title}</h1>
-        {children && <div className="mx-auto mt-5 max-w-2xl text-base text-slate-600 sm:text-lg">{children}</div>}
+        <p className="inline-block rotate-[-2deg] rounded-md border-2 border-ink bg-ink px-3 py-1 text-xs font-bold uppercase tracking-widest text-accent-300">{eyebrow}</p>
+        <h1 className="mt-5 text-4xl font-bold leading-[1.05] text-ink sm:text-6xl">{title}</h1>
+        {children && <div className="mx-auto mt-5 max-w-2xl text-base font-medium text-ink/80 sm:text-lg">{children}</div>}
       </div>
     </section>
   );
@@ -115,9 +115,9 @@ const SHOTS = [
 
 function Shot({ src, title, priority }: { src: string; title: string; priority?: boolean }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-100 shadow-lg ring-1 ring-slate-900/5">
-      <div className="flex items-center gap-1.5 border-b border-slate-200 bg-white px-3 py-2" aria-hidden>
-        <span className="h-2.5 w-2.5 rounded-full bg-slate-300" /><span className="h-2.5 w-2.5 rounded-full bg-slate-300" /><span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
+    <div className="overflow-hidden rounded-xl border-[3px] border-ink bg-white shadow-brut-xl">
+      <div className="flex items-center gap-1.5 border-b-[3px] border-ink bg-accent-300 px-3 py-2" aria-hidden>
+        <span className="h-3 w-3 rounded-full border-2 border-ink bg-white" /><span className="h-3 w-3 rounded-full border-2 border-ink bg-white" /><span className="h-3 w-3 rounded-full border-2 border-ink bg-white" />
       </div>
       <img src={src} alt={`Screenshot: ${title}`} width={1280} height={800} loading={priority ? 'eager' : 'lazy'} decoding="async" className="block aspect-[16/10] w-full object-cover object-top" />
     </div>
@@ -156,17 +156,17 @@ export function Landing() {
   const hero = SHOTS[0];
   return (
     <PublicLayout>
-      <section className="relative overflow-hidden bg-gradient-to-b from-brand-50 via-white to-white">
+      <section className="relative overflow-hidden border-b-[3px] border-ink bg-accent-400 bg-[radial-gradient(#0b102026_1.5px,transparent_1.5px)] [background-size:22px_22px]">
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 sm:py-20 lg:grid-cols-2">
           <div>
-            <p className="inline-flex rounded-full bg-brand-100 px-3 py-1 text-xs font-semibold text-brand-800">For Philippine contractors</p>
-            <h1 className="mt-4 text-4xl font-bold leading-tight tracking-tight text-slate-900 sm:text-5xl">Never lose a bid to a missing permit again.</h1>
-            <p className="mt-5 text-lg text-slate-600">Licitatio keeps your documents, track record and bids in one place, warns you before anything expires, and builds your bid packet and proposal in hours instead of days.</p>
+            <p className="inline-flex rotate-[-2deg] rounded-md border-2 border-ink bg-ink px-3 py-1 text-xs font-bold uppercase tracking-widest text-accent-300">For Philippine contractors</p>
+            <h1 className="mt-5 text-[2.6rem] font-bold leading-[1.02] text-ink sm:text-6xl">Never lose a bid to a missing permit again.</h1>
+            <p className="mt-6 text-lg font-medium text-ink/85">Licitatio keeps your documents, track record and bids in one place, warns you before anything expires, and builds your bid packet and proposal in hours instead of days.</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link to="/register" className="rounded-lg bg-brand-700 px-6 py-3 text-center text-base font-semibold text-white shadow-sm hover:bg-brand-800">Start your {TRIAL_DAYS}-day free trial</Link>
-              <Link to="/gallery" className="rounded-lg border border-slate-300 bg-white px-6 py-3 text-center text-base font-semibold text-slate-800 hover:bg-slate-50">See the app</Link>
+              <Link to="/register" className="rounded-lg press border-[3px] border-ink bg-ink text-accent-300 shadow-brut hover:shadow-brut-lg px-6 py-3.5 text-center text-base font-bold">Start your {TRIAL_DAYS}-day free trial</Link>
+              <Link to="/gallery" className="rounded-lg press border-[3px] border-ink bg-white text-ink shadow-brut hover:shadow-brut-lg px-6 py-3.5 text-center text-base font-bold">See the app</Link>
             </div>
-            <p className="mt-4 text-sm text-slate-500">No credit card needed. Works on phone, tablet and computer.</p>
+            <p className="mt-5 text-sm font-semibold text-ink/75">No credit card needed. Works on phone, tablet and computer.</p>
           </div>
           {hero && <Shot src={hero.src} title={hero.title} priority />}
         </div>
@@ -174,28 +174,28 @@ export function Landing() {
 
       <section className="mx-auto max-w-6xl px-4 py-16 sm:py-20" aria-labelledby="features-h">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 id="features-h" className="text-3xl font-bold tracking-tight text-slate-900">Everything a bid needs, ready when you are</h2>
+          <h2 id="features-h" className="text-4xl font-bold text-ink sm:text-5xl">Everything a bid needs, ready when you are</h2>
           <p className="mt-3 text-slate-600">Made with contractors who bid on government and private projects.</p>
         </div>
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((f) => (
-            <div key={f.title} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-brand-50 text-brand-700"><Icon d={f.icon} /></span>
-              <h3 className="mt-4 text-lg font-semibold text-slate-900">{f.title}</h3>
+            <div key={f.title} className="press rounded-xl border-[3px] border-ink bg-white p-6 shadow-brut-lg hover:shadow-brut-xl">
+              <span className="inline-flex h-12 w-12 items-center justify-center rounded-lg border-[3px] border-ink bg-accent-400 text-ink"><Icon d={f.icon} /></span>
+              <h3 className="mt-5 text-xl font-bold text-ink">{f.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-slate-600">{f.body}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="bg-slate-50 py-16 sm:py-20" aria-labelledby="how-h">
+      <section className="border-y-[3px] border-ink bg-brand-900 py-16 text-white sm:py-20" aria-labelledby="how-h">
         <div className="mx-auto max-w-6xl px-4">
-          <h2 id="how-h" className="text-center text-3xl font-bold tracking-tight text-slate-900">How it works</h2>
+          <h2 id="how-h" className="text-center text-4xl font-bold sm:text-5xl">How it works</h2>
           <ol className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {STEPS.map((s) => (
-              <li key={s.n} className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-700 text-sm font-bold text-white">{s.n}</span>
-                <h3 className="mt-4 font-semibold text-slate-900">{s.title}</h3>
+              <li key={s.n} className="rounded-xl border-[3px] border-ink bg-white p-6 text-ink shadow-[6px_6px_0_0_#ffd60a]">
+                <span className="flex h-11 w-11 items-center justify-center rounded-md border-[3px] border-ink bg-accent-400 font-display text-lg font-bold text-ink">{s.n}</span>
+                <h3 className="mt-4 text-lg font-bold text-ink">{s.title}</h3>
                 <p className="mt-2 text-sm text-slate-600">{s.body}</p>
               </li>
             ))}
@@ -205,32 +205,32 @@ export function Landing() {
 
       <section className="mx-auto max-w-6xl px-4 py-16 sm:py-20" aria-labelledby="pricing-h">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 id="pricing-h" className="text-3xl font-bold tracking-tight text-slate-900">Simple monthly pricing</h2>
+          <h2 id="pricing-h" className="text-4xl font-bold text-ink sm:text-5xl">Simple monthly pricing</h2>
           <p className="mt-3 text-slate-600">Every plan starts with a {TRIAL_DAYS}-day free trial. Pay yearly and get 2 months free.</p>
         </div>
         <div className="mt-12 grid gap-6 lg:grid-cols-3">
           {PRICING.map((p) => (
-            <div key={p.code} className={cx('flex flex-col rounded-2xl border bg-white p-7', p.featured ? 'border-brand-600 shadow-lg ring-1 ring-brand-600' : 'border-slate-200 shadow-sm')}>
-              {p.featured && <span className="mb-3 self-start rounded-full bg-brand-700 px-3 py-0.5 text-xs font-semibold text-white">Most popular</span>}
-              <h3 className="text-xl font-semibold text-slate-900">{p.name}</h3>
+            <div key={p.code} className={cx('flex flex-col rounded-2xl border-[3px] p-7', p.featured ? 'border-ink bg-accent-300 shadow-brut-xl lg:-translate-y-3' : 'border-ink bg-white shadow-brut-lg')}>
+              {p.featured && <span className="mb-3 self-start rotate-[-2deg] rounded-md border-2 border-ink bg-ink px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-300">Most popular</span>}
+              <h3 className="text-2xl font-bold text-ink">{p.name}</h3>
               <p className="mt-1 text-sm text-slate-500">{p.for}</p>
-              <p className="mt-5"><span className="text-4xl font-bold tracking-tight text-slate-900">PHP {formatCentavos(PLAN_PRICES[p.code]).replace(/\.00$/, '')}</span><span className="text-sm text-slate-500"> / month</span></p>
+              <p className="mt-5"><span className="font-display text-4xl font-bold tracking-tight text-ink">PHP {formatCentavos(PLAN_PRICES[p.code]).replace(/\.00$/, '')}</span><span className="text-sm text-slate-500"> / month</span></p>
               <ul className="mt-6 flex-1 space-y-2.5 text-sm text-slate-700">
-                {p.points.map((x) => <li key={x} className="flex gap-2"><svg viewBox="0 0 24 24" className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden><path d="M5 12l5 5L20 7" /></svg>{x}</li>)}
+                {p.points.map((x) => <li key={x} className="flex gap-2"><svg viewBox="0 0 24 24" className="mt-0.5 h-4 w-4 shrink-0 text-ink" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden><path d="M5 12l5 5L20 7" /></svg>{x}</li>)}
               </ul>
-              <Link to="/register" className={cx('mt-7 rounded-lg px-4 py-2.5 text-center text-sm font-semibold', p.featured ? 'bg-brand-700 text-white hover:bg-brand-800' : 'border border-slate-300 text-slate-800 hover:bg-slate-50')}>Start free trial</Link>
+              <Link to="/register" className={cx('mt-7 rounded-lg px-4 py-3 text-center text-sm font-bold', p.featured ? 'press border-[3px] border-ink bg-ink text-accent-300 shadow-brut' : 'press border-[3px] border-ink bg-accent-400 text-ink shadow-brut')}>Start free trial</Link>
             </div>
           ))}
         </div>
       </section>
 
       <section className="px-4 pb-20">
-        <div className="mx-auto max-w-5xl rounded-2xl bg-brand-900 px-6 py-12 text-center text-white sm:px-12">
-          <h2 className="text-2xl font-bold sm:text-3xl">Your next bid deserves a complete packet.</h2>
+        <div className="mx-auto max-w-5xl rounded-2xl border-[3px] border-ink bg-brand-900 px-6 py-12 text-center text-white shadow-[8px_8px_0_0_#ffd60a] sm:px-12">
+          <h2 className="text-3xl font-bold sm:text-5xl">Your next bid deserves a complete packet.</h2>
           <p className="mx-auto mt-3 max-w-xl text-brand-100">Set up your workspace in minutes. Bring your permits; we will handle the reminders.</p>
           <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link to="/register" className="rounded-lg bg-white px-6 py-3 font-semibold text-brand-900 hover:bg-brand-50">Start free trial</Link>
-            <Link to="/install" className="rounded-lg border border-white/40 px-6 py-3 font-semibold text-white hover:bg-white/10">Install on your phone</Link>
+            <Link to="/register" className="rounded-lg press border-[3px] border-ink bg-accent-400 text-ink shadow-brut hover:shadow-brut-lg px-6 py-3.5 font-bold">Start free trial</Link>
+            <Link to="/install" className="press rounded-lg border-[3px] border-white px-6 py-3.5 font-bold text-white hover:bg-white/10">Install on your phone</Link>
           </div>
         </div>
       </section>
@@ -248,11 +248,11 @@ export function AboutPage() {
       </PageIntro>
       <div className="mx-auto max-w-3xl space-y-12 px-4 py-14 text-slate-700">
         <section>
-          <h2 className="text-2xl font-bold text-slate-900">Why we built it</h2>
+          <h2 className="text-3xl font-bold text-ink">Why we built it</h2>
           <p className="mt-4 leading-relaxed">In public bidding, a strong technical offer and a good price can still lose to one expired permit or a missing certificate. Most firms track their documents in folders and spreadsheets, and the same schedules are retyped for every bid. We built Licitatio so that the paperwork is ready before the invitation to bid arrives.</p>
         </section>
         <section>
-          <h2 className="text-2xl font-bold text-slate-900">What we believe</h2>
+          <h2 className="text-3xl font-bold text-ink">What we believe</h2>
           <ul className="mt-4 grid gap-4 sm:grid-cols-2">
             {[
               ['You stay in control', 'Licitatio prepares and checks. Your team reviews every export and submits it. We never submit bids for you.'],
@@ -260,17 +260,17 @@ export function AboutPage() {
               ['Simple beats clever', 'Clear screens that work on a phone at the site office, not only on a desktop.'],
               ['Local first', 'Philippine requirements, peso pricing, GCash, SMS and Filipino.'],
             ].map(([t, b]) => (
-              <li key={t} className="rounded-xl border border-slate-200 p-5"><p className="font-semibold text-slate-900">{t}</p><p className="mt-1.5 text-sm">{b}</p></li>
+              <li key={t} className="rounded-xl border-[3px] border-ink bg-white p-5 shadow-brut"><p className="font-semibold text-slate-900">{t}</p><p className="mt-1.5 text-sm">{b}</p></li>
             ))}
           </ul>
         </section>
         <section>
-          <h2 className="text-2xl font-bold text-slate-900">About Semivra</h2>
+          <h2 className="text-3xl font-bold text-ink">About Semivra</h2>
           <p className="mt-4 leading-relaxed">Semivra is the company behind Licitatio. Besides the software, our desk team can prepare bid packets with you on the Desk plan, working inside your workspace only with access you grant, for a limited time, with every action recorded in your audit log.</p>
         </section>
-        <div className="rounded-xl bg-brand-50 p-6 text-center">
+        <div className="rounded-xl border-[3px] border-ink bg-accent-400 p-6 text-center shadow-brut-lg">
           <p className="font-semibold text-slate-900">Want to see it with your own documents?</p>
-          <Link to="/register" className="mt-4 inline-block rounded-lg bg-brand-700 px-6 py-2.5 font-semibold text-white hover:bg-brand-800">Start free trial</Link>
+          <Link to="/register" className="mt-4 inline-block rounded-lg press border-[3px] border-ink bg-white text-ink shadow-brut hover:shadow-brut-lg px-6 py-3 font-bold">Start free trial</Link>
         </div>
       </div>
     </PublicLayout>
@@ -300,23 +300,23 @@ export function GalleryPage() {
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 md:grid-cols-2">
         {SHOTS.map((s, i) => (
           <figure key={s.src}>
-            <button type="button" className="block w-full text-left transition hover:-translate-y-0.5" onClick={() => setZoom(i)} aria-label={`Enlarge ${s.title}`}>
+            <button type="button" className="press block w-full text-left" onClick={() => setZoom(i)} aria-label={`Enlarge ${s.title}`}>
               <Shot src={s.src} title={s.title} priority={i < 2} />
             </button>
-            <figcaption className="mt-4"><p className="font-semibold text-slate-900">{s.title}</p><p className="mt-1 text-sm text-slate-600">{s.body}</p></figcaption>
+            <figcaption className="mt-4"><p className="font-display text-xl font-bold text-ink">{s.title}</p><p className="mt-1 text-sm text-slate-600">{s.body}</p></figcaption>
           </figure>
         ))}
       </div>
       {current && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 p-4" role="dialog" aria-modal="true" aria-label={current.title} onClick={() => setZoom(null)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/90 p-4" role="dialog" aria-modal="true" aria-label={current.title} onClick={() => setZoom(null)}>
           <div className="w-full max-w-6xl" onClick={(e) => e.stopPropagation()}>
-            <img src={current.src} alt={`Screenshot: ${current.title}`} className="max-h-[80vh] w-full rounded-lg object-contain" />
+            <img src={current.src} alt={`Screenshot: ${current.title}`} className="max-h-[80vh] w-full rounded-lg border-[3px] border-accent-400 object-contain" />
             <div className="mt-3 flex items-center justify-between gap-3 text-white">
               <button type="button" className="rounded-md bg-white/10 px-4 py-2 text-sm hover:bg-white/20" onClick={() => setZoom((zoom! - 1 + SHOTS.length) % SHOTS.length)}>Previous</button>
               <p className="text-center text-sm font-medium">{current.title}</p>
               <div className="flex gap-2">
                 <button type="button" className="rounded-md bg-white/10 px-4 py-2 text-sm hover:bg-white/20" onClick={() => setZoom((zoom! + 1) % SHOTS.length)}>Next</button>
-                <button type="button" className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-slate-900" onClick={() => setZoom(null)}>Close</button>
+                <button type="button" className="rounded-md border-2 border-ink bg-accent-400 px-4 py-2 text-sm font-bold text-ink" onClick={() => setZoom(null)}>Close</button>
               </div>
             </div>
           </div>
@@ -330,14 +330,14 @@ export function GalleryPage() {
 
 function DraftNotice() {
   return (
-    <div className="mb-8 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900" role="note">
+    <div className="mb-8 rounded-lg border-[3px] border-ink bg-accent-200 p-4 text-sm font-medium text-ink shadow-brut" role="note">
       This policy is being reviewed by our lawyer. The reviewed version will replace this page, and account holders will be told by email before any material change takes effect.
     </div>
   );
 }
 
 function Prose({ children }: { children: ReactNode }) {
-  return <div className="mx-auto max-w-3xl px-4 py-12 text-slate-700 [&_h2]:mt-10 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-slate-900 [&_li]:mt-1.5 [&_p]:mt-3 [&_p]:leading-relaxed [&_ul]:mt-3 [&_ul]:list-disc [&_ul]:pl-5">{children}</div>;
+  return <div className="mx-auto max-w-3xl px-4 py-12 text-slate-700 [&_h2]:mt-10 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-ink [&_li]:mt-1.5 [&_p]:mt-3 [&_p]:leading-relaxed [&_ul]:mt-3 [&_ul]:list-disc [&_ul]:pl-5">{children}</div>;
 }
 
 export function PrivacyPage() {
@@ -440,13 +440,13 @@ export function InstallPage() {
         <p>Licitatio installs straight from your browser. No app store, no large download, and it updates itself.</p>
       </PageIntro>
       <div className="mx-auto max-w-5xl px-4 py-14">
-        <div className="rounded-2xl border border-brand-200 bg-brand-50 p-6 text-center sm:p-8">
+        <div className="rounded-2xl border-[3px] border-ink bg-accent-300 p-6 text-center shadow-brut-lg sm:p-8">
           {installed ? (
-            <p className="font-semibold text-brand-900">Licitatio is installed on this device.</p>
+            <p className="font-bold text-ink">Licitatio is installed on this device.</p>
           ) : event ? (
             <>
               <p className="font-semibold text-slate-900">Your browser can install Licitatio now.</p>
-              <button type="button" onClick={() => void install()} className="mt-4 rounded-lg bg-brand-700 px-6 py-3 font-semibold text-white shadow-sm hover:bg-brand-800">Install Licitatio</button>
+              <button type="button" onClick={() => void install()} className="mt-4 rounded-lg press border-[3px] border-ink bg-ink text-accent-300 shadow-brut hover:shadow-brut-lg px-6 py-3 font-bold">Install Licitatio</button>
             </>
           ) : (
             <p className="text-slate-700">Follow the steps for your device below. If you do not see an install option, open this page in Chrome, Edge or Safari.</p>
@@ -454,10 +454,10 @@ export function InstallPage() {
         </div>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
           {PLATFORMS.map((p) => (
-            <section key={p.name} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h2 className="font-semibold text-slate-900">{p.name}</h2>
+            <section key={p.name} className="rounded-xl border-[3px] border-ink bg-white p-6 shadow-brut-lg">
+              <h2 className="text-xl font-bold text-ink">{p.name}</h2>
               <ol className="mt-4 space-y-3 text-sm text-slate-700">
-                {p.steps.map((s, i) => <li key={s} className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-700">{i + 1}</span><span>{s}</span></li>)}
+                {p.steps.map((s, i) => <li key={s} className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 border-ink bg-accent-400 text-xs font-bold text-ink">{i + 1}</span><span>{s}</span></li>)}
               </ol>
             </section>
           ))}

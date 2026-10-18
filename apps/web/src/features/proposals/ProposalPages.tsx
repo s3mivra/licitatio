@@ -67,7 +67,7 @@ export function ProposalsPage({ opportunity }: { opportunity?: OpportunityDto })
   return (
     <>
       <PageHeader title="Proposals" description="Technical proposals built from your content blocks and records."
-        actions={<><Link to={`/o/${orgId}/blocks`} className="inline-flex items-center rounded-md border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50">Content blocks</Link>{canEdit && <Button onClick={() => setCreating(true)}>New proposal</Button>}</>} />
+        actions={<><Link to={`/o/${orgId}/blocks`} className="press inline-flex items-center rounded-md border-2 border-ink bg-white px-3.5 py-2 text-sm font-semibold text-ink shadow-brut-xs hover:bg-slate-50">Content blocks</Link>{canEdit && <Button onClick={() => setCreating(true)}>New proposal</Button>}</>} />
       {body}
     </>
   );
@@ -119,7 +119,7 @@ function AiDraft({ proposalId, onInsert, onClose }: { proposalId: string; onInse
           <textarea className="input mt-1 min-h-20" maxLength={1000} value={instructions} onChange={(e) => setInstructions(e.target.value)} placeholder="For example: stress our flood-control experience in Region III" />
         </label>
         {draft.error && <ErrorAlert error={draft.error} />}
-        {draft.data && <div className="space-y-2 rounded border border-slate-200 bg-slate-50 p-3 text-sm">{draft.data.map((n, i) => <p key={i}>{n.type === 'paragraph' ? n.runs.map((r) => r.text).join('') : ''}</p>)}</div>}
+        {draft.data && <div className="space-y-2 rounded-md border-2 border-ink bg-paper p-3 text-sm">{draft.data.map((n, i) => <p key={i}>{n.type === 'paragraph' ? n.runs.map((r) => r.text).join('') : ''}</p>)}</div>}
       </div>
     </Dialog>
   );

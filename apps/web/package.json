@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit -p ."
   },
   "dependencies": {
+    "@fontsource-variable/space-grotesk": "^5.3.0",
     "@hookform/resolvers": "^3.9.1",
     "@licitatio/shared": "0.1.0",
     "@sentry/react": "^8.47.0",

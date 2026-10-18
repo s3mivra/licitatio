@@ -6,6 +6,7 @@ import { registerSW } from 'virtual:pwa-register';
 import { AcceptInviteScreen, ForgotPasswordScreen, LoginScreen, RegisterScreen, ResetPasswordScreen, VerifyEmailScreen } from './features/auth/AuthScreens';
 import { ApiError } from './lib/api';
 import { AuthProvider, useAuth } from './lib/auth';
+import '@fontsource-variable/space-grotesk/wght.css';
 import './index.css';
 
 const BidDetail = lazy(() => import('./features/bids/BidDetail').then((m) => ({ default: m.BidDetail })));

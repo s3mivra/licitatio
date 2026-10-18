@@ -128,7 +128,7 @@ export function NodeList({ nodes, onChange }: { nodes: BlockNode[]; onChange: (n
   return (
     <div className="space-y-3">
       {nodes.map((n, i) => (
-        <div key={i} className="rounded-md border border-slate-200 p-3">
+        <div key={i} className="rounded-md border-2 border-slate-300 p-3">
           <div className="mb-2 flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">{NODE_LABEL[n.type]}</span>
             <div className="flex gap-1">
