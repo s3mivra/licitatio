@@ -12,6 +12,7 @@ import * as files from './modules/files/files.controller';
 import * as notifications from './modules/notifications/notifications.controller';
 import * as opportunities from './modules/opportunities/opportunities.controller';
 import * as orgs from './modules/orgs/orgs.controller';
+import * as calendar from './modules/calendar/calendar.controller';
 import * as packets from './modules/packets/packets.controller';
 import * as platform from './modules/platform/platform.controller';
 import * as proposals from './modules/proposals/proposals.controller';
@@ -19,11 +20,12 @@ import * as tasks from './modules/tasks/tasks.controller';
 import { controllers as registerControllers } from './modules/registers/registers.controller';
 import * as vault from './modules/vault/vault.controller';
 import { AppError } from './shared/errors';
-import { aiLimiter, exportLimiter } from './shared/rateLimit';
+import { aiLimiter, exportLimiter, calendarLimiter } from './shared/rateLimit';
 
 export const apiRouter = Router();
 
 apiRouter.get('/healthz', platform.healthz);
+apiRouter.get('/calendar/:token', calendarLimiter, calendar.feed);
 apiRouter.use('/auth', authRouter);
 
 apiRouter.post('/internal/jobs/tick', async (req, res) => {
@@ -91,6 +93,7 @@ for (const [path, kind] of [['projects', 'project'], ['personnel', 'personnel'],
 
 org.get('/assignees', viewer, opportunities.assignees);
 org.get('/opportunities', viewer, opportunities.list);
+org.post('/opportunities/read-notice', editor, aiLimiter, opportunities.readNotice);
 org.post('/opportunities', editor, opportunities.create);
 org.get('/opportunities/:id', viewer, opportunities.get);
 org.patch('/opportunities/:id', editor, opportunities.patch);
@@ -120,6 +123,9 @@ org.delete('/proposals/:id', editor, proposals.remove);
 org.post('/proposals/:id/duplicate', editor, proposals.duplicate);
 org.get('/proposals/:id/variables', viewer, proposals.variables);
 org.get('/ai/status', viewer, proposals.aiStatus);
+org.get('/calendar', viewer, calendar.status);
+org.post('/calendar', viewer, calendar.createLink);
+org.delete('/calendar', viewer, calendar.revoke);
 org.post('/proposals/:id/ai-draft', editor, aiLimiter, proposals.aiDraft);
 org.post('/proposals/:id/export', editor, exportLimiter, proposals.exportProposal);
 org.get('/blocks', viewer, proposals.listBlocks);

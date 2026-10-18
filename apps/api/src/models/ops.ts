@@ -124,3 +124,26 @@ export const PaymentModel = model<PaymentRecord>('Payment', paymentSchema);
 /** Processed webhook event ids: a redelivered event is a no-op. */
 const paymentEventSchema = new Schema({ _id: { type: String, required: true }, type: String, at: { type: Date, default: () => new Date() } }, { versionKey: false });
 export const PaymentEventModel = model<{ _id: string; type?: string; at: Date }>('PaymentEvent', paymentEventSchema);
+
+/** A private calendar subscription link per user and organization; only the token hash is stored. */
+export interface CalendarFeed {
+  _id: import('mongoose').Types.ObjectId;
+  orgId: import('mongoose').Types.ObjectId;
+  userId: import('mongoose').Types.ObjectId;
+  tokenHash: string;
+  createdAt: Date;
+  lastFetchedAt?: Date;
+}
+const calendarFeedSchema = new Schema<CalendarFeed>(
+  {
+    orgId: oid('Organization'),
+    userId: oid('User'),
+    tokenHash: { type: String, required: true },
+    createdAt: { type: Date, default: () => new Date() },
+    lastFetchedAt: { type: Date },
+  },
+  { versionKey: false },
+);
+calendarFeedSchema.index({ tokenHash: 1 }, { unique: true });
+calendarFeedSchema.index({ orgId: 1, userId: 1 }, { unique: true });
+export const CalendarFeedModel = model<CalendarFeed>('CalendarFeed', calendarFeedSchema);

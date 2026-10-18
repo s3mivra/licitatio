@@ -3,6 +3,7 @@ import type { AuditEntryDto, CursorPage, MeDto, OrganizationDto, StaffGrantDto, 
 import { BILLING_PERIODS, PLANS, formatCentavos, priceFor } from '@licitatio/shared';
 import type { BillingPeriod, PaymentDto, PlanCode } from '@licitatio/shared';
 import { useSearchParams } from 'react-router-dom';
+import { CalendarLink } from './CalendarLink';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ApiError, api } from '../../lib/api';
@@ -148,6 +149,7 @@ export function NotificationSettings() {
           {pref.error && <ErrorAlert error={pref.error} />}
         </section>
       )}
+      {self?.membershipId && <CalendarLink />}
     </div>
   );
 }

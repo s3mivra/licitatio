@@ -279,6 +279,8 @@ export const patchProposalBody = z.object({
   opportunityId: objectId.nullable().optional(),
 }).strict();
 export const exportProposalBody = z.object({ format: z.enum(['pdf', 'docx']), allowUnresolved: z.boolean().optional() }).strict();
+export const readNoticeBody = z.object({ text: z.string().trim().min(40, 'Paste more of the notice').max(30_000).optional(), fileId: objectId.optional() }).strict()
+  .refine((v) => Boolean(v.text) !== Boolean(v.fileId), { message: 'Paste the notice text or attach its PDF' });
 export const scanDocumentBody = z.object({ fileId: objectId }).strict();
 export const aiDraftBody = z.object({
   kind: z.enum(['company_background', 'method_statement', 'quality_safety', 'custom']),

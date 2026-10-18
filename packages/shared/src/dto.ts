@@ -356,3 +356,9 @@ export interface DocumentScanDto {
   issuedAt?: string;
   expiresAt?: string;
 }
+
+/** Suggested bid form values read from an invitation to bid; instants are ISO strings. */
+export interface NoticeReadDto {
+  title?: string; procuringEntity?: string; referenceNo?: string; location?: string; approvedBudget?: number; bidSecurityRequired?: boolean;
+  preBidAt?: string; clarificationDeadlineAt?: string; submissionDeadlineAt?: string; openingAt?: string;
+}

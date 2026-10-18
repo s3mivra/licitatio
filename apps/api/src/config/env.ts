@@ -9,6 +9,8 @@ const schema = z
     // Development only: more web origins, comma separated (e.g. http://192.168.1.20:5174 for other PCs on the network)
     EXTRA_APP_ORIGINS: z.string().optional(),
     APP_URL: z.string().url(), // base for links in emails
+    // public base of the API for links opened outside the app (calendar feeds); defaults to APP_URL, which proxies /api in development
+    API_PUBLIC_URL: z.string().url().optional(),
     COOKIE_DOMAIN: z.string().min(3).optional(), // example.com so app and api share the site
     MONGODB_URI: z.string().startsWith('mongodb'),
     JWT_SECRET: z.string().min(32),

@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
-import { createOpportunityBody, opportunityListQuery, patchOpportunityBody, transitionBody } from '@licitatio/shared';
+import { createOpportunityBody, opportunityListQuery, patchOpportunityBody, readNoticeBody, transitionBody } from '@licitatio/shared';
 import { orgAccess, param } from '../../shared/validate';
+import * as noticeSvc from './notice.service';
 import * as svc from './opportunities.service';
 
 export async function list(req: Request, res: Response): Promise<void> {
@@ -30,4 +31,8 @@ export async function transition(req: Request, res: Response): Promise<void> {
 
 export async function assignees(req: Request, res: Response): Promise<void> {
   res.json({ data: await svc.assigneeOptions(orgAccess(req)) });
+}
+
+export async function readNotice(req: Request, res: Response): Promise<void> {
+  res.json({ data: await noticeSvc.readBidNotice(orgAccess(req), readNoticeBody.parse(req.body), req.ip) });
 }

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { OpportunityDto } from '@licitatio/shared';
+import type { NoticeReadDto, OpportunityDto } from '@licitatio/shared';
 import { formatCentavos, toCentavos } from '@licitatio/shared';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -8,6 +8,7 @@ import { applyServerErrors } from '../../lib/forms';
 import { useOrgId } from '../../lib/queries';
 import { Alert, Button, Checkbox, Dialog, Select, TextArea, TextInput } from '../../ui';
 import { isoToManilaInput, manilaInputToIso, useAssignees } from './common';
+import { NoticeReader } from './NoticeReader';
 
 interface Values {
   title: string; procuringEntity: string; referenceNo: string; source: string; url: string; location: string; approvedBudget: string;
@@ -74,6 +75,14 @@ export function BidForm({ open, onClose, existing, onSaved }: { open: boolean; o
       footer={<><Button variant="secondary" onClick={onClose} disabled={save.isPending}>Cancel</Button><Button type="submit" form="bid-form" busy={save.isPending}>Save</Button></>}>
       <form id="bid-form" className="space-y-4" noValidate onSubmit={form.handleSubmit((v) => { setError(null); save.mutate(v); })}>
         {error && <Alert>{error}</Alert>}
+        {!existing && <NoticeReader onRead={(d: NoticeReadDto) => {
+          const set = (k: keyof Values, v: string | undefined) => { if (v) form.setValue(k, v, { shouldDirty: true, shouldValidate: true }); };
+          set('title', d.title); set('procuringEntity', d.procuringEntity); set('referenceNo', d.referenceNo); set('location', d.location);
+          set('approvedBudget', d.approvedBudget ? formatCentavos(d.approvedBudget) : undefined);
+          set('submissionDeadlineAt', isoToManilaInput(d.submissionDeadlineAt)); set('openingAt', isoToManilaInput(d.openingAt));
+          set('preBidAt', isoToManilaInput(d.preBidAt)); set('clarificationDeadlineAt', isoToManilaInput(d.clarificationDeadlineAt));
+          if (d.bidSecurityRequired !== undefined) form.setValue('bidSecurityRequired', d.bidSecurityRequired);
+        }} />}
         <TextInput label="Title" {...form.register('title', { required: 'Required' })} error={e('title')} />
         <div className="grid gap-4 sm:grid-cols-2">
           <TextInput label="Procuring entity" {...form.register('procuringEntity', { required: 'Required' })} error={e('procuringEntity')} />

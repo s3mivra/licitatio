@@ -168,7 +168,7 @@ const FEATURES = [
   { tag: 'Vault', dot: 'bg-emerald-500', title: 'No more paper disqualifications', body: 'Every permit and certificate is tracked, with email and SMS warnings weeks before anything expires.' },
   { tag: 'Packets', dot: 'bg-accent-500', title: 'Bid packets in hours', body: 'Pick a template. Licitatio matches your documents, fills the schedules and exports one indexed PDF.' },
   { tag: 'Proposals', dot: 'bg-brand-600', title: 'Proposals without starting over', body: 'Reuse saved text, fill in company details automatically and draft sections with AI.' },
-  { tag: 'Tracker', dot: 'bg-orange-500', title: 'Every deadline in view', body: 'All bids on one board with countdowns, reminders and assigned tasks.' },
+  { tag: 'Tracker', dot: 'bg-orange-500', title: 'Every deadline in your calendar', body: 'Paste the invitation to bid and the deadlines fill themselves in, then show up in Google Calendar, Outlook or your phone.' },
   { tag: 'Analytics', dot: 'bg-violet-500', title: 'Learn from every result', body: 'Record the winning bid and see your win rate and how close your pricing was.' },
   { tag: 'NFCC', dot: 'bg-emerald-600', title: 'Know if you can bid before you start', body: 'Licitatio computes your NFCC against the approved budget, shows the bid security to prepare and prints the NFCC form for the packet.' },
   { tag: 'Scan', dot: 'bg-pink-500', title: 'Snap a permit, skip the typing', body: 'Take a photo or upload a PDF. AI reads the type, number and dates and fills the form for you to check.' },

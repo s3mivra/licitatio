@@ -43,6 +43,9 @@ automated test in `apps/api/test` or `apps/api/src/**/*.test.ts` that runs in CI
 - [ ] Civil engineer: confirm the NFCC formula (K = 15), what counts as outstanding works, and the 2% and 5% bid security
       rates against the current procurement rules (`packages/shared/src/nfcc.ts`), and the two-envelope label wording
       (`apps/api/src/domain/submissionChecklist.ts`).
+- [ ] Set `API_PUBLIC_URL` to the public API address so calendar links work outside the app.
+- [ ] Optional AI notice reading also uses the AI switch; the privacy notice should say pasted notices and notice PDFs
+      are sent to Anthropic when a user presses "Read notice".
 - [ ] Optional AI scan reading uses the same switch as AI drafting; the privacy notice must say that scans are sent to
       Anthropic when a user presses "Read details from the scan".
 - [ ] Optional AI drafting: set `AI_DRAFTING=on` and `ANTHROPIC_API_KEY`, add a line on AI use to the privacy notice
